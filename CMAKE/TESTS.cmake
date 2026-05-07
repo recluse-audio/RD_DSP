@@ -1,4 +1,5 @@
 set(TEST_SOURCES
+    TESTS/BUFFER_FILLER/test_BufferFiller_fromCSV.cpp
     TESTS/HELPERS/CsvLoader.cpp
     TESTS/HELPERS/CsvLoader.h
     TESTS/OSCILLATOR/test_Oscillator.cpp

@@ -61,7 +61,15 @@ void Oscillator::_updatePhaseIncrement()
     if(mSampleRate == 0)
         return; // don't divide by zero
 
-    mPhaseIncrement = static_cast<float> (static_cast<double> (mFrequency) * mWaveform->getNumSamples() / mSampleRate);
+    mPhaseIncrement = _calculatePhaseIncrement (mFrequency, mSampleRate, mWaveform->getNumSamples());
+}
+
+float Oscillator::_calculatePhaseIncrement (float freq, double sampleRate, int waveformSize) noexcept
+{
+    if (sampleRate == 0.0)
+        return 0.0f;
+
+    return static_cast<float> (static_cast<double> (freq) * static_cast<double> (waveformSize) / sampleRate);
 }
 
 } // namespace rd_dsp

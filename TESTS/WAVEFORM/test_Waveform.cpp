@@ -25,7 +25,7 @@ TEST_CASE("Waveform sine fill matches golden CSV exactly at N=8096", "[Waveform]
     wave.setWaveType (rd_dsp::Waveform::WaveType::wSine);
 
     const std::string goldenPath =
-        std::string (RD_DSP_TESTS_DIR) + "/GOLDEN/SINE/GOLDEN_SINE_8096.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/SINE/GOLDEN_SINE_8096.csv";
 
     std::vector<std::vector<float>> rows;
     const bool loaded = rd_dsp_tests::loadCsv (goldenPath, rows, /*skipHeader=*/true);

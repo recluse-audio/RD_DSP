@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python HELPER_SCRIPTS/regenSource.py)"
+      "Bash(python HELPER_SCRIPTS/regenSource.py)",
+      "Bash(git mv *)"
     ]
   }
 }

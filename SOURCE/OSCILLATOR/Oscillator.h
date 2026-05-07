@@ -10,7 +10,8 @@
 namespace rd_dsp
 {
 /**
- * This class owns a Waveform, and reads values from it at varied rates.
+ * This class reads from a waveform and writes to a buffer
+ * It owns a Waveform, and reads values from it at varied rates.
  * Does not need to handle interpolation between samples in Waveform, can pass
  * float sample indices to it and get the sample values it needs.
  */
@@ -37,6 +38,10 @@ private:
 
     // depends on mSampleRate and mFrequency being set.
     void _updatePhaseIncrement();
+
+    // Pure formula. Exposed (privately) so tests can drive it with
+    // explicit waveform sizes that match a golden CSV.
+    static float _calculatePhaseIncrement (float freq, double sampleRate, int waveformSize) noexcept;
 };
 
 

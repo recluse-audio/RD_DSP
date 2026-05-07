@@ -1,23 +1,22 @@
 #!/usr/bin/env python3
 """
-Generate a golden sine-wave CSV used by Catch2 tests.
+Generate golden sine-wave CSV used by Catch2 tests.
 
-Format matches the RD project's golden CSVs:
+Format matches RD project's golden CSVs:
     index,normalized_phase,pi_radians,amplitude
 
 One full cycle across N samples. amplitude[i] = sin(2*pi*i/N).
 Last sample is NOT zero (it is sin(2*pi*(N-1)/N)).
 
 Run:
-    python HELPER_SCRIPTS/gen_golden_sine.py
+    python TESTS/WAVEFORM/GOLDEN/gen_golden_sine.py
 """
 from __future__ import annotations
 
 import math
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
-OUTPUT_DIR = REPO_ROOT / "TESTS" / "GOLDEN" / "SINE"
+OUTPUT_DIR = Path(__file__).resolve().parent / "SINE"
 
 
 def write_golden_sine(num_samples: int) -> Path:

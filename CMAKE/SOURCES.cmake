@@ -1,4 +1,7 @@
 set(SOURCES
+    SOURCE/INTERPOLATOR/Interpolator.h
+    SOURCE/OSCILLATOR/Oscillator.cpp
+    SOURCE/OSCILLATOR/Oscillator.h
     SOURCE/RD_BUFFER/RD_Buffer.cpp
     SOURCE/RD_BUFFER/RD_Buffer.h
     SOURCE/WAVEFORM/Waveform.cpp

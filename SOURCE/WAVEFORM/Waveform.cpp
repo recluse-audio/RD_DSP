@@ -1,4 +1,5 @@
 #include "Waveform.h"
+#include "../INTERPOLATOR/Interpolator.h"
 
 #include <cmath>
 
@@ -13,9 +14,9 @@ namespace
 Waveform::Waveform()  = default;
 Waveform::~Waveform() = default;
 
-void Waveform::setSize (int numChannels, int numSamples)
+void Waveform::setSize (int numSamples)
 {
-    mBuffer.setSize (numChannels, numSamples, true);
+    mBuffer.setSize (1, numSamples, true);
 }
 
 void Waveform::setWaveType (WaveType waveType)
@@ -29,22 +30,38 @@ void Waveform::setWaveType (WaveType waveType)
     }
 }
 
+float Waveform::getInterpolatedSampleAtIndex (float index)
+{
+    const int numSamples = mBuffer.getNumSamples();
+    if (numSamples <= 0)
+        return 0.0f;
+
+    const float n = static_cast<float>(numSamples);
+    float wrapped = std::fmod (index, n);
+    if (wrapped < 0.0f)
+        wrapped += n;
+
+    const int   i0   = static_cast<int>(std::floor (wrapped));
+    const int   i1   = (i0 + 1) % numSamples;
+    const float frac = wrapped - static_cast<float>(i0);
+
+    const float s0 = mBuffer.getSample (0, i0);
+    const float s1 = mBuffer.getSample (0, i1);
+    return static_cast<float>(Interpolator::linearInterp (s0, s1, frac));
+}
+
 void Waveform::_fillWithSine()
 {
     mBuffer.clear();
-    const int numChannels = mBuffer.getNumChannels();
-    const int numSamples  = mBuffer.getNumSamples();
-    if (numChannels <= 0 || numSamples <= 0)
+    const int numSamples = mBuffer.getNumSamples();
+    if (numSamples <= 0)
         return;
 
     for (int sampleIndex = 0; sampleIndex < numSamples; ++sampleIndex)
     {
         const float phase  = (static_cast<float>(sampleIndex) * kTwoPi) / static_cast<float>(numSamples);
         const float sample = std::sin (phase);
-        for (int channel = 0; channel < numChannels; ++channel)
-        {
-            mBuffer.setSample (channel, sampleIndex, sample);
-        }
+        mBuffer.setSample (0, sampleIndex, sample);
     }
 }
 

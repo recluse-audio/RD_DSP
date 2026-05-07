@@ -11,8 +11,8 @@ namespace rd_dsp
 /**
  * Cyclical, normalized waveform with two zero-crossings.
  *
- * Owns an RD_Buffer of amplitude values and knows how to fill itself with
- * canonical wave shapes (sine, tri, square, saw).
+ * Owns a single-channel RD_Buffer of amplitude values and knows how to fill
+ * itself with canonical wave shapes (sine, tri, square, saw).
  *
  * Rules:
  *   1. Cyclical — end amplitude near start amplitude.
@@ -33,17 +33,19 @@ public:
     Waveform();
     ~Waveform();
 
-    void setSize (int numChannels, int numSamples);
+    void setSize (int numSamples);
 
-    int   getNumChannels() const noexcept { return mBuffer.getNumChannels(); }
-    int   getNumSamples()  const noexcept { return mBuffer.getNumSamples(); }
-    float getSample (int channel, int sampleIndex) const noexcept
+    int   getNumSamples() const noexcept { return mBuffer.getNumSamples(); }
+    float getSample (int sampleIndex) const noexcept
     {
-        return mBuffer.getSample (channel, sampleIndex);
+        return mBuffer.getSample (0, sampleIndex);
     }
 
     void setWaveType (WaveType waveType);
 
+    // notice this takes a FLOAT index? That means don't round before here, it will
+    // handle interp.
+    float getInterpolatedSampleAtIndex(float index);
 private:
     friend class WaveformTester;
     void _fillWithSine();

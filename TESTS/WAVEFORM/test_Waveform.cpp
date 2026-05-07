@@ -21,7 +21,7 @@ TEST_CASE("Waveform sine fill matches golden CSV exactly at N=8096", "[Waveform]
     constexpr int numSamples = 8096;
 
     rd_dsp::Waveform wave;
-    wave.setSize (1, numSamples);
+    wave.setSize (numSamples);
     wave.setWaveType (rd_dsp::Waveform::WaveType::wSine);
 
     const std::string goldenPath =
@@ -39,7 +39,7 @@ TEST_CASE("Waveform sine fill matches golden CSV exactly at N=8096", "[Waveform]
     for (int i = 0; i < numSamples; ++i)
     {
         REQUIRE (static_cast<int> (rows[i].size()) > kAmplitudeCol);
-        const float generated = wave.getSample (0, i);
+        const float generated = wave.getSample (i);
         const float golden    = rows[i][kAmplitudeCol];
 
         INFO ("sample index " << i);

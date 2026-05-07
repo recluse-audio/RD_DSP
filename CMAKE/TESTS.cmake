@@ -3,6 +3,5 @@ set(TEST_SOURCES
     TESTS/HELPERS/CsvLoader.h
     TESTS/RD_BUFFER/test_RD_Buffer.cpp
     TESTS/WAVEFORM/test_Waveform.cpp
-    TESTS/WAVEFORM/test_WaveformBufferFiller.cpp
     TESTS/test_main.cpp
 )

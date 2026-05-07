@@ -35,11 +35,22 @@ def find_cmake() -> str:
 
 
 def beep(*, success: bool = True) -> None:
-    """Cross-platform audible notification. Best-effort."""
+    """Cross-platform audible notification. Best-effort.
+
+    On Windows, plays HELPER_SCRIPTS/SOUNDS/{success,failure}_sound.wav if present;
+    falls back to a tone. On other platforms emits the terminal bell.
+    """
     try:
         if sys.platform.startswith("win"):
             import winsound
-            winsound.Beep(880 if success else 220, 120 if success else 400)
+            sounds_dir = Path(__file__).parent / "SOUNDS"
+            wav = sounds_dir / ("success_sound.wav" if success else "failure_sound.wav")
+            if not wav.exists() and not success:
+                wav = sounds_dir / "success_sound.wav"
+            if wav.exists():
+                winsound.PlaySound(str(wav), winsound.SND_FILENAME)
+            else:
+                winsound.Beep(880 if success else 220, 120 if success else 400)
         else:
             sys.stdout.write("\a")
             sys.stdout.flush()

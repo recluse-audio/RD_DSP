@@ -1,0 +1,21 @@
+BUILD/
+build/
+out/
+cmake-build-*/
+
+# IDE
+.idea/
+*.user
+.vs/
+CMakeUserPresets.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.pyc
+
+# Compile commands
+compile_commands.json

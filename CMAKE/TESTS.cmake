@@ -1,4 +1,8 @@
 set(TEST_SOURCES
-    TESTS/test_RD_Buffer.cpp
+    TESTS/HELPERS/CsvLoader.cpp
+    TESTS/HELPERS/CsvLoader.h
+    TESTS/RD_BUFFER/test_RD_Buffer.cpp
+    TESTS/WAVEFORM/test_Waveform.cpp
+    TESTS/WAVEFORM/test_WaveformBufferFiller.cpp
     TESTS/test_main.cpp
 )

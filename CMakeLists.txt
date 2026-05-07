@@ -80,7 +80,13 @@ if(BUILD_TESTS)
     include(CMAKE/TESTS.cmake)
     add_executable(Tests ${TEST_SOURCES})
     target_link_libraries(Tests PRIVATE ${PROJECT_NAME} Catch2::Catch2)
-    target_include_directories(Tests PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/SOURCE)
+    target_include_directories(Tests PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/SOURCE
+        ${CMAKE_CURRENT_SOURCE_DIR}/TESTS
+    )
+    target_compile_definitions(Tests PRIVATE
+        RD_DSP_TESTS_DIR="${CMAKE_CURRENT_SOURCE_DIR}/TESTS"
+    )
 
     enable_testing()
     list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)

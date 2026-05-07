@@ -4,7 +4,7 @@
  */
 
 #include <catch2/catch_test_macros.hpp>
-#include "RD_Buffer.h"
+#include "RD_BUFFER/RD_Buffer.h"
 
 TEST_CASE ("Default-constructed RD_Buffer reports zero size", "[RD_Buffer]")
 {

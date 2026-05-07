@@ -11,12 +11,6 @@
 namespace rd_dsp
 {
 
-/**
- * @brief Functions that fill an RD_Buffer with various amplitude patterns.
- *
- * JUCE-free port of the BufferFiller helpers from the RD project. Only
- * fillWithAllOnes is implemented for now; more will be ported as needed.
- */
 class BufferFiller
 {
 public:

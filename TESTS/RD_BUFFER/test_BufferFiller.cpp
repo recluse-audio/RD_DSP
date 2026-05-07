@@ -41,3 +41,39 @@ TEST_CASE ("fillWithAllOnes on empty buffer is a no-op", "[BufferFiller]")
     REQUIRE (buffer.getNumChannels() == 0);
     REQUIRE (buffer.getNumSamples()  == 0);
 }
+
+//-------------------------------------
+TEST_CASE ("fillIncremental sets sample[i] == float(i) on every channel", "[BufferFiller]")
+{
+    rd_dsp::RD_Buffer buffer (2, 32);
+
+    rd_dsp::BufferFiller::fillIncremental (buffer);
+
+    for (int ch = 0; ch < buffer.getNumChannels(); ++ch)
+        for (int i = 0; i < buffer.getNumSamples(); ++i)
+            REQUIRE (buffer.getSample (ch, i) == static_cast<float> (i));
+}
+
+//-------------------------------------
+TEST_CASE ("fillIncremental overwrites prior values", "[BufferFiller]")
+{
+    rd_dsp::RD_Buffer buffer (1, 8);
+    buffer.setSample (0, 3, -0.75f);
+    buffer.setSample (0, 5,  0.25f);
+
+    rd_dsp::BufferFiller::fillIncremental (buffer);
+
+    for (int i = 0; i < buffer.getNumSamples(); ++i)
+        REQUIRE (buffer.getSample (0, i) == static_cast<float> (i));
+}
+
+//-------------------------------------
+TEST_CASE ("fillIncremental on empty buffer is a no-op", "[BufferFiller]")
+{
+    rd_dsp::RD_Buffer buffer;
+
+    rd_dsp::BufferFiller::fillIncremental (buffer);
+
+    REQUIRE (buffer.getNumChannels() == 0);
+    REQUIRE (buffer.getNumSamples()  == 0);
+}

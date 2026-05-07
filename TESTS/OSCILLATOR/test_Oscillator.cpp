@@ -143,30 +143,30 @@ TEST_CASE ("Oscillator::_calculatePhaseIncrement matches golden CSV", "[Oscillat
 
 TEST_CASE("Oscillator writes its waveform to buffer in process()", "[Oscillator]")
 {
-    // Oscillator osc;
-    // osc.prepare(44100.0);
-    // osc.setFreq(441.f);
+    Oscillator osc;
+    osc.prepare(44100.0);
+    osc.setFreq(441.f);
 
-    // int numChannels = 2;
-    // int numSamples = 128;
+    int numChannels = 2;
+    int numSamples = 128;
 
-    // rd_dsp::RD_Buffer processBuffer(2, 128);
+    rd_dsp::RD_Buffer processBuffer(2, 128);
 
-    // // Confirm all samples are 0's before processing
-    // for (int sampleIndex = 0; sampleIndex < numSamples; ++sampleIndex)
-    // {
-    //     for (int ch = 0; ch < numChannels; ++ch)
-    //     {
-    //         float sampleValue = processBuffer.getSample(ch, sampleIndex);
-    //         CHECK(sampleValue == 0.f);
-    //     }
-    // }
+    // Confirm all samples are 0's before processing
+    for (int sampleIndex = 0; sampleIndex < numSamples; ++sampleIndex)
+    {
+        for (int ch = 0; ch < numChannels; ++ch)
+        {
+            float sampleValue = processBuffer.getSample(ch, sampleIndex);
+            CHECK(sampleValue == 0.f);
+        }
+    }
 
-    // // Confirm mCurrentIndex is at 0.0 before processing
-    // CHECK(OscillatorTester::currentIndex(osc) == Approx(0.f));
+    // Confirm mCurrentIndex is at 0.0 before processing
+    CHECK(OscillatorTester::currentIndex(osc) == Approx(0.f));
 
-    // // Do processing, write values to processBuffer
-    // osc.process(processBuffer);
+    // Do processing, write values to processBuffer
+    osc.process(processBuffer);
 
 
     

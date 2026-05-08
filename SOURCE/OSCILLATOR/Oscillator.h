@@ -35,6 +35,10 @@ private:
     float  mFrequency      = 0.f;
     double mSampleRate     = 44100.0;
     bool mIsRunning = false;
+    bool mPhaseIncrementUpdateNeeded = false;
+
+    // this uses mCurrentIndex 
+    void _incrementCurrentIndex();
 
     // depends on mSampleRate and mFrequency being set.
     void _updatePhaseIncrement();

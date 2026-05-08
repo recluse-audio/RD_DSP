@@ -1,0 +1,35 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Tests (MSVC)",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/BUILD/Debug/Tests.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}/BUILD/Debug",
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "preLaunchTask": "build-tests"
+        },
+        {
+            "name": "Debug Tests by Tag (MSVC)",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/BUILD/Debug/Tests.exe",
+            "args": ["${input:catchFilter}"],
+            "cwd": "${workspaceFolder}/BUILD/Debug",
+            "console": "integratedTerminal",
+            "stopAtEntry": false,
+            "preLaunchTask": "build-tests"
+        }
+    ],
+    "inputs": [
+        {
+            "id": "catchFilter",
+            "type": "promptString",
+            "description": "Catch2 filter (e.g. [BufferFiller] or test name)",
+            "default": "[BufferFiller]"
+        }
+    ]
+}

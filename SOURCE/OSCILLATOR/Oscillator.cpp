@@ -26,7 +26,7 @@ void Oscillator::prepare (double sampleRate)
 void Oscillator::setFreq (float freq)
 {
     mFrequency = freq;
-    _updatePhaseIncrement();
+    mPhaseIncrementUpdateNeeded = true;
 }
 
 void Oscillator::process(RD_Buffer& buffer)
@@ -34,15 +34,23 @@ void Oscillator::process(RD_Buffer& buffer)
     if(!mIsRunning)
         return;
 
+    if (mPhaseIncrementUpdateNeeded)
+    {
+        _updatePhaseIncrement();
+        mPhaseIncrementUpdateNeeded = false;
+    }
+
     int numSamples  = buffer.getNumSamples();
     int numChannels = buffer.getNumChannels();
     
     for (int sampleIndex = 0; sampleIndex < numSamples; ++sampleIndex)
     {
+        float waveformSample = mWaveform->getSample(mCurrentIndex);
         for (int ch = 0; ch < numChannels; ++ch)
         {
-            
+            buffer.setSample(ch, sampleIndex, waveformSample);
         }
+        _incrementCurrentIndex();
     }
 }
 
@@ -54,6 +62,13 @@ void Oscillator::start()
 void Oscillator::stop()
 {
     mIsRunning = false;
+}
+
+void Oscillator::_incrementCurrentIndex()
+{
+    mCurrentIndex = mCurrentIndex + mPhaseIncrement;
+    if(mCurrentIndex >= mWaveform->getNumSamples())
+        mCurrentIndex = mCurrentIndex - mWaveform->getNumSamples();
 }
 
 void Oscillator::_updatePhaseIncrement()

@@ -17,9 +17,10 @@ Oscillator::Oscillator()
 
 Oscillator::~Oscillator() = default;
 
-void Oscillator::prepare (double sampleRate)
+void Oscillator::prepare (double sampleRate, int maxBlockSize)
 {
     mSampleRate = sampleRate;
+    mBlockSize  = maxBlockSize;
     _updatePhaseIncrement();
 }
 

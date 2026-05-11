@@ -21,7 +21,7 @@ public:
     Oscillator();
     ~Oscillator();
 
-    void prepare(double sampleRate);
+    void prepare(double sampleRate, int maxBlockSize);
     void setFreq(float freq);
 
     void process(RD_Buffer& buffer);
@@ -38,6 +38,7 @@ private:
     float  mPhaseIncrement = 0.f;
     float  mFrequency      = 0.f;
     double mSampleRate     = 44100.0;
+    int    mBlockSize      = 0;
     bool mIsRunning = false;
     bool mPhaseIncrementUpdateNeeded = false;
 

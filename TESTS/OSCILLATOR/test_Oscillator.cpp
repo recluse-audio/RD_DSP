@@ -26,6 +26,7 @@ public:
     static float currentIndex  (const Oscillator& o) { return o.mCurrentIndex; }
     static double sampleRate    (const Oscillator& o) { return o.mSampleRate; }
     static int    waveformSize  (const Oscillator& o) { return o.mWaveform->getNumSamples(); }
+    static int    blockSize     (const Oscillator& o) { return o.mBlockSize; }
     static bool   isRunning     (const Oscillator& o) { return o.mIsRunning; }
     static bool   phaseIncrementUpdateNeeded (const Oscillator& o) { return o.mPhaseIncrementUpdateNeeded; }
     static void   resetPhase    (Oscillator& o) { o.mCurrentIndex = 0.f; }
@@ -56,11 +57,12 @@ TEST_CASE ("Oscillator default constructs with sine waveform", "[Oscillator]")
     CHECK (OscillatorTester::phaseIncrement (osc) == 0.f);
 }
 
-TEST_CASE ("Oscillator::prepare stores sample rate", "[Oscillator]")
+TEST_CASE ("Oscillator::prepare stores sample rate and block size", "[Oscillator]")
 {
     Oscillator osc;
-    osc.prepare (48000.0);
+    osc.prepare (48000.0, 256);
     CHECK (OscillatorTester::sampleRate (osc) == 48000.0);
+    CHECK (OscillatorTester::blockSize  (osc) == 256);
 }
 
 // Tests pin waveform size to 2048 via OscillatorTester so their arithmetic
@@ -81,7 +83,7 @@ TEST_CASE ("Oscillator::setFreq flags phase increment update without applying it
 {
     Oscillator osc;
     OscillatorTester::setWaveformSize (osc, 2048);
-    osc.prepare (44100.0);
+    osc.prepare (44100.0, 1);
     osc.setFreq (441.f);
 
     CHECK (OscillatorTester::phaseIncrementUpdateNeeded (osc));
@@ -93,7 +95,7 @@ TEST_CASE ("Oscillator::setFreq computes phase increment from freq, waveform siz
 {
     Oscillator osc;
     OscillatorTester::setWaveformSize (osc, 2048);
-    osc.prepare (44100.0);
+    osc.prepare (44100.0, 1);
     osc.setFreq (441.f);
     flushPhaseIncrement (osc);
 
@@ -106,7 +108,7 @@ TEST_CASE ("Oscillator phase increment scales with frequency", "[Oscillator]")
 {
     Oscillator osc;
     OscillatorTester::setWaveformSize (osc, 2048);
-    osc.prepare (44100.0);
+    osc.prepare (44100.0, 1);
 
     // 441 * 2048 / 44100 = 20.48
     osc.setFreq (441.f);
@@ -123,18 +125,18 @@ TEST_CASE ("Oscillator::prepare after setFreq updates phase increment for new sa
 {
     Oscillator osc;
     OscillatorTester::setWaveformSize (osc, 2048);
-    osc.prepare (44100.0);
+    osc.prepare (44100.0, 1);
     osc.setFreq (441.f);
     flushPhaseIncrement (osc);
     // 441 * 2048 / 44100 = 20.48
     CHECK (OscillatorTester::phaseIncrement (osc) == Approx (20.48f));
 
     // halve the SR -> increment doubles. 441 * 2048 / 22050 = 40.96
-    osc.prepare (22050.0);
+    osc.prepare (22050.0, 1);
     CHECK (OscillatorTester::phaseIncrement (osc) == Approx (40.96f));
 
     // double original SR -> increment halves. 441 * 2048 / 88200 = 10.24
-    osc.prepare (88200.0);
+    osc.prepare (88200.0, 1);
     CHECK (OscillatorTester::phaseIncrement (osc) == Approx (10.24f));
 }
 
@@ -175,7 +177,7 @@ TEST_CASE ("Oscillator::_calculatePhaseIncrement matches golden CSV", "[Oscillat
 TEST_CASE("Oscillator writes its waveform to buffer in process()", "[Oscillator]")
 {
     Oscillator osc;
-    osc.prepare(44100.0);
+    osc.prepare(44100.0, 128);
     osc.setFreq(441.f); // don't change, this refs a golden file
     osc.start();
 
@@ -226,7 +228,7 @@ TEST_CASE("Oscillator writes its waveform to buffer in process()", "[Oscillator]
 TEST_CASE("Oscillator writes its waveform via raw pointer overload of process()", "[Oscillator]")
 {
     Oscillator osc;
-    osc.prepare(44100.0);
+    osc.prepare(44100.0, 128);
     osc.setFreq(441.f); // don't change, this refs a golden file
     osc.start();
 
@@ -301,7 +303,7 @@ TEST_CASE ("Oscillator::stop clears running state", "[Oscillator]")
 TEST_CASE ("Oscillator::process is a no-op when stopped", "[Oscillator]")
 {
     Oscillator osc;
-    osc.prepare (44100.0);
+    osc.prepare (44100.0, 64);
     osc.setFreq (441.f);
 
     rd_dsp::RD_Buffer buffer (2, 64);
@@ -316,7 +318,7 @@ TEST_CASE ("Oscillator::process is a no-op when stopped", "[Oscillator]")
 TEST_CASE ("Oscillator::process writes samples after start", "[Oscillator]")
 {
     Oscillator osc;
-    osc.prepare (44100.0);
+    osc.prepare (44100.0, 64);
     osc.setFreq (441.f);
     osc.start();
 
@@ -339,7 +341,7 @@ TEST_CASE ("Oscillator::process writes samples after start", "[Oscillator]")
 TEST_CASE ("Oscillator::process is a no-op after stop following start", "[Oscillator]")
 {
     Oscillator osc;
-    osc.prepare (44100.0);
+    osc.prepare (44100.0, 64);
     osc.setFreq (441.f);
     osc.start();
     osc.stop();
@@ -356,7 +358,7 @@ TEST_CASE ("Oscillator::process is a no-op after stop following start", "[Oscill
 TEST_CASE ("Oscillator process across freq changes matches golden CSVs (441 -> 663 -> 882)", "[Oscillator]")
 {
     Oscillator osc;
-    osc.prepare (44100.0);
+    osc.prepare (44100.0, 32);
     osc.start();
 
     struct ProcessBlockCall

@@ -67,14 +67,84 @@ void Waveform::_fillWithSine()
 
 void Waveform::_fillWithTri()
 {
+    mBuffer.clear();
+    const int numSamples = mBuffer.getNumSamples();
+    if (numSamples <= 0)
+        return;
+
+    // Band-limited triangle via additive synthesis. Must match
+    // TESTS/WAVEFORM/GOLDEN/gen_golden_triangle.py sample-for-sample.
+    constexpr int    kNumHarmonics = 31;
+    constexpr double kPi           = 3.14159265358979323846;
+    constexpr double kCoeff        = 8.0 / (kPi * kPi);
+
+    for (int sampleIndex = 0; sampleIndex < numSamples; ++sampleIndex)
+    {
+        double acc = 0.0;
+        for (int k = 0; k <= kNumHarmonics; ++k)
+        {
+            const int    n    = 2 * k + 1;
+            const double sign = (k & 1) ? -1.0 : 1.0;
+            const double arg  = 2.0 * kPi * n * static_cast<double>(sampleIndex)
+                              / static_cast<double>(numSamples);
+            acc += sign * std::sin (arg) / static_cast<double>(n * n);
+        }
+        mBuffer.setSample (0, sampleIndex, static_cast<float>(kCoeff * acc));
+    }
 }
 
 void Waveform::_fillWithSquare()
 {
+    mBuffer.clear();
+    const int numSamples = mBuffer.getNumSamples();
+    if (numSamples <= 0)
+        return;
+
+    // Band-limited square via additive synthesis. Must match
+    // TESTS/WAVEFORM/GOLDEN/gen_golden_square.py sample-for-sample.
+    constexpr int    kNumHarmonics = 31;
+    constexpr double kPi           = 3.14159265358979323846;
+    constexpr double kCoeff        = 4.0 / kPi;
+
+    for (int sampleIndex = 0; sampleIndex < numSamples; ++sampleIndex)
+    {
+        double acc = 0.0;
+        for (int k = 0; k <= kNumHarmonics; ++k)
+        {
+            const int    n   = 2 * k + 1;
+            const double arg = 2.0 * kPi * n * static_cast<double>(sampleIndex)
+                             / static_cast<double>(numSamples);
+            acc += std::sin (arg) / static_cast<double>(n);
+        }
+        mBuffer.setSample (0, sampleIndex, static_cast<float>(kCoeff * acc));
+    }
 }
 
 void Waveform::_fillWithSaw()
 {
+    mBuffer.clear();
+    const int numSamples = mBuffer.getNumSamples();
+    if (numSamples <= 0)
+        return;
+
+    // Band-limited ascending saw via additive synthesis. Must match
+    // TESTS/WAVEFORM/GOLDEN/gen_golden_saw.py sample-for-sample.
+    constexpr int    kNumHarmonics = 32;
+    constexpr double kPi           = 3.14159265358979323846;
+    constexpr double kCoeff        = 2.0 / kPi;
+
+    for (int sampleIndex = 0; sampleIndex < numSamples; ++sampleIndex)
+    {
+        double acc = 0.0;
+        for (int n = 1; n <= kNumHarmonics; ++n)
+        {
+            const double sign = (n % 2 == 1) ? 1.0 : -1.0;
+            const double arg  = 2.0 * kPi * n * static_cast<double>(sampleIndex)
+                              / static_cast<double>(numSamples);
+            acc += sign * std::sin (arg) / static_cast<double>(n);
+        }
+        mBuffer.setSample (0, sampleIndex, static_cast<float>(kCoeff * acc));
+    }
 }
 
 } // namespace rd_dsp

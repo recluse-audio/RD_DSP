@@ -223,6 +223,54 @@ TEST_CASE("Oscillator writes its waveform to buffer in process()", "[Oscillator]
     }
 }
 
+TEST_CASE("Oscillator writes its waveform via raw pointer overload of process()", "[Oscillator]")
+{
+    Oscillator osc;
+    osc.prepare(44100.0);
+    osc.setFreq(441.f); // don't change, this refs a golden file
+    osc.start();
+
+    int numChannels = 2;
+    int numSamples = 128;
+
+    rd_dsp::RD_Buffer processBuffer(numChannels, numSamples);
+
+    // Confirm all samples are 0's before processing
+    for (int sampleIndex = 0; sampleIndex < numSamples; ++sampleIndex)
+    {
+        for (int ch = 0; ch < numChannels; ++ch)
+        {
+            float sampleValue = processBuffer.getSample(ch, sampleIndex);
+            CHECK(sampleValue == 0.f);
+        }
+    }
+
+    // Confirm mCurrentIndex is at 0.0 before processing
+    CHECK(OscillatorTester::currentIndex(osc) == Approx(0.f));
+
+    // Drive the pointer-based overload directly.
+    osc.process(processBuffer.getReadArray(), processBuffer.getWriteArray(), numChannels, numSamples);
+
+    const int csvNumChannels = 3;
+    const int csvNumSamples  = 100;
+    rd_dsp::RD_Buffer csvBuffer (csvNumChannels, csvNumSamples);
+
+    const std::string csvPath =
+        std::string (RD_DSP_TESTS_DIR) + "/OSCILLATOR/GOLDEN/SINE/GOLDEN_OSC_SINE_441Hz_44100SR.csv";
+
+    const bool loaded = rd_dsp::BufferFiller::fillFromCSV (csvPath, csvBuffer);
+    REQUIRE (loaded);
+
+    constexpr int amplitudeChannel = 2;
+    constexpr double margin = 1e-3;
+    for (int i = 0; i < csvNumSamples; ++i)
+    {
+        const float expected = csvBuffer.getSample (amplitudeChannel, i);
+        for (int ch = 0; ch < numChannels; ++ch)
+            CHECK (processBuffer.getSample (ch, i) == Approx (expected).margin (margin));
+    }
+}
+
 //-------------------------------------
 TEST_CASE ("Oscillator default is stopped", "[Oscillator]")
 {

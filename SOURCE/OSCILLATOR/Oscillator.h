@@ -25,10 +25,14 @@ public:
     void setFreq(float freq);
 
     void process(RD_Buffer& buffer);
+    void process(const float* const* readPointers, float* const* writePointers, int numChannels, int numSamples);
     void start();
     void stop();
 private:
     friend class OscillatorTester;
+
+    void _process(const float* const* readPointers, float* const* writePointers, int numChannels, int numSamples);
+
     std::unique_ptr<Waveform> mWaveform;
     float  mCurrentIndex   = 0.f;
     float  mPhaseIncrement = 0.f;

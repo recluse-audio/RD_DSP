@@ -31,6 +31,16 @@ void Oscillator::setFreq (float freq)
 
 void Oscillator::process(RD_Buffer& buffer)
 {
+    _process (buffer.getReadArray(), buffer.getWriteArray(), buffer.getNumChannels(), buffer.getNumSamples());
+}
+
+void Oscillator::process(const float* const* readPointers, float* const* writePointers, int numChannels, int numSamples)
+{
+    _process (readPointers, writePointers, numChannels, numSamples);
+}
+
+void Oscillator::_process(const float* const* readPointers, float* const* writePointers, int numChannels, int numSamples)
+{
     if(!mIsRunning)
         return;
 
@@ -40,15 +50,12 @@ void Oscillator::process(RD_Buffer& buffer)
         mPhaseIncrementUpdateNeeded = false;
     }
 
-    int numSamples  = buffer.getNumSamples();
-    int numChannels = buffer.getNumChannels();
-    
     for (int sampleIndex = 0; sampleIndex < numSamples; ++sampleIndex)
     {
         float waveformSample = mWaveform->getSample(mCurrentIndex);
         for (int ch = 0; ch < numChannels; ++ch)
         {
-            buffer.setSample(ch, sampleIndex, waveformSample);
+            writePointers[ch][sampleIndex] = waveformSample;
         }
         _incrementCurrentIndex();
     }

@@ -28,7 +28,7 @@ TEST_CASE("Waveform sine fill matches golden CSV exactly at N=8096", "[Waveform]
         std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/SINE/GOLDEN_SINE_8096.csv";
 
     std::vector<std::vector<float>> rows;
-    const bool loaded = rd_dsp_tests::loadCsv (goldenPath, rows, /*skipHeader=*/true);
+    const bool loaded = rd_dsp::CsvLoader::load (goldenPath, rows, /*skipHeader=*/true);
     INFO ("Golden path: " << goldenPath);
     REQUIRE (loaded);
     REQUIRE (static_cast<int> (rows.size()) == numSamples);
@@ -59,7 +59,7 @@ TEST_CASE("Waveform triangle fill matches golden CSV exactly at N=8096", "[Wavef
         std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/TRIANGLE/GOLDEN_TRIANGLE_8096.csv";
 
     std::vector<std::vector<float>> rows;
-    const bool loaded = rd_dsp_tests::loadCsv (goldenPath, rows, /*skipHeader=*/true);
+    const bool loaded = rd_dsp::CsvLoader::load (goldenPath, rows, /*skipHeader=*/true);
     INFO ("Golden path: " << goldenPath);
     REQUIRE (loaded);
     REQUIRE (static_cast<int> (rows.size()) == numSamples);
@@ -90,7 +90,7 @@ TEST_CASE("Waveform square fill matches golden CSV exactly at N=8096", "[Wavefor
         std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/SQUARE/GOLDEN_SQUARE_8096.csv";
 
     std::vector<std::vector<float>> rows;
-    const bool loaded = rd_dsp_tests::loadCsv (goldenPath, rows, /*skipHeader=*/true);
+    const bool loaded = rd_dsp::CsvLoader::load (goldenPath, rows, /*skipHeader=*/true);
     INFO ("Golden path: " << goldenPath);
     REQUIRE (loaded);
     REQUIRE (static_cast<int> (rows.size()) == numSamples);
@@ -120,7 +120,7 @@ TEST_CASE("Waveform saw fill matches golden CSV exactly at N=8096", "[Waveform]"
         std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/SAW/GOLDEN_SAW_8096.csv";
 
     std::vector<std::vector<float>> rows;
-    const bool loaded = rd_dsp_tests::loadCsv (goldenPath, rows, /*skipHeader=*/true);
+    const bool loaded = rd_dsp::CsvLoader::load (goldenPath, rows, /*skipHeader=*/true);
     INFO ("Golden path: " << goldenPath);
     REQUIRE (loaded);
     REQUIRE (static_cast<int> (rows.size()) == numSamples);

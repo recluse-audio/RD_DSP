@@ -1,4 +1,6 @@
 set(SOURCES
+    SOURCE/HELPERS/CsvLoader.cpp
+    SOURCE/HELPERS/CsvLoader.h
     SOURCE/INTERPOLATOR/Interpolator.h
     SOURCE/OSCILLATOR/Oscillator.cpp
     SOURCE/OSCILLATOR/Oscillator.h

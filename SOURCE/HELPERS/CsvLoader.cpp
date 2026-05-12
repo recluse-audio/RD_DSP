@@ -3,12 +3,12 @@
 #include <fstream>
 #include <sstream>
 
-namespace rd_dsp_tests
+namespace rd_dsp
 {
 
-bool loadCsv (const std::string& path,
-              std::vector<std::vector<float>>& outRows,
-              bool skipHeader)
+bool CsvLoader::load (const std::string& path,
+                      std::vector<std::vector<float>>& outRows,
+                      bool skipHeader)
 {
     std::ifstream stream (path);
     if (! stream.is_open())
@@ -50,4 +50,4 @@ bool loadCsv (const std::string& path,
     return true;
 }
 
-} // namespace rd_dsp_tests
+} // namespace rd_dsp

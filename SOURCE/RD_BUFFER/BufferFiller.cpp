@@ -1,45 +1,10 @@
 #include "BufferFiller.h"
+#include "../HELPERS/CsvLoader.h"
 
-#include <fstream>
-#include <sstream>
 #include <vector>
 
 namespace rd_dsp
 {
-
-namespace
-{
-    bool parseCsv (const std::string& csvPath, std::vector<std::vector<float>>& outRows)
-    {
-        std::ifstream stream (csvPath);
-        if (! stream.is_open())
-            return false;
-
-        outRows.clear();
-
-        std::string line;
-        bool isFirstLine = true;
-        while (std::getline (stream, line))
-        {
-            if (isFirstLine)
-            {
-                isFirstLine = false;
-                continue; // skip header
-            }
-            if (line.empty())
-                continue;
-
-            std::vector<float> row;
-            std::stringstream ss (line);
-            std::string cell;
-            while (std::getline (ss, cell, ','))
-                row.push_back (std::stof (cell));
-
-            outRows.push_back (std::move (row));
-        }
-        return true;
-    }
-} // namespace
 
 //-------------------------------------
 void BufferFiller::fillWithAllOnes (RD_Buffer& bufferToFill) noexcept
@@ -82,7 +47,7 @@ bool BufferFiller::fillFromCSV (const std::string& csvPath, RD_Buffer& bufferToF
     try
     {
         std::vector<std::vector<float>> rows;
-        if (! parseCsv (csvPath, rows))
+        if (! CsvLoader::load (csvPath, rows, true))
             return false;
 
         const int numSamples  = bufferToFill.getNumSamples();
@@ -116,7 +81,7 @@ bool BufferFiller::fillFromCSV (const std::string& csvPath, RD_Buffer& bufferToF
     try
     {
         std::vector<std::vector<float>> rows;
-        if (! parseCsv (csvPath, rows))
+        if (! CsvLoader::load (csvPath, rows, true))
             return false;
 
         const int numSamples  = bufferToFill.getNumSamples();

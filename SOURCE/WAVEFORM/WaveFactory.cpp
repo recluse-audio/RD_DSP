@@ -1,7 +1,6 @@
 #include "WaveFactory.h"
+#include "../HELPERS/CsvLoader.h"
 
-#include <fstream>
-#include <sstream>
 #include <vector>
 
 namespace rd_dsp
@@ -12,50 +11,23 @@ WaveFactory::~WaveFactory() = default;
 
 std::unique_ptr<Waveform> WaveFactory::loadWaveformFromCSV (std::string csvPath)
 {
-    std::ifstream file (csvPath);
-    if (! file.is_open())
+    std::vector<std::vector<float>> rows;
+    if (! CsvLoader::load (csvPath, rows, true))
         return nullptr;
 
-    std::vector<float> amplitudes;
-    std::string        line;
-    bool               isFirstLine = true;
-
-    while (std::getline (file, line))
-    {
-        if (line.empty())
-            continue;
-
-        if (isFirstLine)
-        {
-            isFirstLine = false;
-            // Skip header if last token is non-numeric.
-            try
-            {
-                const auto lastComma = line.find_last_of (',');
-                const auto tail      = (lastComma == std::string::npos)
-                                           ? line
-                                           : line.substr (lastComma + 1);
-                (void) std::stof (tail);
-            }
-            catch (...)
-            {
-                continue;
-            }
-        }
-
-        // Amplitude = last column.
-        const auto  lastComma = line.find_last_of (',');
-        const auto  tail      = (lastComma == std::string::npos)
-                                    ? line
-                                    : line.substr (lastComma + 1);
-        amplitudes.push_back (std::stof (tail));
-    }
+    const int numSamples = static_cast<int> (rows.size());
 
     auto wave = std::make_unique<Waveform>();
-    wave->setSize (static_cast<int> (amplitudes.size()));
+    wave->setSize (numSamples);
 
-    for (int i = 0; i < static_cast<int> (amplitudes.size()); ++i)
-        wave->setSample (i, amplitudes[static_cast<size_t> (i)]);
+    // Amplitude = last column of each row.
+    for (int i = 0; i < numSamples; ++i)
+    {
+        const auto& row = rows[static_cast<std::size_t> (i)];
+        if (row.empty())
+            return nullptr;
+        wave->setSample (i, row.back());
+    }
 
     return wave;
 }

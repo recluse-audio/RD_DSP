@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(python HELPER_SCRIPTS/regenSource.py)",
-      "Bash(git mv *)"
+      "Bash(git mv *)",
+      "PowerShell(Move-Item *)"
     ]
   }
 }

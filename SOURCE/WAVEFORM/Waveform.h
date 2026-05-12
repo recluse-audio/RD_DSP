@@ -43,6 +43,11 @@ public:
 
     void setWaveType (WaveType waveType);
 
+    void setSample (int sampleIndex, float value) noexcept
+    {
+        mBuffer.setSample (0, sampleIndex, value);
+    }
+
     // notice this takes a FLOAT index? That means don't round before here, it will
     // handle interp.
     float getInterpolatedSampleAtIndex(float index);

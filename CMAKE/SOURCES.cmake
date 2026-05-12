@@ -6,6 +6,10 @@ set(SOURCES
     SOURCE/RD_BUFFER/BufferFiller.h
     SOURCE/RD_BUFFER/RD_Buffer.cpp
     SOURCE/RD_BUFFER/RD_Buffer.h
+    SOURCE/WAVEFORM/WaveFactory.cpp
+    SOURCE/WAVEFORM/WaveFactory.h
     SOURCE/WAVEFORM/Waveform.cpp
     SOURCE/WAVEFORM/Waveform.h
+    SOURCE/WAVEFORM/Wavetable.cpp
+    SOURCE/WAVEFORM/Wavetable.h
 )

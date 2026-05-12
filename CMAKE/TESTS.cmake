@@ -5,7 +5,9 @@ set(TEST_SOURCES
     TESTS/OSCILLATOR/test_Oscillator.cpp
     TESTS/RD_BUFFER/test_BufferFiller.cpp
     TESTS/RD_BUFFER/test_RD_Buffer.cpp
+    TESTS/WAVEFORM/test_WaveFactory.cpp
     TESTS/WAVEFORM/test_Waveform.cpp
+    TESTS/WAVEFORM/test_Wavetable.cpp
     TESTS/test_Waveform.cpp
     TESTS/test_main.cpp
 )

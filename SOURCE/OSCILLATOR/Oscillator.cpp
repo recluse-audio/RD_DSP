@@ -55,6 +55,22 @@ void Oscillator::_process(const float* const* readPointers, float* const* writeP
     }
 }
 
+float Oscillator::processSingleSample()
+{
+    if (!mIsRunning)
+        return 0.f;
+
+    if (mPhaseIncrementUpdateNeeded)
+    {
+        _updatePhaseIncrement();
+        mPhaseIncrementUpdateNeeded = false;
+    }
+
+    float sample = mWavetable.getSampleAtIndex (mCurrentIndex);
+    _incrementCurrentIndex();
+    return sample;
+}
+
 void Oscillator::start()
 {
     mIsRunning = true;

@@ -431,3 +431,53 @@ TEST_CASE ("Oscillator process across freq changes matches golden CSVs (441 -> 6
     }
 
 }
+
+TEST_CASE ("Oscillator::processSingleSample returns 0 when not running", "[Oscillator]")
+{
+    Wavetable wt;
+    Oscillator osc (wt);
+    osc.prepare (48000.0, 1);
+    osc.setFreq (440.f);
+    CHECK (osc.processSingleSample() == 0.f);
+}
+
+TEST_CASE ("Oscillator::processSingleSample advances currentIndex by phaseIncrement", "[Oscillator]")
+{
+    Wavetable wt;
+    Oscillator osc (wt);
+    OscillatorTester::setWaveformSize (osc, 2048);
+    osc.prepare (48000.0, 1);
+    osc.setFreq (480.f); // inc = 480 * 2048 / 48000 = 20.48
+    osc.start();
+
+    OscillatorTester::resetPhase (osc);
+    osc.processSingleSample();
+    CHECK (OscillatorTester::currentIndex (osc) == Approx (20.48f).margin (1e-3f));
+    osc.processSingleSample();
+    CHECK (OscillatorTester::currentIndex (osc) == Approx (40.96f).margin (1e-3f));
+}
+
+TEST_CASE ("Oscillator::processSingleSample matches block-wise output sample-for-sample", "[Oscillator]")
+{
+    Wavetable wt1, wt2;
+    Oscillator oscBlock (wt1);
+    Oscillator oscSingle (wt2);
+    OscillatorTester::setWaveformSize (oscBlock, 2048);
+    OscillatorTester::setWaveformSize (oscSingle, 2048);
+    oscBlock.prepare (48000.0, 16);
+    oscSingle.prepare (48000.0, 16);
+    oscBlock.setFreq (440.f);
+    oscSingle.setFreq (440.f);
+    oscBlock.start();
+    oscSingle.start();
+
+    constexpr int kNumSamples = 16;
+    rd_dsp::RD_Buffer blockBuf (1, kNumSamples);
+    oscBlock.process (blockBuf);
+
+    for (int i = 0; i < kNumSamples; ++i)
+    {
+        const float s = oscSingle.processSingleSample();
+        CHECK (s == Approx (blockBuf.getSample (0, i)).margin (1e-5f));
+    }
+}

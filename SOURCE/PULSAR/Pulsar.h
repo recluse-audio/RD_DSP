@@ -13,13 +13,14 @@ namespace rd_dsp
 {
 class Oscillator;
 class Wavetable;
+class Window;
 /**
  * One emmission from the train
  */
 class Pulsar
 {
 public:
-    Pulsar(Wavetable& wavetable);
+    Pulsar(Wavetable& wavetable, Window& window);
     ~Pulsar();
 
     Pulsar(Pulsar&&) noexcept;
@@ -33,16 +34,23 @@ public:
     void process(const float* const* readPointers, float* const* writePointers,
                  int numChannels, int numSamples);
 
+    // with no width the dutyCycleSamples = 2x the freq converted to period in samples
+    void emit(float formantFreq, int dutyCycleSamples);
 
 private:
     friend class PulsarTester;
 
     Wavetable& mWavetable;
+    Window& mWindow;
     std::unique_ptr<Oscillator> mOscillator;
 
-    float mNormalizedWavePos = 0.f;
-    float mCurrentFreqHz = 0.f;
+    float mWindowPos = 0.f;
+    float mWindowIncrement = 0.f;
 
+    bool mIsActive = false;
+    double mSampleRate = 44100;
+
+    int mDutyCycleSamples = 0;
 
 };
 

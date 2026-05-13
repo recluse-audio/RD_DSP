@@ -24,6 +24,7 @@ public:
 
     void process(RD_Buffer& buffer);
     void process(const float* const* readPointers, float* const* writePointers, int numChannels, int numSamples);
+    float processSingleSample();
     void start();
     void stop();
 private:

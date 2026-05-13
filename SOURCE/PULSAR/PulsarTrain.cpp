@@ -3,6 +3,7 @@
 
 #include "../WAVEFORM/Wavetable.h"
 #include "../WAVEFORM/WaveFactory.h"
+#include "../WINDOW/Window.h"
 #include "../HELPERS/CsvLoader.h"
 
 #include <cassert>
@@ -11,7 +12,8 @@ namespace rd_dsp
 {
 PulsarTrain::PulsarTrain()
     : mWavetable (std::make_unique<Wavetable>())
-    , mPulsar (std::make_unique<Pulsar>(*mWavetable))
+    , mWindow (std::make_unique<Window>())
+    , mPulsar (std::make_unique<Pulsar>(*mWavetable, *mWindow))
 {
 }
 
@@ -20,6 +22,7 @@ PulsarTrain::~PulsarTrain() = default;
 void PulsarTrain::prepare (double sampleRate, int maxBlockSize)
 {
     mSampleRate = sampleRate; mBlockSize = maxBlockSize;
+    mWindow->setSize (static_cast<int> (sampleRate));
     mPulsar->prepare (sampleRate, maxBlockSize);
     this->_updateEmissionPeriod();
 }

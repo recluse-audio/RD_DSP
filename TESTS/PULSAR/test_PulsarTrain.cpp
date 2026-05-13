@@ -11,6 +11,7 @@
 #include "PULSAR/PulsarTrain.h"
 #include "PULSAR/Pulsar.h"
 #include "WAVEFORM/Wavetable.h"
+#include "WINDOW/Window.h"
 
 #ifndef RD_DSP_TESTS_DIR
 #define RD_DSP_TESTS_DIR "."
@@ -23,6 +24,7 @@ class PulsarTrainTester
 public:
     static Pulsar* pulsar (PulsarTrain& t) { return t.mPulsar.get(); }
     static Wavetable& wavetable (PulsarTrain& t) { return *t.mWavetable; }
+    static Window& window (PulsarTrain& t) { return *t.mWindow; }
     static double sampleRate (const PulsarTrain& t) { return t.mSampleRate; }
     static int    blockSize  (const PulsarTrain& t) { return t.mBlockSize; }
 
@@ -41,15 +43,15 @@ TEST_CASE ("PulsarTrain::getEngineName returns rd_dsp::PulsarTrain", "[PulsarTra
     REQUIRE (train.getEngineName() == "rd_dsp::PulsarTrain");
 }
 
-TEST_CASE ("PulsarTrain constructs wavetable and pulsar in ctor", "[PulsarTrain]")
+TEST_CASE ("PulsarTrain constructs wavetable, window, and pulsar in ctor", "[PulsarTrain]")
 {
     rd_dsp::PulsarTrain train;
 
     REQUIRE (PulsarTrainTester::pulsar (train) != nullptr);
 
-    // wavetable instance exists and is accessible
     rd_dsp::Wavetable& wt = PulsarTrainTester::wavetable (train);
-    (void) wt;
+    rd_dsp::Window& win = PulsarTrainTester::window (train);
+    (void) wt; (void) win;
     SUCCEED();
 }
 
@@ -63,6 +65,17 @@ TEST_CASE ("PulsarTrain::prepare stores sampleRate/blockSize", "[PulsarTrain]")
 
     CHECK (PulsarTrainTester::sampleRate (train) == kSampleRate);
     CHECK (PulsarTrainTester::blockSize  (train) == kBlockSize);
+}
+
+TEST_CASE ("PulsarTrain::prepare sizes window to 1 second of samples", "[PulsarTrain]")
+{
+    rd_dsp::PulsarTrain train;
+
+    train.prepare (48000.0, 512);
+    CHECK (PulsarTrainTester::window (train).getNumSamples() == 48000);
+
+    train.prepare (44100.0, 512);
+    CHECK (PulsarTrainTester::window (train).getNumSamples() == 44100);
 }
 
 TEST_CASE ("PulsarTrain::loadWavetable replaces wavetable contents in place", "[PulsarTrain]")

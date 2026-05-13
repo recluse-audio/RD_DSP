@@ -14,10 +14,14 @@ namespace rd_dsp
 {
 class Pulsar;
 class Wavetable;
+class Window;
 /**
  * This emits pulsarets at a given emission rate and formant freq
  * 
  * Decidely not a "synth" with midi stuff for it
+ * 
+ * PulsarTrain - Responsible for emitting pulsars at correct time / with correct formant/fund periods
+ * Pulsar - Responsible for stopping at the right time after its duty cycle
  */
 class PulsarTrain
 {
@@ -49,6 +53,7 @@ private:
     friend class PulsarTrainTester;
 
     std::unique_ptr<Wavetable> mWavetable;
+    std::unique_ptr<Window> mWindow;
     std::unique_ptr<Pulsar> mPulsar;
     
     std::atomic<float> mEmissionRate { 0.f };

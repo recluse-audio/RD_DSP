@@ -37,6 +37,9 @@ public:
 
     void setNumVoices(int numVoices);
     int  getNumVoices() const noexcept;
+
+    void setWavePosition(float wavePos);
+    void loadWavetable(std::string tablePath);
 private:
 friend class SynthTester;
     std::unique_ptr<Wavetable> mWavetable;

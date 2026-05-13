@@ -1,6 +1,8 @@
 #include "Synth.h"
 
 #include "../WAVEFORM/Wavetable.h"
+#include "../WAVEFORM/WaveFactory.h"
+#include "../HELPERS/CsvLoader.h"
 
 #include <cassert>
 
@@ -51,6 +53,38 @@ void Synth::noteOff (int midiNote, float midiVelocity)
         return; // shouldn't end up here
 
     voice->noteOff(midiVelocity);
+}
+
+void Synth::setWavePosition (float wavePos)
+{
+    if (mWavetable == nullptr)
+        return;
+
+    mWavetable->setNormalizedWavePosition (wavePos);
+}
+
+void Synth::loadWavetable (std::string tablePath)
+{
+    assert (mWavetable != nullptr && "Synth::loadWavetable called before mWavetable was initialized");
+    if (mWavetable == nullptr)
+        return;
+
+    std::vector<std::vector<float>> rows;
+    if (! CsvLoader::load (tablePath, rows, false))
+        return;
+
+    mWavetable->clear();
+
+    for (const auto& row : rows)
+    {
+        auto wave = WaveFactory::waveformFromRow (row);
+        if (wave == nullptr)
+        {
+            mWavetable->clear();
+            return;
+        }
+        mWavetable->addWaveform (std::move (wave));
+    }
 }
 
 void Synth::controlChange (int controlNumber, float normalizedValue)

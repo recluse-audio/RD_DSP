@@ -38,6 +38,8 @@ public:
     // that may be prolonged if there is an envelope
     void noteOff(float velocity);
 
+    static float midiToHertz (int midiNoteNumber) noexcept;
+
     bool isActive();
     int getCurrentActiveNote();
 private:

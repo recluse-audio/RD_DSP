@@ -34,12 +34,22 @@ public:
                  int numChannels, int numSamples);
 
     void noteOn(int midiNoteNumber, float velocity);
+    // this sends the message, but doesn't always automatically free the voice
+    // that may be prolonged if there is an envelope
     void noteOff(float velocity);
 
+    bool isActive();
+    int getCurrentActiveNote();
 private:
+    friend class SynthVoiceTester;
+
     Wavetable& mWavetable;
     std::unique_ptr<Oscillator> mOscillator;
     int mCurrentMidiNote = -1;
+    bool mIsActive = false;
+    
+    double mSampleRate = 48000;
+    int mBlockSize = 512;
 };
 
 } // namespace rd_dsp

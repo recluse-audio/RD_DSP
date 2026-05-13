@@ -17,22 +17,43 @@ Synth::~Synth() = default;
 
 void Synth::prepare (double sampleRate, int maxBlockSize)
 {
+    mSampleRate = sampleRate; mBlockSize = maxBlockSize;
+    for(auto& voice : mSynthVoices)
+        voice.prepare(sampleRate, maxBlockSize);
 }
 
 void Synth::process (const float* const* readPointers, float* const* writePointers,
                      int numChannels, int numSamples)
 {
+    for(auto& voice : mSynthVoices)
+    {
+        if(voice.isActive())
+            voice.process(readPointers, writePointers, numChannels, numSamples);
+    }
 }
 
-void Synth::noteOn (int midiNote, int midiVelocity)
+void Synth::noteOn (int midiNote, float midiVelocity)
 {
+    auto* voice = this->_findFreeVoice();
+    //if(mAllowNoteStealing) TODO
+
+    // bail out
+    if(voice == nullptr)
+        return;
+
+    voice->noteOn(midiNote, midiVelocity);
 }
 
-void Synth::noteOff (int midiNote, int midiVelocity)
+void Synth::noteOff (int midiNote, float midiVelocity)
 {
+    auto* voice = this->_findActiveVoice(midiNote);
+    if(voice == nullptr)
+        return; // shouldn't end up here
+
+    voice->noteOff(midiVelocity);
 }
 
-void Synth::controlChange (int controlNumber, int normalizedValue)
+void Synth::controlChange (int controlNumber, float normalizedValue)
 {
 }
 
@@ -54,7 +75,7 @@ void Synth::setNumVoices(int numVoices)
     assert (mWavetable != nullptr && "Synth::setNumVoices called before mWavetable was initialized");
     if(mWavetable == nullptr)
         return;
-        
+
     mSynthVoices.clear();
     mSynthVoices.reserve(static_cast<std::size_t>(numVoices));
 
@@ -63,4 +84,29 @@ void Synth::setNumVoices(int numVoices)
         mSynthVoices.emplace_back(*mWavetable);
     }
 }
+
+SynthVoice* Synth::_findFreeVoice()
+{
+    // return first inactive voice
+    for(auto& voice : mSynthVoices)
+    {
+        if(!voice.isActive())
+            return &voice;
+    }
+
+    return nullptr;
+}
+
+SynthVoice* Synth::_findActiveVoice(int midiNoteNumber)
+{
+    // return first inactive voice
+    for(auto& voice : mSynthVoices)
+    {
+        if(voice.getCurrentActiveNote() == midiNoteNumber)
+            return &voice;
+    }
+
+    return nullptr;
+}
+
 } // namespace rd_dsp

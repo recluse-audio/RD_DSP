@@ -29,17 +29,24 @@ public:
     void process(const float* const* readPointers, float* const* writePointers,
                  int numChannels, int numSamples);
 
-    void noteOn(int midiNote, int midiVelocity);
-    void noteOff(int midiNote, int midiVelocity);
+    void noteOn(int midiNote, float midiVelocity);
+    void noteOff(int midiNote, float midiVelocity);
 
-    void controlChange(int controlNumber, int normalizedValue);
+    void controlChange(int controlNumber, float normalizedValue);
     void pitchBend(float signedNormalizedValue);
 
     void setNumVoices(int numVoices);
     int  getNumVoices() const noexcept;
 private:
+friend class SynthTester;
     std::unique_ptr<Wavetable> mWavetable;
     std::vector<SynthVoice> mSynthVoices;
+
+    double mSampleRate = 48000.0;
+    int mBlockSize = 512;
+
+    SynthVoice* _findFreeVoice();
+    SynthVoice* _findActiveVoice(int midiNoteNumber);
 };
 
 } // namespace rd_dsp

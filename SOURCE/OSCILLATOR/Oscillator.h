@@ -28,6 +28,7 @@ public:
     void stop();
 private:
     friend class OscillatorTester;
+    friend class SynthVoiceTester;
 
     void _process(const float* const* readPointers, float* const* writePointers, int numChannels, int numSamples);
 

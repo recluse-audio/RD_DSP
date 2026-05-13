@@ -58,7 +58,7 @@ TEST_CASE("WaveFactory loads basic waveform table; wavePos=0 returns sine row", 
 
     const std::string goldenSineWaveformPath =
         std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/SINE/GOLDEN_SINE_8096.csv";
-
+    
     rd_dsp::WaveFactory factory;
     auto table = factory.loadWavetableFromCSV (goldenPath);
     auto sineWaveform = factory.loadWaveformFromCSV(goldenSineWaveformPath);
@@ -87,4 +87,28 @@ TEST_CASE("WaveFactory loads basic waveform table; wavePos=0 returns sine row", 
         INFO ("sample index " << i);
         REQUIRE (wavetableSample == Catch::Approx (waveformSample).margin (1.0e-6));
     }
+
+    //=====================================
+    // Basic Table at 0.25 is a triangle, should match golden triangle
+    const std::string goldenTriWaveformPath =
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/TRIANGLE/GOLDEN_TRIANGLE_8096.csv";
+
+    auto triWaveform = factory.loadWaveformFromCSV(goldenTriWaveformPath);
+    table->setNormalizedWavePosition (0.25f);
+
+    const auto& triRow = rows[0];
+    for (int i = 0; i < numSamples; ++i)
+    {
+        const float wavetableSample = table->getSampleAtIndex (static_cast<float> (i));
+        const float waveformSample = triWaveform->getInterpolatedSampleAtIndex (static_cast<float> (i));
+
+        INFO ("sample index " << i);
+        REQUIRE (wavetableSample == Catch::Approx (waveformSample).margin (1.0e-6));
+    }
+
+
+
+
+
+
 }

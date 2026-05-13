@@ -43,7 +43,7 @@ void Wavetable::addWaveform(std::unique_ptr<Waveform> waveForm)
 
 float Wavetable::_getPositionForWavetableSize()
 {
-    float worldWavePos = (float)(mWaveforms.size() - 1) * mNormalizedWavePos;
+    float worldWavePos = (float)(mWaveforms.size()) * mNormalizedWavePos;
     return worldWavePos;
 }
 

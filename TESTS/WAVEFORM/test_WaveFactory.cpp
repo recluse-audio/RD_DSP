@@ -89,14 +89,13 @@ TEST_CASE("WaveFactory loads basic waveform table; wavePos=0 returns sine row", 
     }
 
     //=====================================
-    // Basic Table at 0.25 is a triangle, should match golden triangle
+    // Basic Table at 0.25 is a triangle (world wavePos = 1), should match golden triangle
     const std::string goldenTriWaveformPath =
         std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/TRIANGLE/GOLDEN_TRIANGLE_8096.csv";
 
-    auto triWaveform = factory.loadWaveformFromCSV(goldenTriWaveformPath);
+    auto triWaveform = factory.loadWaveformFromCSV (goldenTriWaveformPath);
     table->setNormalizedWavePosition (0.25f);
 
-    const auto& triRow = rows[0];
     for (int i = 0; i < numSamples; ++i)
     {
         const float wavetableSample = table->getSampleAtIndex (static_cast<float> (i));
@@ -106,9 +105,37 @@ TEST_CASE("WaveFactory loads basic waveform table; wavePos=0 returns sine row", 
         REQUIRE (wavetableSample == Catch::Approx (waveformSample).margin (1.0e-6));
     }
 
+    //=====================================
+    // Basic Table at 0.5 is a square (world wavePos = 2), should match golden square
+    const std::string goldenSquareWaveformPath =
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/SQUARE/GOLDEN_SQUARE_8096.csv";
 
+    auto squareWaveform = factory.loadWaveformFromCSV (goldenSquareWaveformPath);
+    table->setNormalizedWavePosition (0.5f);
 
+    for (int i = 0; i < numSamples; ++i)
+    {
+        const float wavetableSample = table->getSampleAtIndex (static_cast<float> (i));
+        const float waveformSample = squareWaveform->getInterpolatedSampleAtIndex (static_cast<float> (i));
 
+        INFO ("sample index " << i);
+        REQUIRE (wavetableSample == Catch::Approx (waveformSample).margin (1.0e-6));
+    }
 
+    //=====================================
+    // Basic Table at 0.75 is a saw (world wavePos = 3), should match golden saw
+    const std::string goldenSawWaveformPath =
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/SAW/GOLDEN_SAW_8096.csv";
 
+    auto sawWaveform = factory.loadWaveformFromCSV (goldenSawWaveformPath);
+    table->setNormalizedWavePosition (0.75f);
+
+    for (int i = 0; i < numSamples; ++i)
+    {
+        const float wavetableSample = table->getSampleAtIndex (static_cast<float> (i));
+        const float waveformSample = sawWaveform->getInterpolatedSampleAtIndex (static_cast<float> (i));
+
+        INFO ("sample index " << i);
+        REQUIRE (wavetableSample == Catch::Approx (waveformSample).margin (1.0e-6));
+    }
 }

@@ -20,9 +20,17 @@ void Wavetable::setNormalizedWavePosition(float normalizedWavePos)
 
 float Wavetable::getSampleAtIndex(float index)
 {
+    const int lastWave = static_cast<int>(mWaveforms.size()) - 1;
+    if (lastWave < 0)
+        return 0.f;
+
     float wavePos = _getPositionForWavetableSize();
+    if (wavePos < 0.f)             wavePos = 0.f;
+    if (wavePos > (float)lastWave) wavePos = (float)lastWave;
+
     int lowerWave = (int)wavePos;
-    int upperWave = lowerWave + 1;
+    if (lowerWave > lastWave) lowerWave = lastWave;
+    int upperWave = (lowerWave < lastWave) ? lowerWave + 1 : lowerWave;
     float spillover = wavePos - (float) lowerWave;
 
     float lowerSample = mWaveforms[lowerWave]->getInterpolatedSampleAtIndex(index) * (1.f - spillover);

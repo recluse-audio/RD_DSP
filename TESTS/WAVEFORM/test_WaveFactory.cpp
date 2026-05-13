@@ -56,8 +56,13 @@ TEST_CASE("WaveFactory loads basic waveform table; wavePos=0 returns sine row", 
     const std::string goldenPath =
         std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/BASIC_TABLE/GOLDEN_BASIC_WAVEFORM_TABLE_8096.csv";
 
+    const std::string goldenSineWaveformPath =
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/SINE/GOLDEN_SINE_8096.csv";
+
     rd_dsp::WaveFactory factory;
     auto table = factory.loadWavetableFromCSV (goldenPath);
+    auto sineWaveform = factory.loadWaveformFromCSV(goldenSineWaveformPath);
+
 
     INFO ("Golden path: " << goldenPath);
     REQUIRE (table != nullptr);
@@ -69,15 +74,17 @@ TEST_CASE("WaveFactory loads basic waveform table; wavePos=0 returns sine row", 
     REQUIRE (static_cast<int> (rows.size()) == numWaves);
     REQUIRE (static_cast<int> (rows[0].size()) == numSamples);
 
+    //====================================
+    // Basic Table at 0.0 is a sine wave
     table->setNormalizedWavePosition (0.0f);
 
     const auto& sineRow = rows[0];
     for (int i = 0; i < numSamples; ++i)
     {
-        const float got = table->getSampleAtIndex (static_cast<float> (i));
-        const float golden = sineRow[static_cast<std::size_t> (i)];
+        const float wavetableSample = table->getSampleAtIndex (static_cast<float> (i));
+        const float waveformSample = sineWaveform->getInterpolatedSampleAtIndex (static_cast<float> (i));
 
         INFO ("sample index " << i);
-        REQUIRE (got == Catch::Approx (golden).margin (1.0e-6));
+        REQUIRE (wavetableSample == Catch::Approx (waveformSample).margin (1.0e-6));
     }
 }

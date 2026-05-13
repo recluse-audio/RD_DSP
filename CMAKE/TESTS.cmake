@@ -1,6 +1,8 @@
 set(TEST_SOURCES
     TESTS/BUFFER_FILLER/test_BufferFiller_fromCSV.cpp
     TESTS/OSCILLATOR/test_Oscillator.cpp
+    TESTS/PULSAR/test_Pulsar.cpp
+    TESTS/PULSAR/test_PulsarTrain.cpp
     TESTS/RD_BUFFER/test_BufferFiller.cpp
     TESTS/RD_BUFFER/test_RD_Buffer.cpp
     TESTS/SYNTH/test_Synth.cpp
@@ -8,6 +10,7 @@ set(TEST_SOURCES
     TESTS/WAVEFORM/test_WaveFactory.cpp
     TESTS/WAVEFORM/test_Waveform.cpp
     TESTS/WAVEFORM/test_Wavetable.cpp
+    TESTS/WINDOW/test_Window.cpp
     TESTS/test_Waveform.cpp
     TESTS/test_main.cpp
 )

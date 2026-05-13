@@ -4,6 +4,10 @@ set(SOURCES
     SOURCE/INTERPOLATOR/Interpolator.h
     SOURCE/OSCILLATOR/Oscillator.cpp
     SOURCE/OSCILLATOR/Oscillator.h
+    SOURCE/PULSAR/Pulsar.cpp
+    SOURCE/PULSAR/Pulsar.h
+    SOURCE/PULSAR/PulsarTrain.cpp
+    SOURCE/PULSAR/PulsarTrain.h
     SOURCE/RD_BUFFER/BufferFiller.cpp
     SOURCE/RD_BUFFER/BufferFiller.h
     SOURCE/RD_BUFFER/RD_Buffer.cpp
@@ -18,4 +22,6 @@ set(SOURCES
     SOURCE/WAVEFORM/Waveform.h
     SOURCE/WAVEFORM/Wavetable.cpp
     SOURCE/WAVEFORM/Wavetable.h
+    SOURCE/WINDOW/Window.cpp
+    SOURCE/WINDOW/Window.h
 )

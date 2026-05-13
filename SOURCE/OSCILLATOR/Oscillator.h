@@ -29,6 +29,7 @@ public:
 private:
     friend class OscillatorTester;
     friend class SynthVoiceTester;
+    friend class PulsarTester;
 
     void _process(const float* const* readPointers, float* const* writePointers, int numChannels, int numSamples);
 

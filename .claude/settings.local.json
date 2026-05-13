@@ -3,7 +3,12 @@
     "allow": [
       "Bash(python HELPER_SCRIPTS/regenSource.py)",
       "Bash(git mv *)",
-      "PowerShell(Move-Item *)"
+      "PowerShell(Move-Item *)",
+      "Bash(git -C C:/REPOS/PLUGIN_PROJECTS/RD_DSP status)",
+      "Bash(git -C C:/REPOS/PLUGIN_PROJECTS/RD_DSP log --oneline -20)",
+      "Bash(git -C C:/REPOS/PLUGIN_PROJECTS/RD_DSP show --stat 9e083ed)",
+      "Bash(git -C C:/REPOS/PLUGIN_PROJECTS/RD_DSP diff HEAD~1 HEAD --name-status)",
+      "Read(//c/REPOS/PLUGIN_PROJECTS/RD/**)"
     ]
   }
 }

@@ -3,16 +3,9 @@
 namespace rd_dsp
 {
 
-namespace
+Oscillator::Oscillator (Wavetable& wavetable)
+    : mWavetable (wavetable)
 {
-    constexpr int kDefaultWaveformSize = 8096;
-}
-
-Oscillator::Oscillator()
-    : mWaveform (std::make_unique<Waveform>())
-{
-    mWaveform->setSize (kDefaultWaveformSize);
-    mWaveform->setWaveType (Waveform::WaveType::wSine);
 }
 
 Oscillator::~Oscillator() = default;
@@ -53,7 +46,7 @@ void Oscillator::_process(const float* const* readPointers, float* const* writeP
 
     for (int sampleIndex = 0; sampleIndex < numSamples; ++sampleIndex)
     {
-        float waveformSample = mWaveform->getSample(mCurrentIndex);
+        float waveformSample = mWavetable.getSampleAtIndex (mCurrentIndex);
         for (int ch = 0; ch < numChannels; ++ch)
         {
             writePointers[ch][sampleIndex] = waveformSample;
@@ -74,9 +67,10 @@ void Oscillator::stop()
 
 void Oscillator::_incrementCurrentIndex()
 {
+    const int size = mWavetable.getWaveformSize();
     mCurrentIndex = mCurrentIndex + mPhaseIncrement;
-    if(mCurrentIndex >= mWaveform->getNumSamples())
-        mCurrentIndex = mCurrentIndex - mWaveform->getNumSamples();
+    if (size > 0 && mCurrentIndex >= (float) size)
+        mCurrentIndex = mCurrentIndex - (float) size;
 }
 
 void Oscillator::_updatePhaseIncrement()
@@ -84,7 +78,7 @@ void Oscillator::_updatePhaseIncrement()
     if(mSampleRate == 0)
         return; // don't divide by zero
 
-    mPhaseIncrement = _calculatePhaseIncrement (mFrequency, mSampleRate, mWaveform->getNumSamples());
+    mPhaseIncrement = _calculatePhaseIncrement (mFrequency, mSampleRate, mWavetable.getWaveformSize());
 }
 
 float Oscillator::_calculatePhaseIncrement (float freq, double sampleRate, int waveformSize) noexcept

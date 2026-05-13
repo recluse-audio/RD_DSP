@@ -4,21 +4,19 @@
 
 #pragma once
 
-#include "../WAVEFORM/Waveform.h"
-#include <memory>
+#include "../WAVEFORM/Wavetable.h"
+#include "../RD_BUFFER/RD_Buffer.h"
 
 namespace rd_dsp
 {
 /**
- * This class reads from a waveform and writes to a buffer
- * It owns a Waveform, and reads values from it at varied rates.
- * Does not need to handle interpolation between samples in Waveform, can pass
- * float sample indices to it and get the sample values it needs.
+ * Reads samples from a Wavetable at varied rates and writes to a buffer.
+ * Does not own the wavetable; caller supplies a reference at construction.
  */
 class Oscillator
 {
 public:
-    Oscillator();
+    explicit Oscillator (Wavetable& wavetable);
     ~Oscillator();
 
     void prepare(double sampleRate, int maxBlockSize);
@@ -33,7 +31,7 @@ private:
 
     void _process(const float* const* readPointers, float* const* writePointers, int numChannels, int numSamples);
 
-    std::unique_ptr<Waveform> mWaveform;
+    Wavetable& mWavetable;
     float  mCurrentIndex   = 0.f;
     float  mPhaseIncrement = 0.f;
     float  mFrequency      = 0.f;
@@ -42,17 +40,10 @@ private:
     bool mIsRunning = false;
     bool mPhaseIncrementUpdateNeeded = false;
 
-    // this uses mCurrentIndex 
     void _incrementCurrentIndex();
-
-    // depends on mSampleRate and mFrequency being set.
     void _updatePhaseIncrement();
 
-    // Pure formula. Exposed (privately) so tests can drive it with
-    // explicit waveform sizes that match a golden CSV.
     static float _calculatePhaseIncrement (float freq, double sampleRate, int waveformSize) noexcept;
 };
-
-
 
 } // namespace rd_dsp

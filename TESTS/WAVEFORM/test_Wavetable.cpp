@@ -23,9 +23,9 @@ TEST_CASE("Wavetable can be assigned waveforms", "[Wavetable]")
     wave->setSize (256);
     wave->setWaveType (rd_dsp::Waveform::WaveType::wSine);
 
-    REQUIRE (wt.getNumWaveforms() == 0);
+    REQUIRE (wt.getNumWaveforms() == 4); // default size
 
     wt.addWaveform (std::move (wave));
 
-    REQUIRE (wt.getNumWaveforms() == 1);
+    REQUIRE (wt.getNumWaveforms() == 5);
 }

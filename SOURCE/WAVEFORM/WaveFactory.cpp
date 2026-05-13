@@ -43,6 +43,7 @@ std::unique_ptr<Wavetable> WaveFactory::loadWavetableFromCSV (std::string csvPat
         return nullptr;
 
     auto table = std::make_unique<Wavetable>();
+    table->clear(); // discard default basic shapes; CSV is authoritative
 
     // Each row = one full waveform; columns are samples of that waveform.
     for (const auto& row : rows)

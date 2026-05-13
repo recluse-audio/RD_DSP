@@ -6,6 +6,7 @@
 #include <string>
 
 #include "../../SOURCE/OSCILLATOR/Oscillator.h"
+#include "../../SOURCE/WAVEFORM/Wavetable.h"
 #include "../../SOURCE/RD_BUFFER/RD_Buffer.h"
 #include "../../SOURCE/RD_BUFFER/BufferFiller.h"
 
@@ -14,7 +15,7 @@
 #endif
 
 using rd_dsp::Oscillator;
-using rd_dsp::Waveform;
+using rd_dsp::Wavetable;
 using Catch::Approx;
 
 namespace rd_dsp
@@ -25,7 +26,7 @@ public:
     static float phaseIncrement (const Oscillator& o) { return o.mPhaseIncrement; }
     static float currentIndex  (const Oscillator& o) { return o.mCurrentIndex; }
     static double sampleRate    (const Oscillator& o) { return o.mSampleRate; }
-    static int    waveformSize  (const Oscillator& o) { return o.mWaveform->getNumSamples(); }
+    static int    waveformSize  (const Oscillator& o) { return o.mWavetable.getWaveformSize(); }
     static int    blockSize     (const Oscillator& o) { return o.mBlockSize; }
     static bool   isRunning     (const Oscillator& o) { return o.mIsRunning; }
     static bool   phaseIncrementUpdateNeeded (const Oscillator& o) { return o.mPhaseIncrementUpdateNeeded; }
@@ -36,13 +37,12 @@ public:
         return Oscillator::_calculatePhaseIncrement (freq, sampleRate, waveformSize);
     }
 
-    // Test-only knob: resize internal waveform and refresh phase increment.
+    // Test-only knob: resize wavetable contents and refresh phase increment.
     // Lets tests pin the waveform size so their arithmetic does not depend on
-    // the production default.
+    // the production default. Refills with basic shapes; slot 0 stays sine.
     static void setWaveformSize (Oscillator& o, int newSize)
     {
-        o.mWaveform->setSize (newSize);
-        o.mWaveform->setWaveType (Waveform::WaveType::wSine);
+        o.mWavetable.fillWithBasicShapes (newSize);
         o._updatePhaseIncrement();
     }
 };
@@ -52,14 +52,16 @@ using rd_dsp::OscillatorTester;
 
 TEST_CASE ("Oscillator default constructs with sine waveform", "[Oscillator]")
 {
-    Oscillator osc;
+    Wavetable wt;
+    Oscillator osc (wt);
     CHECK (OscillatorTester::waveformSize (osc) > 0);
     CHECK (OscillatorTester::phaseIncrement (osc) == 0.f);
 }
 
 TEST_CASE ("Oscillator::prepare stores sample rate and block size", "[Oscillator]")
 {
-    Oscillator osc;
+    Wavetable wt;
+    Oscillator osc (wt);
     osc.prepare (48000.0, 256);
     CHECK (OscillatorTester::sampleRate (osc) == 48000.0);
     CHECK (OscillatorTester::blockSize  (osc) == 256);
@@ -81,7 +83,8 @@ static void flushPhaseIncrement (Oscillator& osc)
 
 TEST_CASE ("Oscillator::setFreq flags phase increment update without applying it", "[Oscillator]")
 {
-    Oscillator osc;
+    Wavetable wt;
+    Oscillator osc (wt);
     OscillatorTester::setWaveformSize (osc, 2048);
     osc.prepare (44100.0, 1);
     osc.setFreq (441.f);
@@ -93,7 +96,8 @@ TEST_CASE ("Oscillator::setFreq flags phase increment update without applying it
 
 TEST_CASE ("Oscillator::setFreq computes phase increment from freq, waveform size, sample rate", "[Oscillator]")
 {
-    Oscillator osc;
+    Wavetable wt;
+    Oscillator osc (wt);
     OscillatorTester::setWaveformSize (osc, 2048);
     osc.prepare (44100.0, 1);
     osc.setFreq (441.f);
@@ -106,7 +110,8 @@ TEST_CASE ("Oscillator::setFreq computes phase increment from freq, waveform siz
 
 TEST_CASE ("Oscillator phase increment scales with frequency", "[Oscillator]")
 {
-    Oscillator osc;
+    Wavetable wt;
+    Oscillator osc (wt);
     OscillatorTester::setWaveformSize (osc, 2048);
     osc.prepare (44100.0, 1);
 
@@ -123,7 +128,8 @@ TEST_CASE ("Oscillator phase increment scales with frequency", "[Oscillator]")
 
 TEST_CASE ("Oscillator::prepare after setFreq updates phase increment for new sample rate", "[Oscillator]")
 {
-    Oscillator osc;
+    Wavetable wt;
+    Oscillator osc (wt);
     OscillatorTester::setWaveformSize (osc, 2048);
     osc.prepare (44100.0, 1);
     osc.setFreq (441.f);
@@ -176,7 +182,8 @@ TEST_CASE ("Oscillator::_calculatePhaseIncrement matches golden CSV", "[Oscillat
 
 TEST_CASE("Oscillator writes its waveform to buffer in process()", "[Oscillator]")
 {
-    Oscillator osc;
+    Wavetable wt;
+    Oscillator osc (wt);
     osc.prepare(44100.0, 128);
     osc.setFreq(441.f); // don't change, this refs a golden file
     osc.start();
@@ -227,7 +234,8 @@ TEST_CASE("Oscillator writes its waveform to buffer in process()", "[Oscillator]
 
 TEST_CASE("Oscillator writes its waveform via raw pointer overload of process()", "[Oscillator]")
 {
-    Oscillator osc;
+    Wavetable wt;
+    Oscillator osc (wt);
     osc.prepare(44100.0, 128);
     osc.setFreq(441.f); // don't change, this refs a golden file
     osc.start();
@@ -276,14 +284,16 @@ TEST_CASE("Oscillator writes its waveform via raw pointer overload of process()"
 //-------------------------------------
 TEST_CASE ("Oscillator default is stopped", "[Oscillator]")
 {
-    Oscillator osc;
+    Wavetable wt;
+    Oscillator osc (wt);
     CHECK_FALSE (OscillatorTester::isRunning (osc));
 }
 
 //-------------------------------------
 TEST_CASE ("Oscillator::start sets running state", "[Oscillator]")
 {
-    Oscillator osc;
+    Wavetable wt;
+    Oscillator osc (wt);
     osc.start();
     CHECK (OscillatorTester::isRunning (osc));
 }
@@ -291,7 +301,8 @@ TEST_CASE ("Oscillator::start sets running state", "[Oscillator]")
 //-------------------------------------
 TEST_CASE ("Oscillator::stop clears running state", "[Oscillator]")
 {
-    Oscillator osc;
+    Wavetable wt;
+    Oscillator osc (wt);
     osc.start();
     REQUIRE (OscillatorTester::isRunning (osc));
 
@@ -302,7 +313,8 @@ TEST_CASE ("Oscillator::stop clears running state", "[Oscillator]")
 //-------------------------------------
 TEST_CASE ("Oscillator::process is a no-op when stopped", "[Oscillator]")
 {
-    Oscillator osc;
+    Wavetable wt;
+    Oscillator osc (wt);
     osc.prepare (44100.0, 64);
     osc.setFreq (441.f);
 
@@ -317,7 +329,8 @@ TEST_CASE ("Oscillator::process is a no-op when stopped", "[Oscillator]")
 //-------------------------------------
 TEST_CASE ("Oscillator::process writes samples after start", "[Oscillator]")
 {
-    Oscillator osc;
+    Wavetable wt;
+    Oscillator osc (wt);
     osc.prepare (44100.0, 64);
     osc.setFreq (441.f);
     osc.start();
@@ -340,7 +353,8 @@ TEST_CASE ("Oscillator::process writes samples after start", "[Oscillator]")
 //-------------------------------------
 TEST_CASE ("Oscillator::process is a no-op after stop following start", "[Oscillator]")
 {
-    Oscillator osc;
+    Wavetable wt;
+    Oscillator osc (wt);
     osc.prepare (44100.0, 64);
     osc.setFreq (441.f);
     osc.start();
@@ -357,7 +371,8 @@ TEST_CASE ("Oscillator::process is a no-op after stop following start", "[Oscill
 //-------------------------------------
 TEST_CASE ("Oscillator process across freq changes matches golden CSVs (441 -> 663 -> 882)", "[Oscillator]")
 {
-    Oscillator osc;
+    Wavetable wt;
+    Oscillator osc (wt);
     osc.prepare (44100.0, 32);
     osc.start();
 

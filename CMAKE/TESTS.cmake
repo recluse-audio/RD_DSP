@@ -3,6 +3,8 @@ set(TEST_SOURCES
     TESTS/OSCILLATOR/test_Oscillator.cpp
     TESTS/RD_BUFFER/test_BufferFiller.cpp
     TESTS/RD_BUFFER/test_RD_Buffer.cpp
+    TESTS/SYNTH/test_Synth.cpp
+    TESTS/SYNTH/test_SynthVoice.cpp
     TESTS/WAVEFORM/test_WaveFactory.cpp
     TESTS/WAVEFORM/test_Waveform.cpp
     TESTS/WAVEFORM/test_Wavetable.cpp

@@ -8,6 +8,10 @@ set(SOURCES
     SOURCE/RD_BUFFER/BufferFiller.h
     SOURCE/RD_BUFFER/RD_Buffer.cpp
     SOURCE/RD_BUFFER/RD_Buffer.h
+    SOURCE/SYNTH/Synth.cpp
+    SOURCE/SYNTH/Synth.h
+    SOURCE/SYNTH/SynthVoice.cpp
+    SOURCE/SYNTH/SynthVoice.h
     SOURCE/WAVEFORM/WaveFactory.cpp
     SOURCE/WAVEFORM/WaveFactory.h
     SOURCE/WAVEFORM/Waveform.cpp

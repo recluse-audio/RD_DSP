@@ -11,8 +11,6 @@
 namespace rd_dsp
 {
 
-/**
- */
 class Wavetable
 {
 public:
@@ -25,8 +23,15 @@ public:
     float getSampleAtIndex(float index);
 
     void addWaveform(std::unique_ptr<Waveform>);
+    void clear() noexcept;
 
     int getNumWaveforms() const noexcept;
+    int getWaveformSize() const noexcept;
+
+    // Resize all waveforms and (re)fill with the canonical 4 basic shapes
+    // in order: sine, triangle, square, saw. Existing contents discarded.
+    void fillWithBasicShapes (int numSamples);
+
 private:
     bool mIsLoading = true;
     std::vector<std::unique_ptr<Waveform>> mWaveforms;
@@ -34,7 +39,6 @@ private:
 
     // given the mNormalizedWavePos above, what would that be when scaled to mWaveforms.size()
     float _getPositionForWavetableSize();
-
 };
 
 } // namespace rd_dsp

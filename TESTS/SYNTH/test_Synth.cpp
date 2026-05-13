@@ -32,6 +32,7 @@ public:
 
     static SynthVoice* findFreeVoice   (Synth& s)            { return s._findFreeVoice(); }
     static SynthVoice* findActiveVoice (Synth& s, int note)  { return s._findActiveVoice (note); }
+    static SynthVoice* findOldestVoice (Synth& s)            { return s._findOldestVoice(); }
 };
 
 class SynthVoiceTester
@@ -141,6 +142,60 @@ TEST_CASE ("Synth::_findFreeVoice returns first inactive voice or nullptr", "[Sy
     voices[1].noteOff (0.f);
     rd_dsp::SynthVoice* freeMid = SynthTester::findFreeVoice (synth);
     CHECK (freeMid == &voices[1]);
+}
+
+TEST_CASE ("Synth::noteOn steals oldest voice when pool is full", "[Synth]")
+{
+    rd_dsp::Synth synth;
+    synth.setNumVoices (3);
+    auto& voices = SynthTester::voices (synth);
+
+    // fill the pool: voice 0 oldest, voice 2 newest
+    synth.noteOn (60, 1.0f);
+    synth.noteOn (62, 1.0f);
+    synth.noteOn (64, 1.0f);
+
+    REQUIRE (voices[0].getCurrentActiveNote() == 60);
+    REQUIRE (voices[1].getCurrentActiveNote() == 62);
+    REQUIRE (voices[2].getCurrentActiveNote() == 64);
+
+    // pool full -> next noteOn steals oldest (voice 0)
+    synth.noteOn (67, 1.0f);
+    CHECK (voices[0].getCurrentActiveNote() == 67);
+    CHECK (voices[1].getCurrentActiveNote() == 62);
+    CHECK (voices[2].getCurrentActiveNote() == 64);
+
+    // stolen voice is now newest -> next steal hits voice 1 (now oldest)
+    synth.noteOn (69, 1.0f);
+    CHECK (voices[0].getCurrentActiveNote() == 67);
+    CHECK (voices[1].getCurrentActiveNote() == 69);
+    CHECK (voices[2].getCurrentActiveNote() == 64);
+}
+
+TEST_CASE ("Synth::_findOldestVoice returns active voice with smallest age or nullptr", "[Synth]")
+{
+    rd_dsp::Synth synth;
+    synth.setNumVoices (3);
+    auto& voices = SynthTester::voices (synth);
+
+    // nothing active -> nullptr
+    CHECK (SynthTester::findOldestVoice (synth) == nullptr);
+
+    // stamp ages in non-index order: v1 oldest, v2 middle, v0 newest
+    voices[1].noteOn (60, 1.0f); voices[1].setAge (10);
+    voices[2].noteOn (62, 1.0f); voices[2].setAge (20);
+    voices[0].noteOn (64, 1.0f); voices[0].setAge (30);
+
+    CHECK (SynthTester::findOldestVoice (synth) == &voices[1]);
+
+    // release oldest -> next oldest active wins
+    voices[1].noteOff (0.f);
+    CHECK (SynthTester::findOldestVoice (synth) == &voices[2]);
+
+    // release remaining -> nullptr
+    voices[2].noteOff (0.f);
+    voices[0].noteOff (0.f);
+    CHECK (SynthTester::findOldestVoice (synth) == nullptr);
 }
 
 TEST_CASE ("Synth::_findActiveVoice returns voice holding the midi note or nullptr", "[Synth]")
@@ -290,9 +345,9 @@ TEST_CASE ("Synth::noteOn with no free voice is a no-op (no stealing yet)", "[Sy
     REQUIRE (voices[0].getCurrentActiveNote() == 60);
     REQUIRE (voices[1].getCurrentActiveNote() == 62);
 
-    // all voices busy -> new note ignored, existing voices untouched
+    // all voices busy -> steals oldest voice
     synth.noteOn (64, 1.0f);
-    CHECK (voices[0].getCurrentActiveNote() == 60);
+    CHECK (voices[0].getCurrentActiveNote() == 64); 
     CHECK (voices[1].getCurrentActiveNote() == 62);
 }
 

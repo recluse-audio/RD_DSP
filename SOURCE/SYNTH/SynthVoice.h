@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <memory>
 #include <string>
 
@@ -42,6 +43,9 @@ public:
 
     bool isActive();
     int getCurrentActiveNote();
+
+    void setAge(std::uint64_t age) noexcept { mAge = age; }
+    std::uint64_t getAge() const noexcept { return mAge; }
 private:
     friend class SynthVoiceTester;
 
@@ -49,6 +53,7 @@ private:
     std::unique_ptr<Oscillator> mOscillator;
     int mCurrentMidiNote = -1;
     bool mIsActive = false;
+    std::uint64_t mAge = 0;
     
     double mSampleRate = 48000;
     int mBlockSize = 512;

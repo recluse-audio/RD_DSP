@@ -6,6 +6,7 @@
 
 #include "SynthVoice.h"
 
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <vector>
@@ -47,9 +48,11 @@ friend class SynthTester;
 
     double mSampleRate = 48000.0;
     int mBlockSize = 512;
+    std::uint64_t mNextVoiceAge = 0;
 
     SynthVoice* _findFreeVoice();
     SynthVoice* _findActiveVoice(int midiNoteNumber);
+    SynthVoice* _findOldestVoice();
 };
 
 } // namespace rd_dsp

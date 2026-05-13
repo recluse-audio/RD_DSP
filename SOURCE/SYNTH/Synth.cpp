@@ -37,13 +37,16 @@ void Synth::process (const float* const* readPointers, float* const* writePointe
 void Synth::noteOn (int midiNote, float midiVelocity)
 {
     auto* voice = this->_findFreeVoice();
-    //if(mAllowNoteStealing) TODO
 
-    // bail out
+    // steal oldest active voice when pool is full
+    if(voice == nullptr)
+        voice = this->_findOldestVoice();
+
     if(voice == nullptr)
         return;
 
     voice->noteOn(midiNote, midiVelocity);
+    voice->setAge(mNextVoiceAge++);
 }
 
 void Synth::noteOff (int midiNote, float midiVelocity)
@@ -141,6 +144,22 @@ SynthVoice* Synth::_findActiveVoice(int midiNoteNumber)
     }
 
     return nullptr;
+}
+
+SynthVoice* Synth::_findOldestVoice()
+{
+    // return active voice with smallest age
+    SynthVoice* oldest = nullptr;
+    for(auto& voice : mSynthVoices)
+    {
+        if(!voice.isActive())
+            continue;
+
+        if(oldest == nullptr || voice.getAge() < oldest->getAge())
+            oldest = &voice;
+    }
+
+    return oldest;
 }
 
 } // namespace rd_dsp

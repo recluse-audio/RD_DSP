@@ -4,6 +4,10 @@ set(SOURCES
     SOURCE/INTERPOLATOR/Interpolator.h
     SOURCE/OSCILLATOR/Oscillator.cpp
     SOURCE/OSCILLATOR/Oscillator.h
+    SOURCE/PULSAR/PulsarSynth.cpp
+    SOURCE/PULSAR/PulsarSynth.h
+    SOURCE/PULSAR/PulsarVoice.cpp
+    SOURCE/PULSAR/PulsarVoice.h
     SOURCE/RD_BUFFER/BufferFiller.cpp
     SOURCE/RD_BUFFER/BufferFiller.h
     SOURCE/RD_BUFFER/RD_Buffer.cpp

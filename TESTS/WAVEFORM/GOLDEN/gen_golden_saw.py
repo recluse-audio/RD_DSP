@@ -2,8 +2,7 @@
 """
 Generate golden saw-wave CSV used by Catch2 tests.
 
-Format matches sine golden CSV:
-    index,normalized_phase,pi_radians,amplitude
+Format: single row, N comma-separated amplitudes, no header.
 
 One full cycle across N samples. Saw is band-limited via additive synthesis
 of all harmonics with 1/n amplitude and alternating sign (ascending saw):
@@ -21,8 +20,8 @@ from __future__ import annotations
 import math
 from pathlib import Path
 
-OUTPUT_DIR    = Path(__file__).resolve().parent / "SAW"
-NUM_HARMONICS = 32  # n=1..NUM_HARMONICS
+OUTPUT_DIR = Path(__file__).resolve().parent / "SAW"
+NUM_HARMONICS = 32
 
 
 def saw_sample(i: int, num_samples: int) -> float:
@@ -38,13 +37,9 @@ def write_golden_saw(num_samples: int) -> Path:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     out_path = OUTPUT_DIR / f"GOLDEN_SAW_{num_samples}.csv"
 
+    amplitudes = [saw_sample(i, num_samples) for i in range(num_samples)]
     with out_path.open("w", newline="") as f:
-        f.write("index,normalized_phase,pi_radians,amplitude\n")
-        for i in range(num_samples):
-            normalized_phase = i / num_samples
-            pi_radians       = 2.0 * normalized_phase
-            amplitude        = saw_sample(i, num_samples)
-            f.write(f"{i},{normalized_phase!r},{pi_radians!r},{amplitude!r}\n")
+        f.write(",".join(repr(a) for a in amplitudes) + "\n")
 
     return out_path
 

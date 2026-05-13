@@ -2,11 +2,8 @@
 """
 Generate golden sine-wave CSV used by Catch2 tests.
 
-Format matches RD project's golden CSVs:
-    index,normalized_phase,pi_radians,amplitude
-
-One full cycle across N samples. amplitude[i] = sin(2*pi*i/N).
-Last sample is NOT zero (it is sin(2*pi*(N-1)/N)).
+Format: single row, N comma-separated amplitudes, no header.
+    amplitude[i] = sin(2*pi*i/N)
 
 Run:
     python TESTS/WAVEFORM/GOLDEN/gen_golden_sine.py
@@ -23,13 +20,9 @@ def write_golden_sine(num_samples: int) -> Path:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     out_path = OUTPUT_DIR / f"GOLDEN_SINE_{num_samples}.csv"
 
+    amplitudes = [math.sin(2.0 * math.pi * i / num_samples) for i in range(num_samples)]
     with out_path.open("w", newline="") as f:
-        f.write("index,normalized_phase,pi_radians,amplitude\n")
-        for i in range(num_samples):
-            normalized_phase = i / num_samples
-            pi_radians = 2.0 * normalized_phase
-            amplitude = math.sin(2.0 * math.pi * i / num_samples)
-            f.write(f"{i},{normalized_phase!r},{pi_radians!r},{amplitude!r}\n")
+        f.write(",".join(repr(a) for a in amplitudes) + "\n")
 
     return out_path
 

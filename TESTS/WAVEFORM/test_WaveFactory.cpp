@@ -32,17 +32,16 @@ TEST_CASE("WaveFactory loads golden sine CSV and samples match golden file", "[W
     REQUIRE (wave->getNumSamples() == numSamples);
 
     std::vector<std::vector<float>> rows;
-    const bool loaded = rd_dsp::CsvLoader::load (goldenPath, rows, /*skipHeader=*/true);
+    const bool loaded = rd_dsp::CsvLoader::load (goldenPath, rows, /*skipHeader=*/false);
     REQUIRE (loaded);
-    REQUIRE (static_cast<int> (rows.size()) == numSamples);
+    REQUIRE (rows.size() == 1);
+    REQUIRE (static_cast<int> (rows[0].size()) == numSamples);
 
-    constexpr int kAmplitudeCol = 3;
-
+    const auto& goldenRow = rows[0];
     for (int i = 0; i < numSamples; ++i)
     {
-        REQUIRE (static_cast<int> (rows[i].size()) > kAmplitudeCol);
         const float loadedSample = wave->getSample (i);
-        const float golden       = rows[i][kAmplitudeCol];
+        const float golden       = goldenRow[static_cast<std::size_t> (i)];
 
         INFO ("sample index " << i);
         REQUIRE (loadedSample == Catch::Approx (golden).margin (1.0e-6));

@@ -27,20 +27,13 @@ std::unique_ptr<Waveform> WaveFactory::waveformFromRow (const std::vector<float>
 std::unique_ptr<Waveform> WaveFactory::loadWaveformFromCSV (std::string csvPath)
 {
     std::vector<std::vector<float>> rows;
-    if (! CsvLoader::load (csvPath, rows, true))
+    if (! CsvLoader::load (csvPath, rows, false))
         return nullptr;
 
-    // Amplitude = last column of each row; each row contributes one sample.
-    std::vector<float> samples;
-    samples.reserve (rows.size());
-    for (const auto& row : rows)
-    {
-        if (row.empty())
-            return nullptr;
-        samples.push_back (row.back());
-    }
+    if (rows.empty())
+        return nullptr;
 
-    return waveformFromRow (samples);
+    return waveformFromRow (rows[0]);
 }
 
 std::unique_ptr<Wavetable> WaveFactory::loadWavetableFromCSV (std::string csvPath)

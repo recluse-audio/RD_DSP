@@ -21,7 +21,7 @@ class SynthVoice
 {
 public:
     SynthVoice(Wavetable& waveTable);
-    virtual ~SynthVoice();
+    ~SynthVoice();
 
     SynthVoice(SynthVoice&&) noexcept;
     SynthVoice(const SynthVoice&) = delete;
@@ -30,23 +30,23 @@ public:
 
     std::string getEngineName() const { return "rd_dsp::SynthVoice"; }
 
-    virtual void prepare(double sampleRate, int maxBlockSize);
-    virtual void process(const float* const* readPointers, float* const* writePointers,
-                         int numChannels, int numSamples);
+    void prepare(double sampleRate, int maxBlockSize);
+    void process(const float* const* readPointers, float* const* writePointers,
+                 int numChannels, int numSamples);
 
-    virtual void noteOn(int midiNoteNumber, float velocity);
+    void noteOn(int midiNoteNumber, float velocity);
     // this sends the message, but doesn't always automatically free the voice
     // that may be prolonged if there is an envelope
-    virtual void noteOff(float velocity);
+    void noteOff(float velocity);
 
     static float midiToHertz (int midiNoteNumber) noexcept;
 
-    virtual bool isActive();
-    virtual int getCurrentActiveNote();
+    bool isActive();
+    int getCurrentActiveNote();
 
     void setAge(std::uint64_t age) noexcept { mAge = age; }
     std::uint64_t getAge() const noexcept { return mAge; }
-protected:
+private:
     friend class SynthVoiceTester;
 
     Wavetable& mWavetable;
@@ -54,7 +54,7 @@ protected:
     int mCurrentMidiNote = -1;
     bool mIsActive = false;
     std::uint64_t mAge = 0;
-
+    
     double mSampleRate = 48000;
     int mBlockSize = 512;
 };

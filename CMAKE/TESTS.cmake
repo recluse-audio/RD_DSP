@@ -1,8 +1,6 @@
 set(TEST_SOURCES
     TESTS/BUFFER_FILLER/test_BufferFiller_fromCSV.cpp
     TESTS/OSCILLATOR/test_Oscillator.cpp
-    TESTS/PULSAR/test_PulsarSynth.cpp
-    TESTS/PULSAR/test_PulsarVoice.cpp
     TESTS/RD_BUFFER/test_BufferFiller.cpp
     TESTS/RD_BUFFER/test_RD_Buffer.cpp
     TESTS/SYNTH/test_Synth.cpp

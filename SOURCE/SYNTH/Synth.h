@@ -22,27 +22,27 @@ class Synth
 {
 public:
     Synth();
-    virtual ~Synth();
+    ~Synth();
 
-    virtual std::string getEngineName() const { return "rd_dsp::Synth"; }
+    std::string getEngineName() const { return "rd_dsp::Synth"; }
 
-    virtual void prepare(double sampleRate, int maxBlockSize);
-    virtual void process(const float* const* readPointers, float* const* writePointers,
-                         int numChannels, int numSamples);
+    void prepare(double sampleRate, int maxBlockSize);
+    void process(const float* const* readPointers, float* const* writePointers,
+                 int numChannels, int numSamples);
 
-    virtual void noteOn(int midiNote, float midiVelocity);
-    virtual void noteOff(int midiNote, float midiVelocity);
+    void noteOn(int midiNote, float midiVelocity);
+    void noteOff(int midiNote, float midiVelocity);
 
-    virtual void controlChange(int controlNumber, float normalizedValue);
-    virtual void pitchBend(float signedNormalizedValue);
+    void controlChange(int controlNumber, float normalizedValue);
+    void pitchBend(float signedNormalizedValue);
 
-    virtual void setNumVoices(int numVoices);
-    virtual int  getNumVoices() const noexcept;
+    void setNumVoices(int numVoices);
+    int  getNumVoices() const noexcept;
 
-    virtual void setWavePosition(float wavePos);
-    virtual void loadWavetable(std::string tablePath);
-protected:
-    friend class SynthTester;
+    void setWavePosition(float wavePos);
+    void loadWavetable(std::string tablePath);
+private:
+friend class SynthTester;
     std::unique_ptr<Wavetable> mWavetable;
     std::vector<SynthVoice> mSynthVoices;
 

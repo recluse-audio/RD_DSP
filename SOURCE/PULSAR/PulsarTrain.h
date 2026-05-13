@@ -10,11 +10,14 @@
 #include <memory>
 #include <string>
 
+#include "../WINDOW/Window.h"
+
 namespace rd_dsp
 {
 class Pulsar;
 class Wavetable;
-class Window;
+
+using WindowType = Window::Shape;
 /**
  * This emits pulsarets at a given emission rate and formant freq
  * 
@@ -49,6 +52,8 @@ public:
     void setFormantFreq(float formantFreq) noexcept;
     float getFormantFreq() const noexcept;
 
+    void setWindowType(WindowType windowType);
+    
 private:
     friend class PulsarTrainTester;
 
@@ -58,12 +63,16 @@ private:
     
     std::atomic<float> mEmissionRate { 0.f };
     std::atomic<float> mFormantFreq { 0.f };
-    std::atomic<float> mEmissionPeriod { 0.f };
+    std::atomic<float> mEmissionCountdown { 0.f };
+    std::atomic<bool>  mEmissionCountdownUpdateNeeded { false };
+
 
     double mSampleRate = 48000.0;
     int mBlockSize = 512;
 
-    void _updateEmissionPeriod() noexcept;
+    void _updateEmissionCountdown() noexcept;
+    void _emitPulsar();
+
 };
 
 } // namespace rd_dsp

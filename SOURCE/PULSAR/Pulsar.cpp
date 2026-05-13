@@ -26,24 +26,33 @@ void Pulsar::prepare (double sampleRate, int maxBlockSize)
 void Pulsar::process (const float* const* readPointers, float* const* writePointers,
                       int numChannels, int numSamples)
 {
-
-
-    for(int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++)
+    for (int sampleIndex = 0; sampleIndex < numSamples; ++sampleIndex)
     {
-        if(mDutyCycleSamples <= 0)
-            break;
-
-        float windowSample = mWindow.getInterpolatedSampleAtIndex(mWindowPos);
-        float oscSample = mOscillator->processSingleSample();
-
-        for(int ch = 0; ch < numChannels; ch++)
-        {
-            writePointers[ch][sampleIndex] = oscSample * windowSample;    
-        }
-
-        mWindowPos = mWindowPos + mWindowIncrement;
-        mDutyCycleSamples--;
+        const float sample = processSingleSample();
+        for (int ch = 0; ch < numChannels; ++ch)
+            writePointers[ch][sampleIndex] = sample;
     }
+}
+
+float Pulsar::processSingleSample()
+{
+    if (mDutyCycleSamples <= 0)
+        return 0.f;
+
+    const float windowSample = mWindow.getInterpolatedSampleAtIndex (mWindowPos);
+    const float oscSample    = mOscillator->processSingleSample();
+    const float out          = oscSample * windowSample;
+
+    mWindowPos += mWindowIncrement;
+    --mDutyCycleSamples;
+
+    if (mDutyCycleSamples <= 0)
+    {
+        mIsActive = false;
+        mOscillator->stop();
+    }
+
+    return out;
 }
 
 void Pulsar::emit (float formantFreq, int dutyCycleSamples)
@@ -60,5 +69,6 @@ void Pulsar::emit (float formantFreq, int dutyCycleSamples)
 
     mDutyCycleSamples = dutyCycleSamples;
 }
+
 
 } // namespace rd_dsp

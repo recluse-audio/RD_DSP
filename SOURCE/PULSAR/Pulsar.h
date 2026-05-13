@@ -33,6 +33,7 @@ public:
     void prepare(double sampleRate, int maxBlockSize);
     void process(const float* const* readPointers, float* const* writePointers,
                  int numChannels, int numSamples);
+    float processSingleSample();
 
     // with no width the dutyCycleSamples = 2x the freq converted to period in samples
     void emit(float formantFreq, int dutyCycleSamples);

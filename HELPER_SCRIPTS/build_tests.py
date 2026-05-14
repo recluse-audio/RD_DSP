@@ -19,16 +19,17 @@ def regen() -> None:
         subprocess.run([sys.executable, str(script)], check=True)
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args() -> tuple[argparse.Namespace, list[str]]:
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", choices=["Debug", "Release"], default="Debug")
     ap.add_argument("--clean", action="store_true")
-    ap.add_argument("--run", action="store_true", help="Run Tests after build")
-    return ap.parse_args()
+    ap.add_argument("--run", action="store_true",
+                    help="Run Tests after build. Extra positional args are forwarded to Catch2 (e.g. tag filters).")
+    return ap.parse_known_args()
 
 
 def main() -> int:
-    args = parse_args()
+    args, test_args = parse_args()
     regen()
 
     root = repo_root()
@@ -54,7 +55,7 @@ def main() -> int:
             exe = build_dir / ("Tests.exe" if sys.platform.startswith("win") else "Tests")
             if sys.platform.startswith("win") and not exe.exists():
                 exe = build_dir / args.config / "Tests.exe"
-            run([str(exe)], cwd=build_dir)
+            run([str(exe), *test_args], cwd=build_dir)
     except subprocess.CalledProcessError:
         beep(success=False)
         return 1

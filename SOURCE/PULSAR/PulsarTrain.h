@@ -53,7 +53,10 @@ public:
     float getFormantFreq() const noexcept;
 
     void setWindowType(WindowType windowType);
-    
+
+    void start();
+    void stop();
+
 private:
     friend class PulsarTrainTester;
 
@@ -63,14 +66,16 @@ private:
     
     std::atomic<float> mEmissionRate { 0.f };
     std::atomic<float> mFormantFreq { 0.f };
-    std::atomic<float> mEmissionCountdown { 0.f };
-    std::atomic<bool>  mEmissionCountdownUpdateNeeded { false };
+    std::atomic<float> mEmissionCount { 0.f }; // count towards next emission, incremented per sample
+    std::atomic<float> mEmissionPeriod { 0.f }; // number to count to, only updated once per emission (not changing countdown goal mid emission)
+    std::atomic<bool>  mEmissionPeriodUpdateNeeded { false };
+    std::atomic<bool>  mIsRunning { false };
 
 
     double mSampleRate = 48000.0;
     int mBlockSize = 512;
 
-    void _updateEmissionCountdown() noexcept;
+    void _updateEmissionPeriod() noexcept;
     void _emitPulsar();
 
 };

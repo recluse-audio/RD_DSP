@@ -44,7 +44,7 @@ def main() -> int:
     try:
         run([cmake, "-S", str(root), "-B", str(build_dir),
              f"-DCMAKE_BUILD_TYPE={args.config}",
-             "-DBUILD_TESTS=ON", "-DBUILD_STANDALONE=ON"], cwd=root)
+             "-DRD_DSP_BUILD_TESTS=ON", "-DRD_DSP_BUILD_STANDALONE=ON"], cwd=root)
 
         for target in ("Tests", "RD_DSP_Standalone"):
             cmd = [cmake, "--build", str(build_dir), "--target", target]

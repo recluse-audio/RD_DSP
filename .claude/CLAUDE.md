@@ -28,7 +28,7 @@ python HELPER_SCRIPTS/rebuild_all.py             # wipe BUILD/, rebuild both
 python HELPER_SCRIPTS/regenSource.py             # regen CMAKE/{SOURCES,TESTS}.cmake
 
 # Or raw CMake
-cmake -B BUILD -DBUILD_TESTS=ON -DBUILD_STANDALONE=ON
+cmake -B BUILD -DRD_DSP_BUILD_TESTS=ON -DRD_DSP_BUILD_STANDALONE=ON
 cmake --build BUILD --target Tests
 cd BUILD && ctest
 ```
@@ -37,8 +37,8 @@ All build scripts call `regenSource.py` automatically before configuring. After 
 
 ### CMake options
 
-- `BUILD_TESTS` (default ON) — Catch2 v3 fetched via FetchContent, builds `Tests` exe.
-- `BUILD_STANDALONE` (default ON) — builds `RD_DSP_Standalone` CLI exe linking the static lib.
+- `RD_DSP_BUILD_TESTS` (default ON when top-level, OFF when embedded) — Catch2 v3 fetched via FetchContent, builds `Tests` exe.
+- `RD_DSP_BUILD_STANDALONE` (default ON when top-level, OFF when embedded) — builds `RD_DSP_Standalone` CLI exe linking the static lib.
 
 ### Running a single test
 

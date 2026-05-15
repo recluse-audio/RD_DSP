@@ -42,7 +42,7 @@ def main() -> int:
     try:
         run([cmake, "-S", str(root), "-B", str(build_dir),
              f"-DCMAKE_BUILD_TYPE={args.config}",
-             "-DBUILD_TESTS=ON", "-DBUILD_STANDALONE=OFF"], cwd=root)
+             "-DRD_DSP_BUILD_TESTS=ON", "-DRD_DSP_BUILD_STANDALONE=OFF"], cwd=root)
 
         build_cmd = [cmake, "--build", str(build_dir), "--target", "Tests"]
         if sys.platform.startswith("win"):

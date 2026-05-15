@@ -16,9 +16,14 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set_property(GLOBAL PROPERTY USE_FOLDERS YES)
 
-# Options
-option(BUILD_TESTS      "Build Catch2 unit tests"        ON)
-option(BUILD_STANDALONE "Build standalone CLI demo"      ON)
+# Options — default ON when top-level, OFF when embedded as subdirectory
+if(PROJECT_IS_TOP_LEVEL)
+    set(_rd_dsp_default ON)
+else()
+    set(_rd_dsp_default OFF)
+endif()
+option(RD_DSP_BUILD_TESTS      "Build RD_DSP Catch2 unit tests"   ${_rd_dsp_default})
+option(RD_DSP_BUILD_STANDALONE "Build RD_DSP standalone CLI demo" ${_rd_dsp_default})
 
 # /FS prevents PDB contention on parallel MSVC builds
 if(MSVC)
@@ -60,7 +65,7 @@ endif()
 # ---------------------------------------------------------------------------
 # Standalone CLI demo
 # ---------------------------------------------------------------------------
-if(BUILD_STANDALONE)
+if(RD_DSP_BUILD_STANDALONE)
     add_executable(RD_DSP_Standalone STANDALONE/main.cpp)
     target_link_libraries(RD_DSP_Standalone PRIVATE ${PROJECT_NAME})
 endif()
@@ -68,7 +73,7 @@ endif()
 # ---------------------------------------------------------------------------
 # Tests (Catch2 v3 via FetchContent)
 # ---------------------------------------------------------------------------
-if(BUILD_TESTS)
+if(RD_DSP_BUILD_TESTS)
     include(FetchContent)
     FetchContent_Declare(
         Catch2

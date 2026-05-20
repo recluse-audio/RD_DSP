@@ -435,7 +435,7 @@ TEST_CASE ("Synth::process matches golden synth sine CSVs across noteOn changes 
 
         rd_dsp::RD_Buffer csvBuffer (3, call.kCSV_ReadSize);
         const std::string csvPath =
-            std::string (RD_DSP_TESTS_DIR) + "/SYNTH/OUTPUT/" + call.kGoldenCSV;
+            std::string (RD_DSP_TESTS_DIR) + "/SYNTH/GOLDEN/OUTPUT/" + call.kGoldenCSV;
         REQUIRE (rd_dsp::BufferFiller::fillFromCSV (csvPath, csvBuffer));
 
         for (int i = 0; i < processBlockSize; ++i)
@@ -512,7 +512,7 @@ TEST_CASE ("Synth::process at varied wave positions matches per-shape golden CSV
 
         rd_dsp::RD_Buffer csvBuffer (3, call.kCSV_ReadSize);
         const std::string csvPath =
-            std::string (RD_DSP_TESTS_DIR) + "/SYNTH/OUTPUT/" + call.kGoldenCSV;
+            std::string (RD_DSP_TESTS_DIR) + "/SYNTH/GOLDEN/OUTPUT/" + call.kGoldenCSV;
         REQUIRE (rd_dsp::BufferFiller::fillFromCSV (csvPath, csvBuffer));
 
         for (int i = 0; i < processBlockSize; ++i)

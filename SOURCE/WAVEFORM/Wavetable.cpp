@@ -23,7 +23,7 @@ void Wavetable::setNormalizedWavePosition(float normalizedWavePos)
     mNormalizedWavePos = normalizedWavePos;
 }
 
-float Wavetable::getSampleAtIndex(float index)
+float Wavetable::getSampleAtIndex (float index) const noexcept
 {
     const int lastWave = static_cast<int>(mWaveforms.size()) - 1;
     if (lastWave < 0)
@@ -42,6 +42,20 @@ float Wavetable::getSampleAtIndex(float index)
     float upperSample = mWaveforms[upperWave]->getInterpolatedSampleAtIndex(index) * spillover;
 
     return lowerSample + upperSample; // don't divide by 2 here, accounted for in spillover
+}
+
+void Wavetable::fillDisplayBuffer (float* out, int outSize) const noexcept
+{
+    if (out == nullptr || outSize <= 0 || mWaveforms.empty())
+        return;
+
+    const float waveSize = static_cast<float>(getWaveformSize());
+    if (waveSize <= 0.f)
+        return;
+
+    const float step = waveSize / static_cast<float>(outSize);
+    for (int i = 0; i < outSize; ++i)
+        out[i] = getSampleAtIndex (static_cast<float>(i) * step);
 }
 
 int Wavetable::getNumWaveforms() const noexcept
@@ -86,7 +100,7 @@ void Wavetable::fillWithBasicShapes (int numSamples)
     }
 }
 
-float Wavetable::_getPositionForWavetableSize()
+float Wavetable::_getPositionForWavetableSize() const noexcept
 {
     float worldWavePos = (float)(mWaveforms.size()) * mNormalizedWavePos;
     return worldWavePos;

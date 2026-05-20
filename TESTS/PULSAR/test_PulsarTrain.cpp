@@ -345,7 +345,7 @@ TEST_CASE ("PulsarTrain output matches golden tukey-windowed sine over duty cycl
     constexpr int    kEmissionPeriodSamples = 480;
     constexpr int    kDutyCycleSamples      = 240;
     constexpr int    kNumChannels           = 1;
-    constexpr float  kSampleMatchMargin     = 5e-3f; // wavetable sine vs pure math sine
+    constexpr float  kSampleMatchMargin     = 1e-5f; // golden mirrors impl resampling exactly; float32 round-trip only
 
     rd_dsp::PulsarTrain pulsarTrain;
     pulsarTrain.prepare (kSampleRate, kBlockSize);

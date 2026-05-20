@@ -30,7 +30,7 @@ void Waveform::setWaveType (WaveType waveType)
     }
 }
 
-float Waveform::getInterpolatedSampleAtIndex (float index)
+float Waveform::getInterpolatedSampleAtIndex (float index) const noexcept
 {
     const int numSamples = mBuffer.getNumSamples();
     if (numSamples <= 0)

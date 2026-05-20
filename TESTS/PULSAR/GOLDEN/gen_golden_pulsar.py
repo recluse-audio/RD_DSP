@@ -73,13 +73,28 @@ def window_values(name: str, num_samples: int) -> list[float]:
     raise ValueError(f"unknown window: {name}")
 
 
-def windowed_sine(sample_rate: float, formant_freq: float, cycles: int, window_name: str) -> list[float]:
-    n_samples = cycles * round(sample_rate / formant_freq)
-    win       = window_values(window_name, n_samples)
+def windowed_sine(sample_rate: float, formant_freq: float, cycles: int, window_name: str,
+                  window_buffer_size: int) -> list[float]:
+    # PulsarTrain stores window as a sample-rate-wide buffer and resamples it
+    # across the duty cycle. Mirror that here: build window at buffer size,
+    # step at buffer_size / duty_cycle_samples per output sample, linear interp
+    # between adjacent indices (matches Window::getInterpolatedSampleAtIndex).
+    duty_cycle = round(sample_rate / formant_freq)
+    n_samples  = cycles * duty_cycle
+    win        = window_values(window_name, window_buffer_size)
+    step       = float(window_buffer_size) / float(duty_cycle)
+
     out: list[float] = []
     for i in range(n_samples):
         sine = math.sin(2.0 * math.pi * i * formant_freq / sample_rate)
-        out.append(sine * win[i])
+
+        pos    = (i * step) % float(window_buffer_size)
+        i0     = int(math.floor(pos))
+        i1     = (i0 + 1) % window_buffer_size
+        frac   = pos - float(i0)
+        win_v  = win[i0] + (win[i1] - win[i0]) * frac
+
+        out.append(sine * win_v)
     return out
 
 
@@ -97,9 +112,14 @@ def main() -> None:
     ap.add_argument("--window",      type=str,   default="tukey", choices=WINDOWS, help="window shape")
     ap.add_argument("--cycles",      type=int,   default=1,                        help="number of formant cycles")
     ap.add_argument("--formant",     type=float, default=200.0,                    help="formant frequency in Hz")
+    ap.add_argument("--window-buffer-size", type=int, default=None,
+                    help="window storage size (defaults to int(sample_rate), matching PulsarTrain::prepare)")
     args = ap.parse_args()
 
-    values = windowed_sine(args.sample_rate, args.formant, args.cycles, args.window)
+    window_buffer_size = args.window_buffer_size if args.window_buffer_size is not None \
+                                                 else int(args.sample_rate)
+
+    values = windowed_sine(args.sample_rate, args.formant, args.cycles, args.window, window_buffer_size)
 
     sr_tag = f"{args.sample_rate:g}".replace(".", "p")
     f_tag  = f"{args.formant:g}".replace(".", "p")

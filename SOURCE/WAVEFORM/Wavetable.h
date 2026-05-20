@@ -20,7 +20,12 @@ public:
     // given a 0-1 value, this maps between the two currently active waveforms
     void setNormalizedWavePosition(float normalizedWavePos);
 
-    float getSampleAtIndex(float index);
+    float getSampleAtIndex (float index) const noexcept;
+
+    // Fills out[0..outSize) with the currently active interpolated waveform,
+    // stretched/decimated to outSize. Allocation-free, no exceptions.
+    // Caller owns the buffer. Writes nothing if empty or outSize <= 0.
+    void fillDisplayBuffer (float* out, int outSize) const noexcept;
 
     void addWaveform(std::unique_ptr<Waveform>);
     void clear() noexcept;
@@ -33,12 +38,11 @@ public:
     void fillWithBasicShapes (int numSamples);
 
 private:
-    bool mIsLoading = true;
     std::vector<std::unique_ptr<Waveform>> mWaveforms;
     float mNormalizedWavePos = 0.f;
 
     // given the mNormalizedWavePos above, what would that be when scaled to mWaveforms.size()
-    float _getPositionForWavetableSize();
+    float _getPositionForWavetableSize() const noexcept;
 };
 
 } // namespace rd_dsp

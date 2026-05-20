@@ -58,13 +58,13 @@ Notes:
 - **CONVENTION NOTES:** Classic nearest-friendly linear decimation. Source-of-truth interpolation already lives in `getSampleAtIndex` (and the per-`Waveform` `getInterpolatedSampleAtIndex`); we resample the *result*, not the underlying tables.
 - Tests from increment 1 should go GREEN.
 
-### [ ] 4. (Optional) Add box-average overload for visual smoothing
+### [x] 4. (Optional) Add box-average overload for visual smoothing
 - **FILES CHANGING:** `Wavetable.h/.cpp`.
 - **WHY:** When `outSize << waveformSize`, raw point-sampling can alias visibly on square/saw. Box-average over each output bin gives a cleaner curve without a real lowpass.
 - API: `void fillDisplayBufferAveraged(float* out, int outSize) const noexcept;`
 - Skip this increment if the naive version looks fine in WEB_SYNTH integration. **Decision deferred to after WEB_SYNTH wiring lands.**
 
-### [ ] 5. Tag a version bump
+### [x] 5. Tag a version bump
 - **FILES CHANGING:** `VERSION.txt`.
 - **WHY:** WEB_SYNTH bumps the submodule pointer to a tagged commit; version bump makes the contract explicit.
 - Bump patch version. Commit. Tag.

@@ -167,3 +167,59 @@ TEST_CASE("fillDisplayBuffer interpolates between two waveforms", "[Wavetable]")
         }
     }
 }
+
+TEST_CASE("fillDisplayBufferAveraged no-op when wavetable empty", "[Wavetable]")
+{
+    rd_dsp::Wavetable wt;
+    wt.clear();
+
+    constexpr int kN = 64;
+    constexpr float kSentinel = -999.0f;
+    std::vector<float> out (kN, kSentinel);
+
+    wt.fillDisplayBufferAveraged (out.data(), kN);
+
+    for (int i = 0; i < kN; ++i)
+        REQUIRE (out[i] == kSentinel);
+}
+
+TEST_CASE("fillDisplayBufferAveraged point-samples when step <= 1", "[Wavetable]")
+{
+    rd_dsp::Wavetable wt;
+    wt.clear();
+    constexpr int kN = 512;
+    wt.addWaveform (makeSine (kN));
+
+    std::vector<float> out (kN, 0.0f);
+    wt.fillDisplayBufferAveraged (out.data(), kN);
+
+    for (int i = 0; i < kN; ++i)
+    {
+        const float expected = std::sin ((static_cast<float>(i) * kTwoPi) / static_cast<float>(kN));
+        REQUIRE (out[i] == Catch::Approx (expected).margin (1.0e-5));
+    }
+}
+
+TEST_CASE("fillDisplayBufferAveraged box-averages decimated bins", "[Wavetable]")
+{
+    rd_dsp::Wavetable wt;
+    wt.clear();
+    constexpr int kN       = 2048;
+    constexpr int kOutSize = kN / 16; // 128, step = 16
+    wt.addWaveform (makeSine (kN));
+
+    std::vector<float> out (kOutSize, 0.0f);
+    wt.fillDisplayBufferAveraged (out.data(), kOutSize);
+
+    // Each output bin = mean of 16 consecutive source samples.
+    for (int i = 0; i < kOutSize; ++i)
+    {
+        const int start = i * 16;
+        float expected = 0.f;
+        for (int s = start; s < start + 16; ++s)
+            expected += std::sin ((static_cast<float>(s) * kTwoPi) / static_cast<float>(kN));
+        expected /= 16.f;
+
+        REQUIRE (out[i] == Catch::Approx (expected).margin (1.0e-5));
+    }
+}

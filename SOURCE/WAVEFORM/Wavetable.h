@@ -27,6 +27,11 @@ public:
     // Caller owns the buffer. Writes nothing if empty or outSize <= 0.
     void fillDisplayBuffer (float* out, int outSize) const noexcept;
 
+    // Same as fillDisplayBuffer, but averages source samples within each
+    // output bin (box filter). Useful when outSize << waveformSize and the
+    // point-sampled version aliases visibly. Allocation-free, no exceptions.
+    void fillDisplayBufferAveraged (float* out, int outSize) const noexcept;
+
     void addWaveform(std::unique_ptr<Waveform>);
     void clear() noexcept;
 

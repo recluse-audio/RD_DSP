@@ -58,6 +58,40 @@ void Wavetable::fillDisplayBuffer (float* out, int outSize) const noexcept
         out[i] = getSampleAtIndex (static_cast<float>(i) * step);
 }
 
+void Wavetable::fillDisplayBufferAveraged (float* out, int outSize) const noexcept
+{
+    if (out == nullptr || outSize <= 0 || mWaveforms.empty())
+        return;
+
+    const int waveSize = getWaveformSize();
+    if (waveSize <= 0)
+        return;
+
+    const float step = static_cast<float>(waveSize) / static_cast<float>(outSize);
+
+    // No decimation -> point-sample (avoids degenerate 1-sample bins).
+    if (step <= 1.f)
+    {
+        for (int i = 0; i < outSize; ++i)
+            out[i] = getSampleAtIndex (static_cast<float>(i) * step);
+        return;
+    }
+
+    for (int i = 0; i < outSize; ++i)
+    {
+        int start = static_cast<int>(static_cast<float>(i) * step);
+        int end   = static_cast<int>(static_cast<float>(i + 1) * step);
+        if (end <= start) end = start + 1;
+        if (end > waveSize) end = waveSize;
+
+        float sum = 0.f;
+        for (int s = start; s < end; ++s)
+            sum += getSampleAtIndex (static_cast<float>(s));
+
+        out[i] = sum / static_cast<float>(end - start);
+    }
+}
+
 int Wavetable::getNumWaveforms() const noexcept
 {
     return static_cast<int>(mWaveforms.size());

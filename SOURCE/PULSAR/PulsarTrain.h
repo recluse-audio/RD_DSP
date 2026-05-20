@@ -46,6 +46,8 @@ public:
     void loadWavetable(std::string tablePath);
     void setWavePosition(float wavePos);
 
+    const Wavetable& getWavetable() const noexcept;
+
     void setEmissionRate(float emissionRate) noexcept;
     float getEmissionRate() const noexcept;
 

@@ -6,6 +6,7 @@
 #include <catch2/catch_approx.hpp>
 
 #include <atomic>
+#include <cmath>
 #include <string>
 
 #include <vector>
@@ -112,6 +113,48 @@ TEST_CASE ("PulsarTrain::loadWavetable replaces wavetable contents in place", "[
 
     CHECK (wt.getNumWaveforms() == 4);
     CHECK (wt.getWaveformSize() == 8096);
+}
+
+TEST_CASE ("PulsarTrain::getWavetable returns live ref usable for fillDisplayBuffer", "[PulsarTrain]")
+{
+    rd_dsp::PulsarTrain train;
+
+    const std::string tablePath =
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/BASIC_TABLE/GOLDEN_BASIC_WAVEFORM_TABLE_8096.csv";
+
+    train.loadWavetable (tablePath);
+    train.setWavePosition (0.5f);
+
+    const rd_dsp::Wavetable& wt = train.getWavetable();
+
+    CHECK (wt.getNumWaveforms() == 4);
+    CHECK (wt.getWaveformSize() == 8096);
+
+    constexpr int kDisplaySize = 128;
+    std::vector<float> buf (kDisplaySize, 0.f);
+
+    wt.fillDisplayBuffer (buf.data(), kDisplaySize);
+
+    float absSum = 0.f;
+    for (float v : buf)
+        absSum += std::abs (v);
+
+    CHECK (absSum > 0.f);
+
+    // accessor must reflect live wave-pos state: changing wave position changes the buffer
+    std::vector<float> bufA (kDisplaySize, 0.f);
+    train.setWavePosition (0.f);
+    wt.fillDisplayBuffer (bufA.data(), kDisplaySize);
+
+    std::vector<float> bufB (kDisplaySize, 0.f);
+    train.setWavePosition (1.f);
+    wt.fillDisplayBuffer (bufB.data(), kDisplaySize);
+
+    bool anyDiff = false;
+    for (int i = 0; i < kDisplaySize; ++i)
+        if (bufA[i] != bufB[i]) { anyDiff = true; break; }
+
+    CHECK (anyDiff);
 }
 
 TEST_CASE ("PulsarTrain::setEmissionRate / getEmissionRate round-trip", "[PulsarTrain]")

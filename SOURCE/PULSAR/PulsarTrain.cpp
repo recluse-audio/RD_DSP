@@ -99,6 +99,12 @@ void PulsarTrain::setWavePosition (float wavePos)
     mWavetable->setNormalizedWavePosition (wavePos);
 }
 
+const Wavetable& PulsarTrain::getWavetable() const noexcept
+{
+    assert (mWavetable != nullptr && "PulsarTrain::getWavetable called before mWavetable was initialized");
+    return *mWavetable;
+}
+
 void PulsarTrain::loadWavetable (std::string tablePath)
 {
     assert (mWavetable != nullptr && "PulsarTrain::loadWavetable called before mWavetable was initialized");

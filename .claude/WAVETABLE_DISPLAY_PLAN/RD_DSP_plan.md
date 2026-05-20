@@ -69,6 +69,32 @@ Notes:
 - **WHY:** WEB_SYNTH bumps the submodule pointer to a tagged commit; version bump makes the contract explicit.
 - Bump patch version. Commit. Tag.
 
+---
+
+## Addendum (2026-05-20) — PulsarTrain wavetable accessor
+
+Discovered during WEB_SYNTH integration: `PulsarTrain` owns `std::unique_ptr<Wavetable> mWavetable` privately with no public read accessor. WEB_SYNTH cannot call `fillDisplayBuffer` on the live (wave-pos driven) pulsar wavetable without one. SYNTH module exposes its Wavetable directly so this only affects pulsar.
+
+### [x] 6. Expose `PulsarTrain::getWavetable() const`
+- **FILES CHANGING:** `SOURCE/PULSAR/PulsarTrain.h` (decl), optionally `.cpp` if defined out-of-line.
+- **WHY:** Give consumers a `const` handle to the live wavetable so they can call read-only methods (`fillDisplayBuffer`, sample count queries) without duplicating wave-pos state.
+- **API:**
+  ```cpp
+  const Wavetable& getWavetable() const noexcept;
+  ```
+  Implementation: `return *mWavetable;` (header is fine — `Wavetable` already forward-declared at `PulsarTrain.h:18`; consumer translation units already include the full `Wavetable.h` if they call methods on the returned ref, so leaving it as a forward-decl-only header is OK as long as the inline body just returns the reference).
+- **CONVENTION NOTES:** `const` accessor that returns a `const&` is the standard "trust the caller, no copying, no mutation" shape. `noexcept` matches the rest of the read-only API surface.
+- **TEST:** Add a small Catch2 case under `TESTS/PULSAR/` (or extend an existing one): construct `PulsarTrain`, call `setWavePosition(0.5f)`, call `getWavetable().fillDisplayBuffer(buf, 128)`, assert buf is non-zero and matches the expected mix.
+- Assertion: precondition is that `mWavetable != nullptr` at all times after construction (already true — constructed in ctor init list with `std::make_unique<Wavetable>()`). Document via an `assert (mWavetable != nullptr);` if paranoid, or trust the invariant.
+
+### [x] 7. Tag a version bump (post-accessor)
+- Bump `VERSION.txt` patch version again. Commit. Tag. WEB_SYNTH pins this tag to unblock pulsar display wiring.
+
+## Out-of-scope clarifications
+
+- No JS, no wasm, no UI. Same as before.
+- Accessor is `const&` only — no non-const overload. Display path is read-only; mutation goes through existing `setWavePosition` / `loadWavetable`.
+
 ## Out of scope
 
 - No JS, no wasm, no UI work. This repo stays a pure C++ DSP lib.

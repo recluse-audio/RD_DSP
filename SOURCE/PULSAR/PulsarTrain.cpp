@@ -68,6 +68,8 @@ void PulsarTrain::_emitPulsar()
     const int dutyCycle = (freq <= 0.f) ? 0
                                         : static_cast<int> (static_cast<float> (mSampleRate) / freq);
     mPulsar->emit (freq, dutyCycle);
+
+    mPulsarReportedToGUI.store (false, std::memory_order_relaxed);
 }
 
 void PulsarTrain::setEmissionRate (float emissionRate) noexcept
@@ -162,6 +164,11 @@ void PulsarTrain::stop()
 bool PulsarTrain::isActive() const noexcept
 {
     return mPulsar ? mPulsar->isActive() : false;
+}
+
+bool PulsarTrain::consumePulsarFlash() noexcept
+{
+    return ! mPulsarReportedToGUI.exchange (true, std::memory_order_relaxed);
 }
 
 

@@ -4,6 +4,7 @@ set(TEST_SOURCES
     TESTS/PULSAR/test_Pulsar.cpp
     TESTS/PULSAR/test_PulsarTrain.cpp
     TESTS/PULSAR/test_PulsarTrain_active.cpp
+    TESTS/PULSAR/test_PulsarTrain_flash.cpp
     TESTS/PULSAR/test_Pulsar_active.cpp
     TESTS/RD_BUFFER/test_BufferFiller.cpp
     TESTS/RD_BUFFER/test_RD_Buffer.cpp

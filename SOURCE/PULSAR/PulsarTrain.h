@@ -61,6 +61,8 @@ public:
 
     bool isActive() const noexcept;
 
+    bool consumePulsarFlash() noexcept;
+
 private:
     friend class PulsarTrainTester;
 
@@ -74,6 +76,7 @@ private:
     std::atomic<float> mEmissionPeriod { 0.f }; // number to count to, only updated once per emission (not changing countdown goal mid emission)
     std::atomic<bool>  mEmissionPeriodUpdateNeeded { false };
     std::atomic<bool>  mIsRunning { false };
+    std::atomic<bool>  mPulsarReportedToGUI { true }; // true = current pulsar already drawn
 
 
     double mSampleRate = 48000.0;

@@ -10,7 +10,9 @@
       "Bash(git -C C:/REPOS/PLUGIN_PROJECTS/RD_DSP diff HEAD~1 HEAD --name-status)",
       "Read(//c/REPOS/PLUGIN_PROJECTS/RD/**)",
       "Read(//c/Users/rdeve/.claude/skills/**)",
-      "Read(//c/Users/rdeve/.claude/**)"
+      "Read(//c/Users/rdeve/.claude/**)",
+      "Bash(mkdir -p C:/REPOS/PLUGIN_PROJECTS/RD_DSP/.claude/PULSAR_ACTIVITY_FLASH_PLAN)",
+      "Bash(cp \"C:/REPOS/PROJECTS/WEB_SYNTH/.claude/PULSAR_ACTIVITY_FLASH_PLAN/RD_DSP_plan.md\" \"C:/REPOS/PLUGIN_PROJECTS/RD_DSP/.claude/PULSAR_ACTIVITY_FLASH_PLAN/RD_DSP_plan.md\")"
     ]
   }
 }

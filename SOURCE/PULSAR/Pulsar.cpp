@@ -15,7 +15,18 @@ Pulsar::Pulsar (Wavetable& wavetable, Window& window)
 }
 
 Pulsar::~Pulsar() = default;
-Pulsar::Pulsar (Pulsar&&) noexcept = default;
+
+Pulsar::Pulsar (Pulsar&& other) noexcept
+: mWavetable (other.mWavetable)
+, mWindow (other.mWindow)
+, mOscillator (std::move (other.mOscillator))
+, mWindowPos (other.mWindowPos)
+, mWindowIncrement (other.mWindowIncrement)
+, mIsActive (other.mIsActive.load (std::memory_order_relaxed))
+, mSampleRate (other.mSampleRate)
+, mDutyCycleSamples (other.mDutyCycleSamples)
+{
+}
 
 void Pulsar::prepare (double sampleRate, int maxBlockSize)
 {
@@ -48,7 +59,7 @@ float Pulsar::processSingleSample()
 
     if (mDutyCycleSamples <= 0)
     {
-        mIsActive = false;
+        mIsActive.store (false, std::memory_order_relaxed);
         mOscillator->stop();
     }
 
@@ -63,11 +74,16 @@ void Pulsar::emit (float formantFreq, int dutyCycleSamples)
 
     mWindowIncrement = static_cast<float> (mWindow.getNumSamples()) / static_cast<float> (dutyCycleSamples);
     
-    mIsActive = true;
+    mIsActive.store (true, std::memory_order_relaxed);
     mOscillator->setFreq(formantFreq);
     mOscillator->start();
 
     mDutyCycleSamples = dutyCycleSamples;
+}
+
+bool Pulsar::isActive() const noexcept
+{
+    return mIsActive.load (std::memory_order_relaxed);
 }
 
 

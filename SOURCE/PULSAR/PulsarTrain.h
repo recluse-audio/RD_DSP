@@ -59,6 +59,8 @@ public:
     void start();
     void stop();
 
+    bool isActive() const noexcept;
+
 private:
     friend class PulsarTrainTester;
 

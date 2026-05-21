@@ -159,5 +159,10 @@ void PulsarTrain::stop()
     mIsRunning.store (false, std::memory_order_relaxed);
 }
 
+bool PulsarTrain::isActive() const noexcept
+{
+    return mPulsar ? mPulsar->isActive() : false;
+}
+
 
 } // namespace rd_dsp

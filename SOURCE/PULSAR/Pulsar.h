@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <atomic>
 #include <memory>
 #include <string>
 
@@ -38,6 +39,8 @@ public:
     // with no width the dutyCycleSamples = 2x the freq converted to period in samples
     void emit(float formantFreq, int dutyCycleSamples);
 
+    bool isActive() const noexcept;
+
 private:
     friend class PulsarTester;
 
@@ -48,7 +51,7 @@ private:
     float mWindowPos = 0.f;
     float mWindowIncrement = 0.f;
 
-    bool mIsActive = false;
+    std::atomic<bool> mIsActive { false };
     double mSampleRate = 44100;
 
     int mDutyCycleSamples = 0;

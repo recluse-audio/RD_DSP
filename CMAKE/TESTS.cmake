@@ -6,8 +6,8 @@ set(TEST_SOURCES
     TESTS/PULSAR/test_PulsarTrain_active.cpp
     TESTS/PULSAR/test_PulsarTrain_flash.cpp
     TESTS/PULSAR/test_Pulsar_active.cpp
-    TESTS/RANDOMIZER/test_NormalizedRandomizer.cpp
-    TESTS/RANGE/test_NormalizedRange.cpp
+    TESTS/RANDOMIZER/test_Randomizer.cpp
+    TESTS/RANGE/test_Range.cpp
     TESTS/RD_BUFFER/test_BufferFiller.cpp
     TESTS/RD_BUFFER/test_RD_Buffer.cpp
     TESTS/SYNTH/test_Synth.cpp

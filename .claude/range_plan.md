@@ -38,20 +38,27 @@ Skew math (JUCE core):
 
 ## Increments
 
-- [ ] 1. RED+GREEN linear core. New `SOURCE/RANGE/Range.{h,cpp}`. ctor(start,end,
+- [x] 1. RED+GREEN linear core. New `SOURCE/RANGE/Range.{h,cpp}`. ctor(start,end,
       skew=1), getters, convert*0to1 with skew==1 (linear). Test: endpoints map
       0 and 1, round-trip, midpoint.
-- [ ] 2. Skew math. Add pow-based skew to both convert fns. Test: skew!=1
+- [x] 2. Skew math. Add pow-based skew to both convert fns. Test: skew!=1
       midpoint maps off-0.5; round-trip still exact.
-- [ ] 3. `setSkew` + `setSkewForCentre`. Derive skew = log(0.5)/log((c-start)/
+- [x] 3. `setSkew` + `setSkewForCentre`. Derive skew = log(0.5)/log((c-start)/
       (end-start)). Test: after setSkewForCentre(c), convertFrom0to1(0.5)==c.
-- [ ] 4. Clamp out-of-range world values into [start,end] before normalizing.
+- [x] 4. Clamp out-of-range world values into [start,end] before normalizing.
       Test: v<start -> 0, v>end -> 1.
-- [ ] 5. Randomizer integration. Swap `NormalizedRange mRange` for `Range`.
-      DECIDE here: how center/default value is carried (per-call arg vs stored).
-      Update `NormalizedRandomizer` + its tests.
-- [ ] 6. Retire `NormalizedRange`. Remove old files, rename test_NormalizedRange
+- [x] 5. Randomizer integration. Swapped to `Range`. DECIDED: centre stays a
+      per-call arg to getNextRandom; world bounds via setRange, skew via setSkew.
+      Dropped setNormalizedRange/getMin/getCenter/getMax. Tests rewritten.
+- [x] 6. Retire `NormalizedRange`. Deleted .h/.cpp + old test (test_Range
+      already created fresh in inc 1, so delete not rename). Remove old files, rename test_NormalizedRange
       -> test_Range, fix includes. User runs regenSource + build.
+
+- [x] 7. Rename `NormalizedRandomizer` -> `Randomizer` (files, class, test, tags).
+      Pure rename, behavior identical. regenSource.
+- [x] 8. Normalized in/out. Added getNextNormalizedRandom (skew-independent
+      [0,1] base draw) + convertTo0to1/convertFrom0to1 passthrough to Range.
+      Normalized is the canonical base; world derives via convertFrom0to1.
 
 ## Open decisions
 

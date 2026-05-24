@@ -4,6 +4,8 @@
 
 #include "NormalizedRandomizer.h"
 
+#include <algorithm>
+
 namespace rd_dsp
 {
 void NormalizedRandomizer::setNormalizedRange (float min, float center, float max)
@@ -26,13 +28,30 @@ float NormalizedRandomizer::getMax() const
     return mRange.getMax();
 }
 
+void NormalizedRandomizer::setDensity (float density)
+{
+    mDensity = std::clamp (density, 0.0f, 1.0f);
+}
+
+float NormalizedRandomizer::getDensity() const
+{
+    return mDensity;
+}
+
 float NormalizedRandomizer::getNextRandom (float min, float center, float max)
 {
     setNormalizedRange (min, center, max);
-    return getNextRandom();
+
+    float nextRandomValue = center; // default unless the density check passes
+
+    // mDensity is the probability a fresh random value replaces the center.
+    if (_getNormalizedRandom() < mDensity)
+        nextRandomValue = _getRandomValueInRange();
+
+    return nextRandomValue;
 }
 
-float NormalizedRandomizer::getNextRandom()
+float NormalizedRandomizer::_getNormalizedRandom()
 {
     // minstd_rand output is fixed by the standard: [1, 2147483646].
     // Divisor is a compile-time constant, so fold it into a reciprocal we multiply by.
@@ -42,9 +61,12 @@ float NormalizedRandomizer::getNextRandom()
     constexpr float kGeneratorMin = 1.0f;
     constexpr float kInvGeneratorRange = 1.0f / (2147483646.0f - 1.0f);
 
-    const float normalized = (static_cast<float> (mRandomNumberGenerator()) - kGeneratorMin) * kInvGeneratorRange;
+    return (static_cast<float> (mRandomNumberGenerator()) - kGeneratorMin) * kInvGeneratorRange;
+}
 
-    return mRange.getMin() + normalized * (mRange.getMax() - mRange.getMin());
+float NormalizedRandomizer::_getRandomValueInRange()
+{
+    return mRange.getMin() + _getNormalizedRandom() * (mRange.getMax() - mRange.getMin());
 }
 
 } // namespace rd_dsp

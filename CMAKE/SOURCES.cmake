@@ -8,6 +8,10 @@ set(SOURCES
     SOURCE/PULSAR/Pulsar.h
     SOURCE/PULSAR/PulsarTrain.cpp
     SOURCE/PULSAR/PulsarTrain.h
+    SOURCE/RANDOMIZER/NormalizedRandomizer.cpp
+    SOURCE/RANDOMIZER/NormalizedRandomizer.h
+    SOURCE/RANGE/NormalizedRange.cpp
+    SOURCE/RANGE/NormalizedRange.h
     SOURCE/RD_BUFFER/BufferFiller.cpp
     SOURCE/RD_BUFFER/BufferFiller.h
     SOURCE/RD_BUFFER/RD_Buffer.cpp

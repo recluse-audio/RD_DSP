@@ -2,10 +2,12 @@ set(TEST_SOURCES
     TESTS/BUFFER_FILLER/test_BufferFiller_fromCSV.cpp
     TESTS/OSCILLATOR/test_Oscillator.cpp
     TESTS/PULSAR/test_Pulsar.cpp
+    TESTS/PULSAR/test_PulsarData.cpp
     TESTS/PULSAR/test_PulsarTrain.cpp
     TESTS/PULSAR/test_PulsarTrain_active.cpp
     TESTS/PULSAR/test_PulsarTrain_flash.cpp
     TESTS/PULSAR/test_Pulsar_active.cpp
+    TESTS/RANDOMIZER/test_RandomizedParam.cpp
     TESTS/RANDOMIZER/test_Randomizer.cpp
     TESTS/RANGE/test_Range.cpp
     TESTS/RD_BUFFER/test_BufferFiller.cpp

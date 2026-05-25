@@ -64,7 +64,10 @@ void PulsarTrain::_emitPulsar()
 
     mEmissionCount.store (0.f, std::memory_order_relaxed);
 
-    const float freq = mFormantFreq.load (std::memory_order_relaxed);
+    // Formant freq runs through PulsarData: density 0 returns the centre
+    // unchanged; higher density randomizes within the configured range.
+    mPulsarData.formantFreq.setCentre (mFormantFreq.load (std::memory_order_relaxed));
+    const float freq = mPulsarData.resolve().formantFreq;
     const int dutyCycle = (freq <= 0.f) ? 0
                                         : static_cast<int> (static_cast<float> (mSampleRate) / freq);
     mPulsar->emit (freq, dutyCycle);

@@ -6,8 +6,12 @@ set(SOURCES
     SOURCE/OSCILLATOR/Oscillator.h
     SOURCE/PULSAR/Pulsar.cpp
     SOURCE/PULSAR/Pulsar.h
+    SOURCE/PULSAR/PulsarData.cpp
+    SOURCE/PULSAR/PulsarData.h
     SOURCE/PULSAR/PulsarTrain.cpp
     SOURCE/PULSAR/PulsarTrain.h
+    SOURCE/RANDOMIZER/RandomizedParam.cpp
+    SOURCE/RANDOMIZER/RandomizedParam.h
     SOURCE/RANDOMIZER/Randomizer.cpp
     SOURCE/RANDOMIZER/Randomizer.h
     SOURCE/RANGE/Range.cpp

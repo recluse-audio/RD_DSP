@@ -27,7 +27,7 @@ TEST_CASE ("Range linear round-trips a midpoint", "[Range]")
 
 TEST_CASE ("Range skew bends the curve and still round-trips", "[Range]")
 {
-    Range range (1.0f, 1500.0f, 0.5f); // skew < 1: low end stretched
+    Range range (1.0f, 1500.0f, 0.5f); // skew < 1: mid maps high (high-end resolution); skew > 1 favors low end
 
     // endpoints unchanged by skew
     CHECK (range.convertFrom0to1 (0.0f) == Catch::Approx (1.0f).margin (1e-6));

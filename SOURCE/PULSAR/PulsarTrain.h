@@ -11,6 +11,7 @@
 #include <string>
 
 #include "../WINDOW/Window.h"
+#include "PulsarData.h"
 
 namespace rd_dsp
 {
@@ -69,6 +70,8 @@ private:
     std::unique_ptr<Wavetable> mWavetable;
     std::unique_ptr<Window> mWindow;
     std::unique_ptr<Pulsar> mPulsar;
+
+    PulsarData mPulsarData; // per-emission randomization config + draw
     
     std::atomic<float> mEmissionRate { 0.f };
     std::atomic<float> mFormantFreq { 0.f };

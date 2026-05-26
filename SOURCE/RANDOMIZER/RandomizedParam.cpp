@@ -23,7 +23,7 @@ void RandomizedParam::setDensity (float density)
 
 void RandomizedParam::setCenter (float center)
 {
-    mCenter = center;
+    mCenter.store (center, std::memory_order_relaxed);
 }
 
 float RandomizedParam::getStart() const
@@ -48,12 +48,14 @@ float RandomizedParam::getDensity() const
 
 float RandomizedParam::getCenterValue() const
 {
-    return mCenter;
+    return mCenter.load (std::memory_order_relaxed);
 }
 
 float RandomizedParam::getRandomizedValue()
 {
-    return mRandomizer.getNextRandom (mRandomizer.getStart(), mCenter, mRandomizer.getEnd());
+    return mRandomizer.getNextRandom (mRandomizer.getStart(),
+                                      mCenter.load (std::memory_order_relaxed),
+                                      mRandomizer.getEnd());
 }
 
 } // namespace rd_dsp

@@ -10,37 +10,39 @@ namespace rd_dsp
 {
 void Randomizer::setRange (float start, float end)
 {
-    mRange = Range (start, end, mRange.getSkew());
+    // keep current skew; only the bounds change
+    mStart.store (start, std::memory_order_relaxed);
+    mEnd.store (end, std::memory_order_relaxed);
 }
 
 void Randomizer::setSkew (float skew)
 {
-    mRange.setSkew (skew);
+    mSkew.store (skew, std::memory_order_relaxed);
 }
 
 float Randomizer::getStart() const
 {
-    return mRange.getStart();
+    return mStart.load (std::memory_order_relaxed);
 }
 
 float Randomizer::getEnd() const
 {
-    return mRange.getEnd();
+    return mEnd.load (std::memory_order_relaxed);
 }
 
 float Randomizer::getSkew() const
 {
-    return mRange.getSkew();
+    return mSkew.load (std::memory_order_relaxed);
 }
 
 void Randomizer::setDensity (float density)
 {
-    mDensity = std::clamp (density, 0.0f, 1.0f);
+    mDensity.store (std::clamp (density, 0.0f, 1.0f), std::memory_order_relaxed);
 }
 
 float Randomizer::getDensity() const
 {
-    return mDensity;
+    return mDensity.load (std::memory_order_relaxed);
 }
 
 float Randomizer::getNextRandom (float start, float centre, float end)
@@ -50,7 +52,7 @@ float Randomizer::getNextRandom (float start, float centre, float end)
     float nextRandomValue = centre; // default unless the density check passes
 
     // mDensity is the probability a fresh random value replaces the centre.
-    if (_getNormalizedRandom() < mDensity)
+    if (_getNormalizedRandom() < mDensity.load (std::memory_order_relaxed))
         nextRandomValue = _getRandomValueInRange();
 
     return nextRandomValue;
@@ -60,7 +62,7 @@ float Randomizer::getNextNormalizedRandom (float normalizedCentre)
 {
     float nextNormalizedValue = normalizedCentre; // default unless the gate passes
 
-    if (_getNormalizedRandom() < mDensity)
+    if (_getNormalizedRandom() < mDensity.load (std::memory_order_relaxed))
         nextNormalizedValue = _getNormalizedRandom();
 
     return nextNormalizedValue;
@@ -68,12 +70,12 @@ float Randomizer::getNextNormalizedRandom (float normalizedCentre)
 
 float Randomizer::convertTo0to1 (float worldValue) const
 {
-    return mRange.convertTo0to1 (worldValue);
+    return _makeRange().convertTo0to1 (worldValue);
 }
 
 float Randomizer::convertFrom0to1 (float normalizedValue) const
 {
-    return mRange.convertFrom0to1 (normalizedValue);
+    return _makeRange().convertFrom0to1 (normalizedValue);
 }
 
 float Randomizer::_getNormalizedRandom()
@@ -91,7 +93,14 @@ float Randomizer::_getNormalizedRandom()
 
 float Randomizer::_getRandomValueInRange()
 {
-    return mRange.convertFrom0to1 (_getNormalizedRandom());
+    return _makeRange().convertFrom0to1 (_getNormalizedRandom());
+}
+
+Range Randomizer::_makeRange() const
+{
+    return Range (mStart.load (std::memory_order_relaxed),
+                  mEnd.load   (std::memory_order_relaxed),
+                  mSkew.load  (std::memory_order_relaxed));
 }
 
 } // namespace rd_dsp

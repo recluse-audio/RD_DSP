@@ -36,6 +36,10 @@ Status legend: `[ ]` todo  `[~]` in progress  `[x]` done  `[!]` blocked
   deferred -- same thread-safety caveat as formant. Tests poke via friend for now.
 
 ## Follow-ups (carried from PulsarData task)
-- Thread-safe control surface for live random config (Randomizer holds plain
-  floats, not atomics).
+- [x] Thread-safe control surface for live random config. Randomizer fields
+  (start/end/skew/density) and RandomizedParam center are now std::atomic<float>;
+  Range rebuilt locally per draw. PulsarTrain's separate mEmissionRate/mFormantFreq
+  atomics deleted -- the set value IS the RandomizedParam center. Range/density now
+  safe to set live from the control thread. RandomizedParam/Randomizer/PulsarData
+  are non-copyable now (atomics); nothing copies them.
 - Consume wavePosition / amp draws. Pan operations (TODO(pan)).

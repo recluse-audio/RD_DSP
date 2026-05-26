@@ -6,6 +6,8 @@
 
 #include "Randomizer.h"
 
+#include <atomic>
+
 namespace rd_dsp
 {
 /**
@@ -32,7 +34,7 @@ public:
 
 private:
     Randomizer mRandomizer;
-    float mCenter = 0.0f;
+    std::atomic<float> mCenter { 0.0f }; // written from control thread, read on audio thread
 };
 
 } // namespace rd_dsp

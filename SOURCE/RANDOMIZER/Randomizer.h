@@ -6,6 +6,7 @@
 
 #include "../RANGE/Range.h"
 
+#include <atomic>
 #include <random>
 
 namespace rd_dsp
@@ -42,10 +43,16 @@ public:
     float getDensity() const;
 
 private:
-    Range mRange { 0.0f, 1.0f, 1.0f };
+    // Config is written from the control thread, read on the audio thread, so
+    // every field is atomic. The Range is rebuilt locally per draw/convert from
+    // these scalars -- it carries no shared state of its own.
+    std::atomic<float> mStart   { 0.0f };
+    std::atomic<float> mEnd     { 1.0f };
+    std::atomic<float> mSkew    { 1.0f };
+    std::atomic<float> mDensity { 1.0f };
     std::minstd_rand mRandomNumberGenerator;
-    float mDensity = 1.0f;
 
+    Range _makeRange() const;        // build a Range from the current atomic bounds/skew
     float _getNormalizedRandom();    // raw draw mapped to [0,1]
     float _getRandomValueInRange();  // [0,1] draw mapped through the range
 };

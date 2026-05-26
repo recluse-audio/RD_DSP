@@ -2,11 +2,27 @@
 """Clean BUILD/ then rebuild Tests + Standalone."""
 from __future__ import annotations
 import argparse
+import os
 import shutil
+import stat
 import subprocess
 import sys
 from pathlib import Path
 from build_complete import find_cmake, beep, repo_root
+
+
+def _on_rm_error(func, path, _exc) -> None:
+    # Windows marks git pack files read-only; rmtree's unlink then fails with
+    # WinError 5. Clear the read-only bit and retry the failed op.
+    os.chmod(path, stat.S_IWRITE)
+    func(path)
+
+
+def force_rmtree(target: Path) -> None:
+    if sys.version_info >= (3, 12):
+        shutil.rmtree(target, onexc=_on_rm_error)
+    else:
+        shutil.rmtree(target, onerror=_on_rm_error)
 
 
 def run(cmd: list[str], cwd: Path) -> None:
@@ -36,7 +52,7 @@ def main() -> int:
     build_dir = root / "BUILD"
     if build_dir.exists() and not args.no_clean:
         print(f"Removing {build_dir}")
-        shutil.rmtree(build_dir)
+        force_rmtree(build_dir)
     build_dir.mkdir(parents=True, exist_ok=True)
 
     cmake = find_cmake()

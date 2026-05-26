@@ -72,11 +72,9 @@ private:
     std::unique_ptr<Window> mWindow;
     std::unique_ptr<Pulsar> mPulsar;
 
-    PulsarData mPulsarData; // per-emission, per-pulsar randomization config + draw
-    RandomizedParam mEmissionRateRandom; // train-level: randomizes emission period
-    
-    std::atomic<float> mEmissionRate { 0.f };
-    std::atomic<float> mFormantFreq { 0.f };
+    PulsarData mPulsarData; // per-emission, per-pulsar randomization config + draw (formant freq center = the set freq)
+    RandomizedParam mEmissionRateRandom; // train-level: emission rate center = the set rate, randomizes the period
+
     std::atomic<float> mEmissionCount { 0.f }; // count towards next emission, incremented per sample
     std::atomic<float> mEmissionPeriod { 0.f }; // number to count to, only updated once per emission (not changing countdown goal mid emission)
     std::atomic<bool>  mEmissionPeriodUpdateNeeded { false };

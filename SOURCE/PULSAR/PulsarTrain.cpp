@@ -61,18 +61,18 @@ void PulsarTrain::_emitPulsar()
     mEmissionCount.store (0.f, std::memory_order_relaxed);
 
     // Emission period is recomputed every emission through its randomizer:
-    // density 0 returns the set rate unchanged; higher density varies the
-    // period within the rate range.
-    mEmissionRateRandom.setCenter (mEmissionRate.load (std::memory_order_relaxed));
+    // density 0 returns the set rate (its center) unchanged; higher density
+    // varies the period within the rate range. The center is the set rate,
+    // written by setEmissionRate.
     const float rate = mEmissionRateRandom.getRandomizedValue();
     mEmissionPeriod.store ((rate <= 0.f) ? 0.f
                                          : static_cast<float> (mSampleRate) / rate,
                            std::memory_order_relaxed);
     mEmissionPeriodUpdateNeeded.store (false, std::memory_order_relaxed);
 
-    // Formant freq runs through PulsarData: density 0 returns the center
-    // unchanged; higher density randomizes within the configured range.
-    mPulsarData.formantFreq.setCenter (mFormantFreq.load (std::memory_order_relaxed));
+    // Formant freq runs through PulsarData: density 0 returns the center (the
+    // set freq, written by setFormantFreq) unchanged; higher density randomizes
+    // within the configured range.
     const float freq = mPulsarData.resolve().formantFreq;
     const int dutyCycle = (freq <= 0.f) ? 0
                                         : static_cast<int> (static_cast<float> (mSampleRate) / freq);
@@ -83,23 +83,23 @@ void PulsarTrain::_emitPulsar()
 
 void PulsarTrain::setEmissionRate (float emissionRate) noexcept
 {
-    mEmissionRate.store (emissionRate, std::memory_order_relaxed);
+    mEmissionRateRandom.setCenter (emissionRate);
     mEmissionPeriodUpdateNeeded.store (true, std::memory_order_relaxed);
 }
 
 float PulsarTrain::getEmissionRate() const noexcept
 {
-    return mEmissionRate.load (std::memory_order_relaxed);
+    return mEmissionRateRandom.getCenterValue();
 }
 
 void PulsarTrain::setFormantFreq (float formantFreq) noexcept
 {
-    mFormantFreq.store (formantFreq, std::memory_order_relaxed);
+    mPulsarData.formantFreq.setCenter (formantFreq);
 }
 
 float PulsarTrain::getFormantFreq() const noexcept
 {
-    return mFormantFreq.load (std::memory_order_relaxed);
+    return mPulsarData.formantFreq.getCenterValue();
 }
 
 void PulsarTrain::setWavePosition (float wavePos)
@@ -142,7 +142,7 @@ void PulsarTrain::loadWavetable (std::string tablePath)
 
 void PulsarTrain::_updateEmissionPeriod() noexcept
 {
-    const float rate = mEmissionRate.load (std::memory_order_relaxed);
+    const float rate = mEmissionRateRandom.getCenterValue();
     const float period = (rate <= 0.f) ? 0.f : static_cast<float> (mSampleRate) / rate;
     mEmissionPeriod.store (period, std::memory_order_relaxed);
 }

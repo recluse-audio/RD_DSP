@@ -35,6 +35,7 @@ public:
     static int    blockSize  (const PulsarTrain& t) { return t.mBlockSize; }
 
     static RandomizedParam& emissionRateRandom (PulsarTrain& t) { return t.mEmissionRateRandom; }
+    static RandomizedParam& formantRandom (PulsarTrain& t) { return t.mPulsarData.formantFreq; }
 
     static void emit (PulsarTrain& t) { t._emitPulsar(); }
 
@@ -191,6 +192,19 @@ TEST_CASE ("PulsarTrain emission-rate random param defaults to full range, densi
     CHECK (emissionRand.getDensity() == 0.0f);
 }
 
+TEST_CASE ("PulsarTrain::setEmissionRange / setEmissionDensity move the underlying RandomizedParam", "[PulsarTrain]")
+{
+    rd_dsp::PulsarTrain train;
+    rd_dsp::RandomizedParam& emissionRand = PulsarTrainTester::emissionRateRandom (train);
+
+    train.setEmissionRange (10.f, 40.f);
+    CHECK (emissionRand.getStart() == 10.f);
+    CHECK (emissionRand.getEnd() == 40.f);
+
+    train.setEmissionDensity (0.7f);
+    CHECK (emissionRand.getDensity() == 0.7f);
+}
+
 TEST_CASE ("PulsarTrain randomized emission rate varies the period within bounds", "[PulsarTrain]")
 {
     constexpr double kSampleRate = 48000.0;
@@ -240,6 +254,48 @@ TEST_CASE ("PulsarTrain::setFormantFreq / getFormantFreq round-trip", "[PulsarTr
 
     train.setFormantFreq (rd_dsp::PulsarTrain::kMaxFormantFreq);
     CHECK (train.getFormantFreq() == rd_dsp::PulsarTrain::kMaxFormantFreq);
+}
+
+TEST_CASE ("PulsarTrain::setFormantRange / setFormantDensity move the underlying RandomizedParam", "[PulsarTrain]")
+{
+    rd_dsp::PulsarTrain train;
+    rd_dsp::RandomizedParam& formantRand = PulsarTrainTester::formantRandom (train);
+
+    train.setFormantRange (300.f, 800.f);
+    CHECK (formantRand.getStart() == 300.f);
+    CHECK (formantRand.getEnd() == 800.f);
+
+    train.setFormantDensity (0.5f);
+    CHECK (formantRand.getDensity() == 0.5f);
+}
+
+TEST_CASE ("PulsarTrain formant density 0 collapses draws to center; density 1 varies within range", "[PulsarTrain]")
+{
+    rd_dsp::PulsarTrain train;
+    rd_dsp::RandomizedParam& formantRand = PulsarTrainTester::formantRandom (train);
+
+    // density 0: every draw is the center, regardless of range
+    train.setFormantFreq (440.f);
+    train.setFormantRange (300.f, 800.f);
+    train.setFormantDensity (0.f);
+    for (int index = 0; index < 20; ++index)
+        CHECK (formantRand.getRandomizedValue() == 440.f);
+
+    // density 1: every draw is random within [min,max] and varies
+    train.setFormantDensity (1.f);
+    float firstValue = -1.f;
+    bool varied = false;
+    for (int index = 0; index < 50; ++index)
+    {
+        const float value = formantRand.getRandomizedValue();
+        CHECK (value >= 300.f);
+        CHECK (value <= 800.f);
+        if (firstValue < 0.f)
+            firstValue = value;
+        else if (value != firstValue)
+            varied = true;
+    }
+    CHECK (varied);
 }
 
 TEST_CASE ("PulsarTrain::setEmissionRate queues update; _updateEmissionPeriod computes period", "[PulsarTrain]")

@@ -92,6 +92,16 @@ float PulsarTrain::getEmissionRate() const noexcept
     return mEmissionRateRandom.getCenterValue();
 }
 
+void PulsarTrain::setEmissionRange (float minRate, float maxRate) noexcept
+{
+    mEmissionRateRandom.setRange (minRate, maxRate);
+}
+
+void PulsarTrain::setEmissionDensity (float density) noexcept
+{
+    mEmissionRateRandom.setDensity (density);
+}
+
 void PulsarTrain::setFormantFreq (float formantFreq) noexcept
 {
     mPulsarData.formantFreq.setCenter (formantFreq);
@@ -100,6 +110,16 @@ void PulsarTrain::setFormantFreq (float formantFreq) noexcept
 float PulsarTrain::getFormantFreq() const noexcept
 {
     return mPulsarData.formantFreq.getCenterValue();
+}
+
+void PulsarTrain::setFormantRange (float minFreq, float maxFreq) noexcept
+{
+    mPulsarData.formantFreq.setRange (minFreq, maxFreq);
+}
+
+void PulsarTrain::setFormantDensity (float density) noexcept
+{
+    mPulsarData.formantFreq.setDensity (density);
 }
 
 void PulsarTrain::setWavePosition (float wavePos)

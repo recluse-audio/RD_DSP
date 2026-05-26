@@ -53,8 +53,14 @@ public:
     void setEmissionRate(float emissionRate) noexcept;
     float getEmissionRate() const noexcept;
 
+    void setEmissionRange(float minRate, float maxRate) noexcept;
+    void setEmissionDensity(float density) noexcept;
+
     void setFormantFreq(float formantFreq) noexcept;
     float getFormantFreq() const noexcept;
+
+    void setFormantRange(float minFreq, float maxFreq) noexcept;
+    void setFormantDensity(float density) noexcept;
 
     void setWindowType(WindowType windowType);
 

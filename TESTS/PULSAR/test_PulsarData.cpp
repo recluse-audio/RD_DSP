@@ -13,10 +13,10 @@ TEST_CASE ("PulsarData holds four randomized params", "[PulsarData]")
 {
     PulsarData data;
 
-    CHECK (data.formantFreq.getCentre() == 0.0f);
-    CHECK (data.wavePosition.getCentre() == 0.0f);
-    CHECK (data.amp.getCentre() == 0.0f);
-    CHECK (data.pan.getCentre() == 0.0f);
+    CHECK (data.formantFreq.getCenterValue() == 0.0f);
+    CHECK (data.wavePosition.getCenterValue() == 0.0f);
+    CHECK (data.amp.getCenterValue() == 0.0f);
+    CHECK (data.pan.getCenterValue() == 0.0f);
 }
 
 TEST_CASE ("PulsarData sets default ranges and density 0 per param", "[PulsarData]")
@@ -41,13 +41,13 @@ TEST_CASE ("PulsarData sets default ranges and density 0 per param", "[PulsarDat
     CHECK (data.pan.getDensity() == 0.0f);
 }
 
-TEST_CASE ("PulsarData resolve returns centres when density 0", "[PulsarData]")
+TEST_CASE ("PulsarData resolve returns centers when density 0", "[PulsarData]")
 {
     PulsarData data; // density 0 per param by default
-    data.formantFreq.setCentre (440.0f);
-    data.wavePosition.setCentre (0.3f);
-    data.amp.setCentre (0.8f);
-    data.pan.setCentre (0.0f);
+    data.formantFreq.setCenter (440.0f);
+    data.wavePosition.setCenter (0.3f);
+    data.amp.setCenter (0.8f);
+    data.pan.setCenter (0.0f);
 
     const PulsarParamValues values = data.resolve();
     CHECK (values.formantFreq == 440.0f);

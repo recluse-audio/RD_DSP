@@ -11,6 +11,7 @@
 #include <string>
 
 #include "../WINDOW/Window.h"
+#include "../RANDOMIZER/RandomizedParam.h"
 #include "PulsarData.h"
 
 namespace rd_dsp
@@ -71,7 +72,8 @@ private:
     std::unique_ptr<Window> mWindow;
     std::unique_ptr<Pulsar> mPulsar;
 
-    PulsarData mPulsarData; // per-emission randomization config + draw
+    PulsarData mPulsarData; // per-emission, per-pulsar randomization config + draw
+    RandomizedParam mEmissionRateRandom; // train-level: randomizes emission period
     
     std::atomic<float> mEmissionRate { 0.f };
     std::atomic<float> mFormantFreq { 0.f };

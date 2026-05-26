@@ -34,6 +34,10 @@ public:
     static double sampleRate (const PulsarTrain& t) { return t.mSampleRate; }
     static int    blockSize  (const PulsarTrain& t) { return t.mBlockSize; }
 
+    static RandomizedParam& emissionRateRandom (PulsarTrain& t) { return t.mEmissionRateRandom; }
+
+    static void emit (PulsarTrain& t) { t._emitPulsar(); }
+
     static float emissionCount (const PulsarTrain& t)
     {
         return t.mEmissionCount.load (std::memory_order_relaxed);
@@ -175,6 +179,51 @@ TEST_CASE ("PulsarTrain::setEmissionRate / getEmissionRate round-trip", "[Pulsar
 
     // atomic<float> must be lock-free for real-time safety
     CHECK (std::atomic<float> {}.is_lock_free());
+}
+
+TEST_CASE ("PulsarTrain emission-rate random param defaults to full range, density 0", "[PulsarTrain]")
+{
+    rd_dsp::PulsarTrain train;
+    rd_dsp::RandomizedParam& emissionRand = PulsarTrainTester::emissionRateRandom (train);
+
+    CHECK (emissionRand.getStart() == rd_dsp::PulsarTrain::kMinEmissionRate);
+    CHECK (emissionRand.getEnd() == rd_dsp::PulsarTrain::kMaxEmissionRate);
+    CHECK (emissionRand.getDensity() == 0.0f);
+}
+
+TEST_CASE ("PulsarTrain randomized emission rate varies the period within bounds", "[PulsarTrain]")
+{
+    constexpr double kSampleRate = 48000.0;
+
+    rd_dsp::PulsarTrain train;
+    train.prepare (kSampleRate, 512);
+    train.setEmissionRate (50.f); // center; ignored when density 1 (always random)
+
+    rd_dsp::RandomizedParam& emissionRand = PulsarTrainTester::emissionRateRandom (train);
+    emissionRand.setDensity (1.0f); // always randomize the rate
+
+    // rate in [kMin,kMax] -> period in [sr/kMax, sr/kMin]
+    const float minPeriod = static_cast<float> (kSampleRate) / rd_dsp::PulsarTrain::kMaxEmissionRate;
+    const float maxPeriod = static_cast<float> (kSampleRate) / rd_dsp::PulsarTrain::kMinEmissionRate;
+
+    float firstPeriod = -1.f;
+    bool varied = false;
+
+    for (int index = 0; index < 50; ++index)
+    {
+        PulsarTrainTester::emit (train);
+        const float period = PulsarTrainTester::emissionPeriod (train);
+
+        if (firstPeriod < 0.f)
+            firstPeriod = period;
+        else if (period != firstPeriod)
+            varied = true;
+
+        CHECK (period >= minPeriod);
+        CHECK (period <= maxPeriod);
+    }
+
+    CHECK (varied);
 }
 
 TEST_CASE ("PulsarTrain::setFormantFreq / getFormantFreq round-trip", "[PulsarTrain]")

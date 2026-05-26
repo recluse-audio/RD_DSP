@@ -21,9 +21,9 @@ void RandomizedParam::setDensity (float density)
     mRandomizer.setDensity (density);
 }
 
-void RandomizedParam::setCentre (float centre)
+void RandomizedParam::setCenter (float center)
 {
-    mCentre = centre;
+    mCenter = center;
 }
 
 float RandomizedParam::getStart() const
@@ -46,14 +46,14 @@ float RandomizedParam::getDensity() const
     return mRandomizer.getDensity();
 }
 
-float RandomizedParam::getCentre() const
+float RandomizedParam::getCenterValue() const
 {
-    return mCentre;
+    return mCenter;
 }
 
-float RandomizedParam::draw()
+float RandomizedParam::getRandomizedValue()
 {
-    return mRandomizer.getNextRandom (mRandomizer.getStart(), mCentre, mRandomizer.getEnd());
+    return mRandomizer.getNextRandom (mRandomizer.getStart(), mCenter, mRandomizer.getEnd());
 }
 
 } // namespace rd_dsp

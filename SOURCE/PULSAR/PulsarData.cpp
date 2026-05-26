@@ -24,10 +24,10 @@ PulsarData::PulsarData()
 PulsarParamValues PulsarData::resolve()
 {
     PulsarParamValues values;
-    values.formantFreq = formantFreq.draw();
-    values.wavePosition = wavePosition.draw();
-    values.amp = amp.draw();
-    values.pan = pan.draw();
+    values.formantFreq = formantFreq.getRandomizedValue();
+    values.wavePosition = wavePosition.getRandomizedValue();
+    values.amp = amp.getRandomizedValue();
+    values.pan = pan.getRandomizedValue();
     return values;
 }
 

@@ -21,40 +21,40 @@ TEST_CASE ("RandomizedParam delegates range/skew/density to its randomizer", "[R
     CHECK (param.getDensity() == 0.25f);
 }
 
-TEST_CASE ("RandomizedParam stores the centre as-is (no clamp)", "[RandomizedParam]")
+TEST_CASE ("RandomizedParam stores the center as-is (no clamp)", "[RandomizedParam]")
 {
     RandomizedParam param;
     param.setRange (150.0f, 2000.0f);
 
-    param.setCentre (500.0f);
-    CHECK (param.getCentre() == 500.0f);
+    param.setCenter (500.0f);
+    CHECK (param.getCenterValue() == 500.0f);
 
-    // trust caller: a centre outside the range is kept verbatim
-    param.setCentre (5000.0f);
-    CHECK (param.getCentre() == 5000.0f);
+    // trust caller: a center outside the range is kept verbatim
+    param.setCenter (5000.0f);
+    CHECK (param.getCenterValue() == 5000.0f);
 }
 
-TEST_CASE ("RandomizedParam draw returns centre when density is 0", "[RandomizedParam]")
+TEST_CASE ("RandomizedParam getRandomizedValue returns center when density is 0", "[RandomizedParam]")
 {
     RandomizedParam param;
     param.setRange (150.0f, 2000.0f);
-    param.setCentre (500.0f);
+    param.setCenter (500.0f);
     param.setDensity (0.0f);
 
     for (int index = 0; index < 100; ++index)
-        CHECK (param.draw() == 500.0f);
+        CHECK (param.getRandomizedValue() == 500.0f);
 }
 
-TEST_CASE ("RandomizedParam draw stays within range when density is 1", "[RandomizedParam]")
+TEST_CASE ("RandomizedParam getRandomizedValue stays within range when density is 1", "[RandomizedParam]")
 {
     RandomizedParam param;
     param.setRange (150.0f, 2000.0f);
-    param.setCentre (500.0f);
+    param.setCenter (500.0f);
     param.setDensity (1.0f);
 
     for (int index = 0; index < 100; ++index)
     {
-        const float value = param.draw();
+        const float value = param.getRandomizedValue();
         CHECK (value >= 150.0f);
         CHECK (value <= 2000.0f);
     }

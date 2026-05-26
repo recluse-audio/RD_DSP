@@ -15,6 +15,8 @@ PulsarTrain::PulsarTrain()
     , mWindow (std::make_unique<Window>())
     , mPulsar (std::make_unique<Pulsar>(*mWavetable, *mWindow))
 {
+    mEmissionRateRandom.setRange (kMinEmissionRate, kMaxEmissionRate);
+    mEmissionRateRandom.setDensity (0.0f); // no randomization until dialed up
 }
 
 PulsarTrain::~PulsarTrain() = default;
@@ -56,17 +58,21 @@ void PulsarTrain::process (const float* const* readPointers, float* const* write
 
 void PulsarTrain::_emitPulsar()
 {
-    if (mEmissionPeriodUpdateNeeded.load (std::memory_order_relaxed))
-    {
-        _updateEmissionPeriod();
-        mEmissionPeriodUpdateNeeded.store (false, std::memory_order_relaxed);
-    }
-
     mEmissionCount.store (0.f, std::memory_order_relaxed);
 
-    // Formant freq runs through PulsarData: density 0 returns the centre
+    // Emission period is recomputed every emission through its randomizer:
+    // density 0 returns the set rate unchanged; higher density varies the
+    // period within the rate range.
+    mEmissionRateRandom.setCenter (mEmissionRate.load (std::memory_order_relaxed));
+    const float rate = mEmissionRateRandom.getRandomizedValue();
+    mEmissionPeriod.store ((rate <= 0.f) ? 0.f
+                                         : static_cast<float> (mSampleRate) / rate,
+                           std::memory_order_relaxed);
+    mEmissionPeriodUpdateNeeded.store (false, std::memory_order_relaxed);
+
+    // Formant freq runs through PulsarData: density 0 returns the center
     // unchanged; higher density randomizes within the configured range.
-    mPulsarData.formantFreq.setCentre (mFormantFreq.load (std::memory_order_relaxed));
+    mPulsarData.formantFreq.setCenter (mFormantFreq.load (std::memory_order_relaxed));
     const float freq = mPulsarData.resolve().formantFreq;
     const int dutyCycle = (freq <= 0.f) ? 0
                                         : static_cast<int> (static_cast<float> (mSampleRate) / freq);

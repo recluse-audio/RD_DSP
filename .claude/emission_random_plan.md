@@ -42,4 +42,12 @@ Status legend: `[ ]` todo  `[~]` in progress  `[x]` done  `[!]` blocked
   atomics deleted -- the set value IS the RandomizedParam center. Range/density now
   safe to set live from the control thread. RandomizedParam/Randomizer/PulsarData
   are non-copyable now (atomics); nothing copies them.
-- Consume wavePosition / amp draws. Pan operations (TODO(pan)).
+- [x] Consume wavePosition / amp draws.
+  - amp: PulsarData amp center defaults to 1.0 (unity); PulsarTrain set/get/range/density
+    surface; Pulsar::emit takes amp and scales its output (separate from any train gain).
+  - wavePosition: PulsarTrain set/get/range/density surface; Pulsar::emit latches the drawn
+    wavePos and pushes it to the wavetable for its render (one pulsar plays at a time).
+  - Display rate: PulsarTrain flags a redraw (mWavePosReportedToGUI) only when the emitted/
+    control wave position changes; consumeWavePositionChanged() lets the GUI regen on change
+    only, never per-emission at the emission rate. Mirrors consumePulsarFlash.
+- Pan operations (TODO(pan)).

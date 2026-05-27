@@ -5,6 +5,7 @@
 #pragma once
 #include "Waveform.h"
 
+#include <atomic>
 #include <memory>
 #include <vector>
 
@@ -44,7 +45,9 @@ public:
 
 private:
     std::vector<std::unique_ptr<Waveform>> mWaveforms;
-    float mNormalizedWavePos = 0.f;
+    // Written from the control/audio thread, read on the GUI thread (fillDisplayBuffer)
+    // and audio thread (getSampleAtIndex). Atomic to make those accesses race-free.
+    std::atomic<float> mNormalizedWavePos { 0.f };
 
     // given the mNormalizedWavePos above, what would that be when scaled to mWaveforms.size()
     float _getPositionForWavetableSize() const noexcept;

@@ -70,13 +70,26 @@ void PulsarTrain::_emitPulsar()
                            std::memory_order_relaxed);
     mEmissionPeriodUpdateNeeded.store (false, std::memory_order_relaxed);
 
-    // Formant freq runs through PulsarData: density 0 returns the center (the
-    // set freq, written by setFormantFreq) unchanged; higher density randomizes
-    // within the configured range.
-    const float freq = mPulsarData.resolve().formantFreq;
+    // Per-emission params run through PulsarData: density 0 returns each center
+    // (the set value) unchanged; higher density randomizes within the range.
+    // Drawn once here so all params resolve for this single emission.
+    const PulsarParamValues values = mPulsarData.resolve();
+
+    const float freq = values.formantFreq;
     const int dutyCycle = (freq <= 0.f) ? 0
                                         : static_cast<int> (static_cast<float> (mSampleRate) / freq);
-    mPulsar->emit (freq, dutyCycle);
+
+    // Pulsar latches the wave position and pushes it to the wavetable for its render.
+    mPulsar->emit (freq, dutyCycle, values.amp, values.wavePosition);
+
+    // Flag a display redraw only when the wave position actually changed since the
+    // last one the GUI accounted for. Density 0 keeps drawing the same center, so
+    // this stays unset and the GUI never regenerates faster than it polls.
+    if (values.wavePosition != mGuiWavePos.load (std::memory_order_relaxed))
+    {
+        mGuiWavePos.store (values.wavePosition, std::memory_order_relaxed);
+        mWavePosReportedToGUI.store (false, std::memory_order_relaxed);
+    }
 
     mPulsarReportedToGUI.store (false, std::memory_order_relaxed);
 }
@@ -122,12 +135,55 @@ void PulsarTrain::setFormantDensity (float density) noexcept
     mPulsarData.formantFreq.setDensity (density);
 }
 
+void PulsarTrain::setAmp (float amp) noexcept
+{
+    mPulsarData.amp.setCenter (amp);
+}
+
+float PulsarTrain::getAmp() const noexcept
+{
+    return mPulsarData.amp.getCenterValue();
+}
+
+void PulsarTrain::setAmpRange (float minAmp, float maxAmp) noexcept
+{
+    mPulsarData.amp.setRange (minAmp, maxAmp);
+}
+
+void PulsarTrain::setAmpDensity (float density) noexcept
+{
+    mPulsarData.amp.setDensity (density);
+}
+
 void PulsarTrain::setWavePosition (float wavePos)
 {
+    // The set position is the randomizer center; also pushed straight to the
+    // wavetable so the display reflects it even while stopped (no emission yet).
+    mPulsarData.wavePosition.setCenter (wavePos);
+
+    // Control-side change: flag a redraw so the GUI picks up the new shape.
+    mGuiWavePos.store (wavePos, std::memory_order_relaxed);
+    mWavePosReportedToGUI.store (false, std::memory_order_relaxed);
+
     if (mWavetable == nullptr)
         return;
 
     mWavetable->setNormalizedWavePosition (wavePos);
+}
+
+float PulsarTrain::getWavePosition() const noexcept
+{
+    return mPulsarData.wavePosition.getCenterValue();
+}
+
+void PulsarTrain::setWavePositionRange (float minPos, float maxPos) noexcept
+{
+    mPulsarData.wavePosition.setRange (minPos, maxPos);
+}
+
+void PulsarTrain::setWavePositionDensity (float density) noexcept
+{
+    mPulsarData.wavePosition.setDensity (density);
 }
 
 const Wavetable& PulsarTrain::getWavetable() const noexcept
@@ -198,6 +254,11 @@ bool PulsarTrain::isActive() const noexcept
 bool PulsarTrain::consumePulsarFlash() noexcept
 {
     return ! mPulsarReportedToGUI.exchange (true, std::memory_order_relaxed);
+}
+
+bool PulsarTrain::consumeWavePositionChanged() noexcept
+{
+    return ! mWavePosReportedToGUI.exchange (true, std::memory_order_relaxed);
 }
 
 

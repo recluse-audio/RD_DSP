@@ -22,6 +22,8 @@ Pulsar::Pulsar (Pulsar&& other) noexcept
 , mOscillator (std::move (other.mOscillator))
 , mWindowPos (other.mWindowPos)
 , mWindowIncrement (other.mWindowIncrement)
+, mAmp (other.mAmp)
+, mWavePos (other.mWavePos)
 , mIsActive (other.mIsActive.load (std::memory_order_relaxed))
 , mSampleRate (other.mSampleRate)
 , mDutyCycleSamples (other.mDutyCycleSamples)
@@ -52,7 +54,7 @@ float Pulsar::processSingleSample()
 
     const float windowSample = mWindow.getInterpolatedSampleAtIndex (mWindowPos);
     const float oscSample    = mOscillator->processSingleSample();
-    const float out          = oscSample * windowSample;
+    const float out          = oscSample * windowSample * mAmp;
 
     mWindowPos += mWindowIncrement;
     --mDutyCycleSamples;
@@ -66,9 +68,17 @@ float Pulsar::processSingleSample()
     return out;
 }
 
-void Pulsar::emit (float formantFreq, int dutyCycleSamples)
+void Pulsar::emit (float formantFreq, int dutyCycleSamples, float amp, float wavePos)
 {
     mWindowPos = 0.f;
+    mAmp = amp;
+
+    // Latch this emission's wave position and push it to the shared wavetable so
+    // the oscillator renders the whole duty cycle from it (only one pulsar plays
+    // at a time, so the wavetable position is this emission's for its lifetime).
+    mWavePos = wavePos;
+    mWavetable.setNormalizedWavePosition (wavePos);
+
     if(dutyCycleSamples <= 0)
         return; // something messed up, shouldn't be here
 

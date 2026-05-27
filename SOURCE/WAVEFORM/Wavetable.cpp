@@ -20,7 +20,7 @@ Wavetable::~Wavetable()
 
 void Wavetable::setNormalizedWavePosition(float normalizedWavePos)
 {
-    mNormalizedWavePos = normalizedWavePos;
+    mNormalizedWavePos.store (normalizedWavePos, std::memory_order_relaxed);
 }
 
 float Wavetable::getSampleAtIndex (float index) const noexcept
@@ -136,7 +136,7 @@ void Wavetable::fillWithBasicShapes (int numSamples)
 
 float Wavetable::_getPositionForWavetableSize() const noexcept
 {
-    float worldWavePos = (float)(mWaveforms.size()) * mNormalizedWavePos;
+    float worldWavePos = (float)(mWaveforms.size()) * mNormalizedWavePos.load (std::memory_order_relaxed);
     return worldWavePos;
 }
 

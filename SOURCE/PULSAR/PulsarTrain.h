@@ -46,7 +46,12 @@ public:
                  int numChannels, int numSamples);
 
     void loadWavetable(std::string tablePath);
+
     void setWavePosition(float wavePos);
+    float getWavePosition() const noexcept;
+
+    void setWavePositionRange(float minPos, float maxPos) noexcept;
+    void setWavePositionDensity(float density) noexcept;
 
     const Wavetable& getWavetable() const noexcept;
 
@@ -62,6 +67,12 @@ public:
     void setFormantRange(float minFreq, float maxFreq) noexcept;
     void setFormantDensity(float density) noexcept;
 
+    void setAmp(float amp) noexcept;
+    float getAmp() const noexcept;
+
+    void setAmpRange(float minAmp, float maxAmp) noexcept;
+    void setAmpDensity(float density) noexcept;
+
     void setWindowType(WindowType windowType);
 
     void start();
@@ -70,6 +81,11 @@ public:
     bool isActive() const noexcept;
 
     bool consumePulsarFlash() noexcept;
+
+    // True once if the emitted (or control-set) wave position changed since the
+    // last call -- lets the GUI regenerate the displayed waveform only on change,
+    // never per-emission. Mirrors consumePulsarFlash.
+    bool consumeWavePositionChanged() noexcept;
 
 private:
     friend class PulsarTrainTester;
@@ -86,6 +102,8 @@ private:
     std::atomic<bool>  mEmissionPeriodUpdateNeeded { false };
     std::atomic<bool>  mIsRunning { false };
     std::atomic<bool>  mPulsarReportedToGUI { true }; // true = current pulsar already drawn
+    std::atomic<bool>  mWavePosReportedToGUI { true }; // true = displayed wave position is current
+    std::atomic<float> mGuiWavePos { 0.f }; // last wave position accounted for in the redraw flag
 
 
     double mSampleRate = 48000.0;

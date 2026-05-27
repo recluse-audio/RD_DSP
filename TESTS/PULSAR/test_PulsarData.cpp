@@ -15,7 +15,7 @@ TEST_CASE ("PulsarData holds four randomized params", "[PulsarData]")
 
     CHECK (data.formantFreq.getCenterValue() == 0.0f);
     CHECK (data.wavePosition.getCenterValue() == 0.0f);
-    CHECK (data.amp.getCenterValue() == 0.0f);
+    CHECK (data.amp.getCenterValue() == 1.0f); // unity default: unrandomized pulsar = full amp
     CHECK (data.pan.getCenterValue() == 0.0f);
 }
 

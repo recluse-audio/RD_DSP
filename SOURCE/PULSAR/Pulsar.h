@@ -37,7 +37,10 @@ public:
     float processSingleSample();
 
     // with no width the dutyCycleSamples = 2x the freq converted to period in samples
-    void emit(float formantFreq, int dutyCycleSamples);
+    // amp scales this emission's output; unity by default (separate from any train-level gain)
+    // wavePos is this emission's normalized wavetable position, latched and pushed
+    // to the wavetable so the duty-cycle render reads from it
+    void emit(float formantFreq, int dutyCycleSamples, float amp = 1.0f, float wavePos = 0.0f);
 
     bool isActive() const noexcept;
 
@@ -50,6 +53,8 @@ private:
 
     float mWindowPos = 0.f;
     float mWindowIncrement = 0.f;
+    float mAmp = 1.f; // this emission's amplitude scalar, set on emit
+    float mWavePos = 0.f; // this emission's normalized wavetable position, latched on emit
 
     std::atomic<bool> mIsActive { false };
     double mSampleRate = 44100;

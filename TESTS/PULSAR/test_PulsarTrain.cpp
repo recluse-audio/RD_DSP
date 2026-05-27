@@ -36,6 +36,8 @@ public:
 
     static RandomizedParam& emissionRateRandom (PulsarTrain& t) { return t.mEmissionRateRandom; }
     static RandomizedParam& formantRandom (PulsarTrain& t) { return t.mPulsarData.formantFreq; }
+    static RandomizedParam& wavePositionRandom (PulsarTrain& t) { return t.mPulsarData.wavePosition; }
+    static RandomizedParam& ampRandom (PulsarTrain& t) { return t.mPulsarData.amp; }
 
     static void emit (PulsarTrain& t) { t._emitPulsar(); }
 
@@ -374,6 +376,188 @@ TEST_CASE ("PulsarTrain::setWavePosition does not crash", "[PulsarTrain]")
     train.setWavePosition (0.5f);
     train.setWavePosition (1.0f);
     SUCCEED();
+}
+
+TEST_CASE ("PulsarTrain::setWavePosition / getWavePosition round-trip the center", "[PulsarTrain]")
+{
+    rd_dsp::PulsarTrain train;
+
+    CHECK (train.getWavePosition() == 0.f);
+
+    train.setWavePosition (0.3f);
+    CHECK (train.getWavePosition() == 0.3f);
+
+    train.setWavePosition (1.f);
+    CHECK (train.getWavePosition() == 1.f);
+}
+
+TEST_CASE ("PulsarTrain wave-position random param defaults to full range, density 0", "[PulsarTrain]")
+{
+    rd_dsp::PulsarTrain train;
+    rd_dsp::RandomizedParam& wavePosRand = PulsarTrainTester::wavePositionRandom (train);
+
+    CHECK (wavePosRand.getStart() == 0.f);
+    CHECK (wavePosRand.getEnd() == 1.f);
+    CHECK (wavePosRand.getDensity() == 0.f);
+}
+
+TEST_CASE ("PulsarTrain::setWavePositionRange / setWavePositionDensity move the underlying RandomizedParam", "[PulsarTrain]")
+{
+    rd_dsp::PulsarTrain train;
+    rd_dsp::RandomizedParam& wavePosRand = PulsarTrainTester::wavePositionRandom (train);
+
+    train.setWavePositionRange (0.2f, 0.8f);
+    CHECK (wavePosRand.getStart() == 0.2f);
+    CHECK (wavePosRand.getEnd() == 0.8f);
+
+    train.setWavePositionDensity (0.6f);
+    CHECK (wavePosRand.getDensity() == 0.6f);
+}
+
+TEST_CASE ("PulsarTrain _emitPulsar applies the drawn wave position to the wavetable", "[PulsarTrain]")
+{
+    rd_dsp::PulsarTrain train;
+    train.prepare (48000.0, 512);
+
+    const std::string tablePath =
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/BASIC_TABLE/GOLDEN_BASIC_WAVEFORM_TABLE_8096.csv";
+    train.loadWavetable (tablePath);
+
+    rd_dsp::RandomizedParam& wavePosRand = PulsarTrainTester::wavePositionRandom (train);
+    rd_dsp::Wavetable& wt = PulsarTrainTester::wavetable (train);
+
+    constexpr int kDisplaySize = 128;
+
+    // Set the center directly on the param (bypassing setWavePosition's own
+    // wavetable push) so the only thing that can move the wavetable is _emitPulsar.
+    wavePosRand.setCenter (0.f); // density 0 -> draw is the center
+    PulsarTrainTester::emit (train);
+    std::vector<float> bufA (kDisplaySize, 0.f);
+    wt.fillDisplayBuffer (bufA.data(), kDisplaySize);
+
+    wavePosRand.setCenter (1.f);
+    PulsarTrainTester::emit (train);
+    std::vector<float> bufB (kDisplaySize, 0.f);
+    wt.fillDisplayBuffer (bufB.data(), kDisplaySize);
+
+    bool anyDiff = false;
+    for (int i = 0; i < kDisplaySize; ++i)
+        if (bufA[i] != bufB[i]) { anyDiff = true; break; }
+
+    CHECK (anyDiff);
+}
+
+TEST_CASE ("PulsarTrain::consumeWavePositionChanged flags a redraw only when the wave position changes", "[PulsarTrain]")
+{
+    rd_dsp::PulsarTrain train;
+    train.prepare (48000.0, 512);
+
+    // Fresh: displayed position is current, nothing to redraw (matches flash semantics).
+    CHECK (train.consumeWavePositionChanged() == false);
+
+    // Control change flags a redraw, consumed exactly once.
+    train.setWavePosition (0.5f);
+    CHECK (train.consumeWavePositionChanged() == true);
+    CHECK (train.consumeWavePositionChanged() == false);
+
+    rd_dsp::RandomizedParam& wavePosRand = PulsarTrainTester::wavePositionRandom (train);
+
+    // Density 0: every emission draws the same center -> no change -> no redraw.
+    wavePosRand.setDensity (0.f); // center already 0.5 from setWavePosition
+    PulsarTrainTester::emit (train);
+    CHECK (train.consumeWavePositionChanged() == false);
+
+    // Density 1: emitted position varies -> at least one emission flags a redraw.
+    wavePosRand.setDensity (1.f);
+    bool flagged = false;
+    for (int i = 0; i < 50; ++i)
+    {
+        PulsarTrainTester::emit (train);
+        if (train.consumeWavePositionChanged())
+        {
+            flagged = true;
+            break;
+        }
+    }
+    CHECK (flagged);
+}
+
+TEST_CASE ("PulsarTrain amp random param defaults to unity center, full range, density 0", "[PulsarTrain]")
+{
+    rd_dsp::PulsarTrain train;
+    rd_dsp::RandomizedParam& ampRand = PulsarTrainTester::ampRandom (train);
+
+    CHECK (ampRand.getCenterValue() == 1.f); // unity by default: unset amp = full output
+    CHECK (ampRand.getStart() == 0.f);
+    CHECK (ampRand.getEnd() == 1.f);
+    CHECK (ampRand.getDensity() == 0.f);
+}
+
+TEST_CASE ("PulsarTrain::setAmp / getAmp round-trip the center", "[PulsarTrain]")
+{
+    rd_dsp::PulsarTrain train;
+
+    CHECK (train.getAmp() == 1.f);
+
+    train.setAmp (0.5f);
+    CHECK (train.getAmp() == 0.5f);
+
+    train.setAmp (0.f);
+    CHECK (train.getAmp() == 0.f);
+}
+
+TEST_CASE ("PulsarTrain::setAmpRange / setAmpDensity move the underlying RandomizedParam", "[PulsarTrain]")
+{
+    rd_dsp::PulsarTrain train;
+    rd_dsp::RandomizedParam& ampRand = PulsarTrainTester::ampRandom (train);
+
+    train.setAmpRange (0.25f, 0.75f);
+    CHECK (ampRand.getStart() == 0.25f);
+    CHECK (ampRand.getEnd() == 0.75f);
+
+    train.setAmpDensity (0.4f);
+    CHECK (ampRand.getDensity() == 0.4f);
+}
+
+TEST_CASE ("PulsarTrain amp scales emission output by the drawn value", "[PulsarTrain]")
+{
+    constexpr double kSampleRate     = 48000.0;
+    constexpr int    kBlockSize      = 512;
+    constexpr float  kEmissionRate   = 100.f;   // period = 480 samples
+    constexpr float  kFormantFreq    = 200.f;   // one cycle = 240 samples
+    constexpr int    kCycleSamples   = 240;
+    constexpr float  kAmp            = 0.5f;
+    constexpr float  kMargin         = 1e-4f;
+
+    rd_dsp::PulsarTrain train;
+    train.prepare (kSampleRate, kBlockSize);
+
+    const std::string tablePath =
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/BASIC_TABLE/GOLDEN_BASIC_WAVEFORM_TABLE_8096.csv";
+    train.loadWavetable (tablePath);
+    train.setWavePosition (0.f);                       // sine slot
+    train.setWindowType  (rd_dsp::WindowType::kNone);  // all-ones window
+    train.setEmissionRate (kEmissionRate);
+    train.setFormantFreq  (kFormantFreq);
+    train.setAmp          (kAmp);                      // density 0 -> every draw is 0.5
+    train.start();
+
+    std::vector<float> outL (kCycleSamples, 0.f);
+    float* writes[1] = { outL.data() };
+    train.process (nullptr, writes, 1, kCycleSamples);
+
+    // Reference oscillator on the same wavetable, unscaled; expect output == ref * amp.
+    rd_dsp::Oscillator refOsc (PulsarTrainTester::wavetable (train));
+    refOsc.prepare (kSampleRate, kBlockSize);
+    refOsc.setFreq (kFormantFreq);
+    refOsc.start();
+
+    std::vector<float> expected (kCycleSamples, 0.f);
+    float* expWrites[1] = { expected.data() };
+    refOsc.process (nullptr, expWrites, 1, kCycleSamples);
+
+    for (int i = 0; i < kCycleSamples; ++i)
+        CHECK (outL[i] == Catch::Approx (expected[i] * kAmp).margin (kMargin));
 }
 
 TEST_CASE ("PulsarTrain end-to-end: one 200Hz sine cycle then zeros within emission period", "[PulsarTrain]""[E2E]")

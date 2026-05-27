@@ -16,6 +16,7 @@ PulsarData::PulsarData()
 
     amp.setRange (0.0f, 1.0f);
     amp.setDensity (0.0f);
+    amp.setCenter (1.0f); // unity by default: an unrandomized pulsar plays at full amp
 
     pan.setRange (-1.0f, 1.0f);
     pan.setDensity (0.0f);

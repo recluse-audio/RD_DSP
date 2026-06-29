@@ -1,0 +1,8 @@
+#+TITLE: README
+#+AUTHOR: Ryan Devens
+#+DATE: 2026-06-25 21:07
+#+OPTIONS: toc:nil num:nil
+SUMMARY: This is a C++ DSP library with minimal external dependencies
+
+This is ported from much of my work done in JUCE.
+Building for web assembly necessitated this.

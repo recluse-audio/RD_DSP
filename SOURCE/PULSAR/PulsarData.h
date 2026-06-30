@@ -9,8 +9,7 @@
 namespace rd_dsp
 {
 /**
- * One emission's resolved (drawn) parameter values. Pan is carried but its
- * operations are not wired yet (TODO).
+ * This captures the potential parameter values of one pulsar emission
  */
 struct PulsarParamValues
 {

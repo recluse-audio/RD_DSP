@@ -1,0 +1,6 @@
+[submodule "SUBMODULES/nlohmann_json"]
+	path = SUBMODULES/nlohmann_json
+	url = https://github.com/nlohmann/json.git
+[submodule "SUBMODULES/rapidcsv"]
+	path = SUBMODULES/rapidcsv
+	url = https://github.com/d99kris/rapidcsv.git

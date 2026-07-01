@@ -60,14 +60,9 @@ void PulsarTrain::_emitPulsar()
 {
     mEmissionCount.store (0.f, std::memory_order_relaxed);
 
-    // Emission period is recomputed every emission through its randomizer:
-    // density 0 returns the set rate (its center) unchanged; higher density
-    // varies the period within the rate range. The center is the set rate,
-    // written by setEmissionRate.
+    // period is updated each emission - changed by randomization and param change
     const float rate = mEmissionRateRandom.getRandomizedValue();
-    mEmissionPeriod.store ((rate <= 0.f) ? 0.f
-                                         : static_cast<float> (mSampleRate) / rate,
-                           std::memory_order_relaxed);
+    mEmissionPeriod.store ((rate <= 0.f) ? 0.f : static_cast<float> (mSampleRate) / rate, std::memory_order_relaxed);
     mEmissionPeriodUpdateNeeded.store (false, std::memory_order_relaxed);
 
     // Per-emission params run through PulsarData: density 0 returns each center
@@ -76,8 +71,7 @@ void PulsarTrain::_emitPulsar()
     const PulsarParamValues values = mPulsarData.resolve();
 
     const float freq = values.formantFreq;
-    const int dutyCycle = (freq <= 0.f) ? 0
-                                        : static_cast<int> (static_cast<float> (mSampleRate) / freq);
+    const int dutyCycle = (freq <= 0.f) ? 0 : static_cast<int> (static_cast<float> (mSampleRate) / freq);
 
     // Pulsar latches the wave position and pushes it to the wavetable for its render.
     mPulsar->emit (freq, dutyCycle, values.amp, values.wavePosition);

@@ -1,0 +1,22 @@
+#+TITLE: PULSARTRAIN_LOADWAVETABLE_FROMCSV
+#+AUTHOR: Ryan Devens
+#+DATE: 2026-07-01 14:12
+#+OPTIONS: toc:nil num:nil
+#+SUMMARY: This documents my plan as well as progress in loading Wavetables from CSV files.
+
+* Current State
+It has been a while since I worked on this DSP.
+I think I paused because I felt I needed a wave maker first.
+- Appears I can load from CSV already / have test coverage
+- Not implemented in ~PulsarTrain~
+  - this means not in ~Pulsarello~ i.e. the website either
+- Limited to default basic waveshapes.
+
+* Desired State
+I want to make waveforms and load them into ~Pulsarello~ and future synths
+
+
+
+* Plan
+
+** Questions

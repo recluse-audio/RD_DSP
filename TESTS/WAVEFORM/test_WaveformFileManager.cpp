@@ -201,3 +201,25 @@ TEST_CASE("Can write single waveform to CSV" )
     REQUIRE(csvWaveform.getNumSamples() == waveform.getNumSamples());
 
 }
+
+TEST_CASE("Can create csv row aka vector of doubles from waveform amp values" "[write_waveforms]" )
+{
+    int numSamples = 8192;
+    rd_dsp::Waveform waveform;
+    waveform.setSize(8192);
+    waveform.setWaveType(rd_dsp::Waveform::WaveType::wSine);
+
+    // declare vector of doubles same num samples as waveform
+    std::vector<double> row(8192);
+
+    // fill row with sample values (hopefully)
+    rd_dsp::WaveformFileManager::fillRowFromWaveform(waveform, row);
+
+    // check them, expecting the same values
+    for(int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++)
+    {
+        auto waveformSample = waveform.getSample(sampleIndex);
+        auto rowSample = row[sampleIndex];
+        REQUIRE(waveformSample == rowSample);
+    }
+}

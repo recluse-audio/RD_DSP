@@ -2,6 +2,7 @@
 """Configure and build the Catch2 Tests target."""
 from __future__ import annotations
 import argparse
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -12,6 +13,19 @@ def run(cmd: list[str], cwd: Path) -> None:
     print("+", " ".join(cmd))
     subprocess.run(cmd, cwd=str(cwd), check=True)
 
+def clean_output_dirs(root: Path) -> None:
+    """Delete contents of every TESTS/**/OUTPUT dir, skipping any under a GOLDEN dir."""
+    for output_dir in (root / "TESTS").rglob("OUTPUT"):
+        if not output_dir.is_dir():
+            continue
+        if "GOLDEN" in output_dir.relative_to(root).parts:
+            continue
+        for entry in output_dir.iterdir():
+            if entry.is_dir():
+                shutil.rmtree(entry)
+            else:
+                entry.unlink()
+        print(f"cleaned {output_dir.relative_to(root)}")
 
 def regen() -> None:
     script = Path(__file__).parent / "regenSource.py"
@@ -52,6 +66,7 @@ def main() -> int:
         run(build_cmd, cwd=root)
 
         if args.run:
+            clean_output_dirs(root)
             exe = build_dir / ("Tests.exe" if sys.platform.startswith("win") else "Tests")
             if sys.platform.startswith("win") and not exe.exists():
                 exe = build_dir / args.config / "Tests.exe"

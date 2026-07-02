@@ -73,7 +73,27 @@ public:
     //
     static void writeWaveformToCSV(const rd_dsp::Waveform& waveform, const std::string& csvPath)
     {
+        // args mean "no path (yet)" and no column / row labels
+        rapidcsv::Document waveformDoc("", rapidcsv::LabelParams(-1, -1));
 
+        int numSamples = waveform.getNumSamples();
+
+        // create row of double vals which will be inserted into csv
+        std::vector<double> row(numSamples);
+
+        fillRowFromWaveform(waveform, row);
+
+        waveformDoc.SetRow<double>(0, row);
+        waveformDoc.Save(csvPath);
+    }
+
+    static void fillRowFromWaveform(const rd_dsp::Waveform& waveform, std::vector<double>& row)
+    {
+        for(int sampleIndex = 0; sampleIndex < waveform.getNumSamples(); sampleIndex++)
+        {
+            auto sampleToWrite = waveform.getSample(sampleIndex);
+            row[sampleIndex] = sampleToWrite;
+        }
     }
 
 private:

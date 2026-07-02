@@ -16,6 +16,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set_property(GLOBAL PROPERTY USE_FOLDERS YES)
 
+# Turn off tests built in to submodules
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+set(RAPIDCSV_BUILD_TESTS OFF CACHE INTERNAL "")
+
 # Options — default ON when top-level, OFF when embedded as subdirectory
 if(PROJECT_IS_TOP_LEVEL)
     set(_rd_dsp_default ON)
@@ -43,6 +47,14 @@ include(CMAKE/SOURCES.cmake)
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
 
+add_subdirectory(SUBMODULES/nlohmann_json/)
+add_subdirectory(SUBMODULES/rapidcsv/)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE
+  nlohmann_json::nlohmann_json
+  rapidcsv
+)
+
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/SOURCE
 )
@@ -67,7 +79,11 @@ endif()
 # ---------------------------------------------------------------------------
 if(RD_DSP_BUILD_STANDALONE)
     add_executable(RD_DSP_Standalone STANDALONE/main.cpp)
-    target_link_libraries(RD_DSP_Standalone PRIVATE ${PROJECT_NAME})
+    target_link_libraries(RD_DSP_Standalone PRIVATE
+      ${PROJECT_NAME}
+      nlohmann_json::nlohmann_json
+      rapidcsv
+    )
 endif()
 
 # ---------------------------------------------------------------------------
@@ -84,7 +100,12 @@ if(RD_DSP_BUILD_TESTS)
 
     include(CMAKE/TESTS.cmake)
     add_executable(Tests ${TEST_SOURCES})
-    target_link_libraries(Tests PRIVATE ${PROJECT_NAME} Catch2::Catch2)
+    target_link_libraries(Tests PRIVATE
+      ${PROJECT_NAME}
+      Catch2::Catch2
+      nlohmann_json::nlohmann_json
+      rapidcsv
+    )
     target_include_directories(Tests PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/SOURCE
         ${CMAKE_CURRENT_SOURCE_DIR}/TESTS

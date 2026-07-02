@@ -28,6 +28,7 @@ set(SOURCES
     SOURCE/WAVEFORM/WaveFactory.h
     SOURCE/WAVEFORM/Waveform.cpp
     SOURCE/WAVEFORM/Waveform.h
+    SOURCE/WAVEFORM/WaveformFileManager.h
     SOURCE/WAVEFORM/Wavetable.cpp
     SOURCE/WAVEFORM/Wavetable.h
     SOURCE/WINDOW/Window.cpp

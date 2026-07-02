@@ -17,6 +17,7 @@
 #define RD_DSP_TESTS_DIR "."
 #endif
 
+
 TEST_CASE("WaveFactory loads golden sine CSV and samples match golden file", "[WaveFactory]")
 {
     constexpr int numSamples = 8096;

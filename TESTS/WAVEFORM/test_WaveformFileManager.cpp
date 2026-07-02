@@ -223,3 +223,16 @@ TEST_CASE("Can create csv row aka vector of doubles from waveform amp values" "[
         REQUIRE(waveformSample == rowSample);
     }
 }
+
+TEST_CASE("Can load Wavetable from multi-row csv" "[Wavetable][CSV]")
+{
+    rd_dsp::Wavetable wavetable;
+    wavetable.clear();
+    REQUIRE(wavetable.getNumWaveforms() == 0);
+
+    const std::string goldenTablePath =
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/BASIC_TABLE/GOLDEN_BASIC_WAVEFORM_TABLE_8192.csv";
+
+
+
+}

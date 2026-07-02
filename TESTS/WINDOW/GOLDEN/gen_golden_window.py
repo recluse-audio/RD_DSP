@@ -60,7 +60,7 @@ def write_row(path: Path, values: list[float]) -> None:
 
 
 def main() -> None:
-    sizes = (8096,)
+    sizes = (8192,)
     for n in sizes:
         none_path = OUTPUT_DIR / "NONE" / f"GOLDEN_WINDOW_NONE_{n}.csv"
         han_path  = OUTPUT_DIR / "HANNING" / f"GOLDEN_WINDOW_HANNING_{n}.csv"

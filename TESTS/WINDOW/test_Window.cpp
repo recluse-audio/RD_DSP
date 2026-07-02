@@ -139,25 +139,25 @@ TEST_CASE ("Window::getInterpolatedSampleAtIndex returns exact sample at integer
                == Catch::Approx (window.getSample (i)).margin (1e-6));
 }
 
-TEST_CASE ("Window none fill matches golden CSV exactly at N=8096", "[Window]")
+TEST_CASE ("Window none fill matches golden CSV exactly at N=8192", "[Window]")
 {
     verifyWindowAgainstGolden (rd_dsp::Window::Shape::kNone,
-                               "/WINDOW/GOLDEN/NONE/GOLDEN_WINDOW_NONE_8096.csv",
-                               8096);
+                               "/WINDOW/GOLDEN/NONE/GOLDEN_WINDOW_NONE_8192.csv",
+                               8192);
 }
 
-TEST_CASE ("Window hanning fill matches golden CSV exactly at N=8096", "[Window]")
+TEST_CASE ("Window hanning fill matches golden CSV exactly at N=8192", "[Window]")
 {
     verifyWindowAgainstGolden (rd_dsp::Window::Shape::kHanning,
-                               "/WINDOW/GOLDEN/HANNING/GOLDEN_WINDOW_HANNING_8096.csv",
-                               8096);
+                               "/WINDOW/GOLDEN/HANNING/GOLDEN_WINDOW_HANNING_8192.csv",
+                               8192);
 }
 
-TEST_CASE ("Window tukey fill matches golden CSV exactly at N=8096", "[Window]")
+TEST_CASE ("Window tukey fill matches golden CSV exactly at N=8192", "[Window]")
 {
     verifyWindowAgainstGolden (rd_dsp::Window::Shape::kTukey,
-                               "/WINDOW/GOLDEN/TUKEY/GOLDEN_WINDOW_TUKEY_8096.csv",
-                               8096);
+                               "/WINDOW/GOLDEN/TUKEY/GOLDEN_WINDOW_TUKEY_8192.csv",
+                               8192);
 }
 
 TEST_CASE ("Window::getInterpolatedSampleAtIndex linearly interpolates between samples", "[Window]")

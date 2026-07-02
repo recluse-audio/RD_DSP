@@ -55,7 +55,7 @@ def write_golden_triangle_table(num_samples: int, num_waves: int) -> Path:
 
 
 def main() -> None:
-    for sample_num in (8096,):
+    for sample_num in (8192,):
         path = write_golden_triangle_table(sample_num, NUM_WAVES)
         print(f"Wrote {path}")
 

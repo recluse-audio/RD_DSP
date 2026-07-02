@@ -20,10 +20,10 @@
 
 TEST_CASE("WaveFactory loads golden sine CSV and samples match golden file", "[WaveFactory]")
 {
-    constexpr int numSamples = 8096;
+    constexpr int numSamples = 8192;
 
     const std::string goldenPath =
-        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/SINE/GOLDEN_SINE_8096.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/SINE/GOLDEN_SINE_8192.csv";
 
     rd_dsp::WaveFactory factory;
     auto wave = factory.loadWaveformFromCSV (goldenPath);
@@ -51,14 +51,14 @@ TEST_CASE("WaveFactory loads golden sine CSV and samples match golden file", "[W
 
 TEST_CASE("WaveFactory loads basic waveform table; wavePos=0 returns sine row", "[WaveFactory]")
 {
-    constexpr int numSamples = 8096;
+    constexpr int numSamples = 8192;
     constexpr int numWaves = 4;
 
     const std::string goldenPath =
-        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/BASIC_TABLE/GOLDEN_BASIC_WAVEFORM_TABLE_8096.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/BASIC_TABLE/GOLDEN_BASIC_WAVEFORM_TABLE_8192.csv";
 
     const std::string goldenSineWaveformPath =
-        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/SINE/GOLDEN_SINE_8096.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/SINE/GOLDEN_SINE_8192.csv";
     
     rd_dsp::WaveFactory factory;
     auto table = factory.loadWavetableFromCSV (goldenPath);
@@ -92,7 +92,7 @@ TEST_CASE("WaveFactory loads basic waveform table; wavePos=0 returns sine row", 
     //=====================================
     // Basic Table at 0.25 is a triangle (world wavePos = 1), should match golden triangle
     const std::string goldenTriWaveformPath =
-        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/TRIANGLE/GOLDEN_TRIANGLE_8096.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/TRIANGLE/GOLDEN_TRIANGLE_8192.csv";
 
     auto triWaveform = factory.loadWaveformFromCSV (goldenTriWaveformPath);
     table->setNormalizedWavePosition (0.25f);
@@ -109,7 +109,7 @@ TEST_CASE("WaveFactory loads basic waveform table; wavePos=0 returns sine row", 
     //=====================================
     // Basic Table at 0.5 is a square (world wavePos = 2), should match golden square
     const std::string goldenSquareWaveformPath =
-        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/SQUARE/GOLDEN_SQUARE_8096.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/SQUARE/GOLDEN_SQUARE_8192.csv";
 
     auto squareWaveform = factory.loadWaveformFromCSV (goldenSquareWaveformPath);
     table->setNormalizedWavePosition (0.5f);
@@ -126,7 +126,7 @@ TEST_CASE("WaveFactory loads basic waveform table; wavePos=0 returns sine row", 
     //=====================================
     // Basic Table at 0.75 is a saw (world wavePos = 3), should match golden saw
     const std::string goldenSawWaveformPath =
-        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/SAW/GOLDEN_SAW_8096.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/SAW/GOLDEN_SAW_8192.csv";
 
     auto sawWaveform = factory.loadWaveformFromCSV (goldenSawWaveformPath);
     table->setNormalizedWavePosition (0.75f);

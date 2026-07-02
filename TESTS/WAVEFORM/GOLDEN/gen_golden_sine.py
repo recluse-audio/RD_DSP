@@ -28,7 +28,7 @@ def write_golden_sine(num_samples: int) -> Path:
 
 
 def main() -> None:
-    for n in (8096,):
+    for n in (8192,):
         path = write_golden_sine(n)
         print(f"Wrote {path}")
 

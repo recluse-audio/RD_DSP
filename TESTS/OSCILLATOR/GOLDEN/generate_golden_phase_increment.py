@@ -19,7 +19,7 @@ Usage:
 
     # override:
     python TESTS/OSCILLATOR/GOLDEN/generate_golden_phase_increment.py \
-        --freq 441 --sample-rate 44100 --waveform-size 8096
+        --freq 441 --sample-rate 44100 --waveform-size 8192
 """
 from __future__ import annotations
 
@@ -29,7 +29,7 @@ from pathlib import Path
 SCRIPT_DIR = Path(__file__).resolve().parent
 OUTPUT_DIR = SCRIPT_DIR / "PHASE_INCREMENT"
 
-DEFAULT_WAVEFORM_SIZE = 8096
+DEFAULT_WAVEFORM_SIZE = 8192
 
 # (freq_hz, sample_rate_hz)
 DEFAULT_CASES: list[tuple[float, float]] = [

@@ -45,7 +45,7 @@ def write_golden_saw(num_samples: int) -> Path:
 
 
 def main() -> None:
-    for n in (8096,):
+    for n in (8192,):
         path = write_golden_saw(n)
         print(f"Wrote {path}")
 

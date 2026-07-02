@@ -72,7 +72,7 @@ def write_basic_table(num_samples: int) -> Path:
 
 
 def main() -> None:
-    for n in (8096,):
+    for n in (8192,):
         path = write_basic_table(n)
         print(f"Wrote {path}")
 

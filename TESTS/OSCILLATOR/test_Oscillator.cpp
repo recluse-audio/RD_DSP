@@ -149,7 +149,7 @@ TEST_CASE ("Oscillator::prepare after setFreq updates phase increment for new sa
 TEST_CASE ("Oscillator::_calculatePhaseIncrement matches golden CSV", "[Oscillator]")
 {
     const std::string csvPath =
-        std::string (RD_DSP_TESTS_DIR) + "/OSCILLATOR/GOLDEN/PHASE_INCREMENT/GOLDEN_PHASE_INCREMENT_8096.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/OSCILLATOR/GOLDEN/PHASE_INCREMENT/GOLDEN_PHASE_INCREMENT_8192.csv";
 
     std::ifstream in (csvPath);
     REQUIRE (in.is_open());
@@ -386,9 +386,9 @@ TEST_CASE ("Oscillator process across freq changes matches golden CSVs (441 -> 6
 
     const ProcessBlockCall processBlockCalls[] =
     {
-        { 441.f, 80.96f, 100, "GOLDEN_OSC_SINE_441Hz_44100SR.csv" },
-        { 663.f, 121.71542f, 67, "GOLDEN_OSC_SINE_663Hz_44100SR.csv" },
-        { 882.f, 161.92f, 50, "GOLDEN_OSC_SINE_882Hz_44100SR.csv" },
+        { 441.f, 81.92f, 100, "GOLDEN_OSC_SINE_441Hz_44100SR.csv" },
+        { 663.f, 123.15864f, 67, "GOLDEN_OSC_SINE_663Hz_44100SR.csv" },
+        { 882.f, 163.84f, 50, "GOLDEN_OSC_SINE_882Hz_44100SR.csv" },
     };
 
     constexpr int    processBlockSize = 32;

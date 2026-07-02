@@ -5,7 +5,7 @@ namespace rd_dsp
 
 namespace
 {
-    constexpr int kDefaultWaveformSize = 8096;
+    constexpr int kDefaultWaveformSize = 8192;
 }
 
 Wavetable::Wavetable()

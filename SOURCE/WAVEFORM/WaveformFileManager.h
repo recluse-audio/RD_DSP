@@ -29,14 +29,13 @@ public:
         waveTable.clear();
         rapidcsv::Document waveCSV(csvPath, rapidcsv::LabelParams(-1, -1));
         std::size_t numWaveforms = waveCSV.GetRowCount();
-        std::size_t numSamples = waveCSV.GetColumnCount();
 
         // iterate through rows from csv and make a waveform for each
         for(std::size_t index = 0; index < numWaveforms; index++)
         {
             std::vector<double> sampleRow = waveCSV.GetRow<double>(index);
-            auto waveform = getWaveformFromRow(sampleRow);
-            if(waveform.get() == nullptr)
+            auto waveform = std::make_unique<rd_dsp::Waveform>();
+            if(!fillFromRow(*waveform, sampleRow))
                 break;
             waveTable.addWaveform(std::move(waveform));
         }
@@ -44,31 +43,31 @@ public:
 
     }
 
-    // this is destructive to contents of wavetable, overwrites
-    static std::unique_ptr<rd_dsp::Waveform> loadWaveformFromCSV(const std::string& csvPath)
+    // this is destructive to contents of waveform, overwrites
+    static bool fillFromCSV(rd_dsp::Waveform& waveform, const std::string& csvPath)
     {
         rapidcsv::Document waveCSV(csvPath, rapidcsv::LabelParams(-1, -1));
         std::size_t numWaveforms = waveCSV.GetRowCount();
         if(numWaveforms == 0)
-            return nullptr;
+            return false;
 
         std::vector<double> sampleRow = waveCSV.GetRow<double>(0);
-        return getWaveformFromRow(sampleRow);
+        return fillFromRow(waveform, sampleRow);
     }
 
-    static std::unique_ptr<rd_dsp::Waveform> getWaveformFromRow(const std::vector<double>& samples )
+    // this is destructive to contents of waveform, overwrites
+    static bool fillFromRow(rd_dsp::Waveform& waveform, const std::vector<double>& samples)
     {
         const int numSamples = static_cast<int>(samples.size());
         if(numSamples <= 0)
-            return nullptr;
+            return false;
 
-        auto wave = std::make_unique<rd_dsp::Waveform>();
-        wave->setSize (numSamples);
+        waveform.setSize (numSamples);
 
         for (int i = 0; i < numSamples; ++i)
-            wave->setSample (i, samples[static_cast<std::size_t> (i)]);
+            waveform.setSample (i, samples[static_cast<std::size_t> (i)]);
 
-        return wave;
+        return true;
     }
 
     //

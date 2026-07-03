@@ -26,7 +26,7 @@ void WaveFactory::_initHarmonicData()
         if(harmonicIndex == 0)
             harmonicData.gain = 0.5f;
         else
-            harmonicData.gain = 0.f;
+            harmonicData.gain = 0.0f;
 
         mHarmonicData.push_back(harmonicData);
     }

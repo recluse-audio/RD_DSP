@@ -30,4 +30,10 @@ TEST_CASE("WaveFactory constructs with default num harmonic data in member array
     // fundamental with gain above 0.f
     REQUIRE(fundamentalData->gain > 0.f);
 
+    for(int harmonicIndex = 1; harmonicIndex < expectedNumHarmonics; harmonicIndex++)
+    {
+        auto harmonicData = waveFactory.getHarmonicData(harmonicIndex);
+        REQUIRE(harmonicData->gain == 0.f);
+    }
+
 }

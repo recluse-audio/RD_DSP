@@ -2,9 +2,8 @@
 #include "PULSAR/Pulsar.h"
 
 #include "../WAVEFORM/Wavetable.h"
-#include "../WAVEFORM/WaveFactory.h"
+#include "../WAVEFORM/WaveformFileManager.h"
 #include "../WINDOW/Window.h"
-#include "../HELPERS/CsvLoader.h"
 
 #include <cassert>
 
@@ -192,22 +191,7 @@ void PulsarTrain::loadWavetable (std::string tablePath)
     if (mWavetable == nullptr)
         return;
 
-    std::vector<std::vector<float>> rows;
-    if (! CsvLoader::load (tablePath, rows, false))
-        return;
-
-    mWavetable->clear();
-
-    for (const auto& row : rows)
-    {
-        auto wave = WaveFactory::waveformFromRow (row);
-        if (wave == nullptr)
-        {
-            mWavetable->clear();
-            return;
-        }
-        mWavetable->addWaveform (std::move (wave));
-    }
+    WaveformFileManager::fillFromCSV (*mWavetable, tablePath);
 }
 
 void PulsarTrain::_updateEmissionPeriod() noexcept

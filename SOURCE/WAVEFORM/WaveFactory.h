@@ -13,16 +13,33 @@
 namespace rd_dsp
 {
 
+static const int kMaxAudioFriendlyHarmonics = 16;
+
+//
+struct HarmonicData
+{
+    int harmonic = 0;
+    float gain = 0.125;
+    float phaseOffset = 0.f;
+};
+
+
+//
 class WaveFactory
 {
 public:
     WaveFactory();
     ~WaveFactory();
 
-    std::unique_ptr<Waveform> loadWaveformFromCSV (std::string csvPath);
-    std::unique_ptr<Wavetable> loadWavetableFromCSV (std::string csvPath);
 
-    static std::unique_ptr<Waveform> waveformFromRow (const std::vector<float>& samples);
+private:
+    // creates HarmonicData for each harmonic sine wave we will create
+    void _initHarmonicData();
+    // this turns off all harmonics except the fundamental
+    void _muteAllHarmonics();
+    std::vector<HarmonicData> mHarmonicData;
+
+
 };
 
 } // namespace rd_dsp

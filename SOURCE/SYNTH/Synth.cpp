@@ -1,8 +1,7 @@
 #include "Synth.h"
 
 #include "../WAVEFORM/Wavetable.h"
-#include "../WAVEFORM/WaveFactory.h"
-#include "../HELPERS/CsvLoader.h"
+#include "../WAVEFORM/WaveformFileManager.h"
 
 #include <cassert>
 
@@ -72,22 +71,7 @@ void Synth::loadWavetable (std::string tablePath)
     if (mWavetable == nullptr)
         return;
 
-    std::vector<std::vector<float>> rows;
-    if (! CsvLoader::load (tablePath, rows, false))
-        return;
-
-    mWavetable->clear();
-
-    for (const auto& row : rows)
-    {
-        auto wave = WaveFactory::waveformFromRow (row);
-        if (wave == nullptr)
-        {
-            mWavetable->clear();
-            return;
-        }
-        mWavetable->addWaveform (std::move (wave));
-    }
+    WaveformFileManager::fillFromCSV (*mWavetable, tablePath);
 }
 
 void Synth::controlChange (int controlNumber, float normalizedValue)

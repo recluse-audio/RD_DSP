@@ -26,4 +26,8 @@ TEST_CASE("WaveFactory constructs with default num harmonic data in member array
     auto fundamentalData = waveFactory.getHarmonicData(0);
     REQUIRE(fundamentalData->harmonic == 0);
 
+    // without any args given, WaveFactory creates HarmonicData with only
+    // fundamental with gain above 0.f
+    REQUIRE(fundamentalData->gain > 0.f);
+
 }

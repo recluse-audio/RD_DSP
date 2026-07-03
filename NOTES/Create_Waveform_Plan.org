@@ -1,0 +1,101 @@
+#+TITLE: CREATE_WAVEFORM_PLAN
+#+AUTHOR: Ryan Devens
+#+DATE: 2026-07-02 21:02
+#+OPTIONS: toc:nil num:nil
+#+SUMMARY: This documents my planned waveform creation feature
+
+* GOALS
+- Create ~Waveform~ by summing sine waves as harmonics
+- Construct with variable number of sine waves.
+- GUI/TUI/API/MCP
+- Wave is visualized as it is constructed
+- Phase / gain+mute / harmonic detune params
+- 128 harmonics max
+  - default 0-15 are only turned on
+- Create ~Wavetable~ out of ~Waveforms~ you create
+
+** AUDIO AND EXPERIMENTAL TYPE WAVES
+Have optional limitations of audio friendly and full chaos wave construction
+
+*** Audio Friendly
+- This style will aim to anti-alias
+- Ensure zero-crossing at start/end
+- limit range of harmonics to fundamental x 8
+- ideal for drag n' drop wavetable synths
+
+*** Experimental Mode
+- no anti-aliasing
+- no zero-crossing correction
+- up to 128 harmonics
+- ideal for user with other library to control this
+- ideal for user with llm guided use
+
+*** normalize() function
+- need to be able to take an =experimental= waveform and make it =audio friendly=
+
+** SAVE / RESTORE
+
+*** WAVEFORMS / WAVETABLES
+Waveforms are written to .csv, and can be restored from them as well
+- User finds a waveform they like and decides to save
+  - File is written to default path
+    - user adjustable
+  -
+*** WAVE DATA
+each waveform is made from summed sine waves (up to 128)
+- each sine wave has params
+  - On/Off
+  - Gain
+  - Phase
+  - Detune Ratio
+    - range is -0.5 to +0.4999...
+    - ratio not percent (smaller percent of full ratio at high ratios but idc)
+      - believe this is compensated for because 126x fundamental and 127x fundamental are crazy
+
+** INTERFACE
+Multi-faced application operable in many ways
+
+*** GUI
+- 128 harmonics
+  - 16 per row
+  - harmonic bay buttons to switch groups
+    - [0-15][16-31][32-47]etc...
+
+- Traditional User Interface (Knobs / Sliders / Wave Display)
+  - Gain
+  - Phase
+  - Detune
+  - Bypass
+
+*** TUI
+Ideal call workflow
+#+begin_Src sh
+rd_wave_factory --wave_params <path_to_wave_param_json>
+#+end_src
+where =wave_params= and each [] array that follows corresponds with the harmonic at integer first in array
+
+* QUESTIONS
+
+** Prevent Clipping
+Is every harmonic -1.f to 1.f?
+- this would lead to clipping?
+- if variable number being added how to keep from clipping
+- Scale so each harmonic's unity gain when summed would equal to 1?
+  - give headroom and default to 1/2 this value?
+
+** How to handle in-harmonic discontinuities
+- each sine wave is a ratio of the fundamental
+- if a perfect ratio the waveform of this harmonic will have perfect periodicity
+- if not a perfect ratio the waveform of inharmonic will not be periodic and will have jumps
+  - solve this with a window?
+
+*** When to implement a solution to this
+NOT YET
+- build thing before you fix it.
+
+*** Fundamental always start/end at zero crossings idea
+- in this idea the fundamental would not have controllable phase offset
+  - presumably its phase offset would be realized in a
+- If starts/ends at 0, we can "window" using the approach to 0
+- apply start/end multiplication by fundamental on last few samples
+  - how many samples?

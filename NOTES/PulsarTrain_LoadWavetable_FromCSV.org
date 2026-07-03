@@ -3,6 +3,7 @@
 #+DATE: 2026-07-01 14:12
 #+OPTIONS: toc:nil num:nil
 #+SUMMARY: This documents my plan as well as progress in loading Wavetables from CSV files.
+#+STATUS: DONE
 
 * Current State
 It has been a while since I worked on this DSP.
@@ -16,7 +17,11 @@ I think I paused because I felt I needed a wave maker first.
 I want to make waveforms and load them into ~Pulsarello~ and future synths
 
 
-
 * Plan
 
+** Reading / Writing Waveforms and Wavetables to CSV
+- using library ~rapidcsv~
+
 ** Questions
+Should I use csv and json libraries?
+- decided yes for now

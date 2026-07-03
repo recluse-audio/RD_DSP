@@ -43,6 +43,10 @@ public:
     // in order: sine, triangle, square, saw. Existing contents discarded.
     void fillWithBasicShapes (int numSamples);
 
+    // Returns a pointer to the waveform at index, or nullptr if index is
+    // out of range (including the empty-wavetable case).
+    const Waveform* getWaveformAtIndex (int index) const noexcept;
+
 private:
     std::vector<std::unique_ptr<Waveform>> mWaveforms;
     // Written from the control/audio thread, read on the GUI thread (fillDisplayBuffer)

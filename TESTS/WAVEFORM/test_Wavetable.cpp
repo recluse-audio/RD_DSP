@@ -223,3 +223,54 @@ TEST_CASE("fillDisplayBufferAveraged box-averages decimated bins", "[Wavetable]"
         REQUIRE (out[i] == Catch::Approx (expected).margin (1.0e-5));
     }
 }
+
+TEST_CASE("Wavetable::getWaveformAtIndex returns appropriate waveform and null when empty""[Wavetable]")
+{
+    const int numSamples = 8192;
+    rd_dsp::Wavetable wavetable;
+
+    wavetable.clear();
+    REQUIRE(wavetable.getNumWaveforms() == 0);
+    REQUIRE(wavetable.getWaveformAtIndex(3) == nullptr);
+
+    wavetable.fillWithBasicShapes(numSamples);
+    REQUIRE(wavetable.getNumWaveforms() == 4);
+
+    // order per fillWithBasicShapes: sine, triangle, square, saw
+    const rd_dsp::Waveform* sineWaveform = wavetable.getWaveformAtIndex(0);
+    const rd_dsp::Waveform* triWaveform = wavetable.getWaveformAtIndex(1);
+    const rd_dsp::Waveform* squareWaveform = wavetable.getWaveformAtIndex(2);
+    const rd_dsp::Waveform* sawWaveform = wavetable.getWaveformAtIndex(3);
+
+    REQUIRE(sineWaveform != nullptr);
+    REQUIRE(triWaveform != nullptr);
+    REQUIRE(squareWaveform != nullptr);
+    REQUIRE(sawWaveform != nullptr);
+
+    rd_dsp::Waveform expectedSineWaveform;
+    expectedSineWaveform.setSize(numSamples);
+    expectedSineWaveform.setWaveType(rd_dsp::Waveform::WaveType::wSine);
+
+    rd_dsp::Waveform expectedTriWaveform;
+    expectedTriWaveform.setSize(numSamples);
+    expectedTriWaveform.setWaveType(rd_dsp::Waveform::WaveType::wTri);
+
+    rd_dsp::Waveform expectedSquareWaveform;
+    expectedSquareWaveform.setSize(numSamples);
+    expectedSquareWaveform.setWaveType(rd_dsp::Waveform::WaveType::wSquare);
+
+    rd_dsp::Waveform expectedSawWaveform;
+    expectedSawWaveform.setSize(numSamples);
+    expectedSawWaveform.setWaveType(rd_dsp::Waveform::WaveType::wSaw);
+
+    for(int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++)
+    {
+        REQUIRE(sineWaveform->getSample(sampleIndex) == expectedSineWaveform.getSample(sampleIndex));
+        REQUIRE(triWaveform->getSample(sampleIndex) == expectedTriWaveform.getSample(sampleIndex));
+        REQUIRE(squareWaveform->getSample(sampleIndex) == expectedSquareWaveform.getSample(sampleIndex));
+        REQUIRE(sawWaveform->getSample(sampleIndex) == expectedSawWaveform.getSample(sampleIndex));
+    }
+
+    REQUIRE(wavetable.getWaveformAtIndex(4) == nullptr);
+    REQUIRE(wavetable.getWaveformAtIndex(-1) == nullptr);
+}

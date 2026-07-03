@@ -241,3 +241,26 @@ TEST_CASE("Can create csv row aka vector of doubles from waveform amp values" "[
     }
 }
 
+TEST_CASE("Can write Wavetable to CSV file with 1 row / waveform" "[Wavetable][CSV]")
+{
+    const int numSamples = 8192;
+    rd_dsp::Wavetable wavetable;
+    // clear/fill with basic shapes to ensure test conditions
+    wavetable.clear();
+    wavetable.fillWithBasicShapes(numSamples);
+
+    const std::string csvPath = std::string(RD_DSP_TESTS_DIR) +"/WAVEFORM/OUTPUT/WaveformFileManager_WriteWavetableToCSV_Output.csv";
+    rd_dsp::WaveformFileManager::writeWavetableToCSV(wavetable, csvPath);
+
+    // make a wave table, clear, then fill from csv
+    // expect this to match wavetable above that wrote to csv
+    rd_dsp::Wavetable wavetableFromCSV;
+    wavetableFromCSV.clear();
+    REQUIRE(wavetableFromCSV.getNumWaveforms() == 0); // just cleared it
+
+    // fill with csv we just wrote
+    rd_dsp::WaveformFileManager::fillFromCSV(wavetableFromCSV, csvPath);
+
+    // should have more waveforms now
+    REQUIRE(wavetableFromCSV.getNumWaveforms() == 4);
+}

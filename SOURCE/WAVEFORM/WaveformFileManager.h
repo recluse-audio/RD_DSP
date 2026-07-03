@@ -71,6 +71,25 @@ public:
     }
 
     //
+    static void writeWavetableToCSV(const rd_dsp::Wavetable& wavetable, const std::string& csvPath)
+    {
+        const int numSamples = wavetable.getWaveformSize();
+        rapidcsv::Document wavetableDoc("", rapidcsv::LabelParams(-1,-1));
+
+        for(int rowIndex = 0; rowIndex < wavetable.getNumWaveforms(); rowIndex++)
+        {
+            auto waveform = wavetable.getWaveformAtIndex(rowIndex);
+            if(waveform != nullptr)
+            {
+               std::vector<double> rowVector(numSamples);
+               fillRowFromWaveform(*waveform, rowVector);
+               wavetableDoc.SetRow<double>(rowIndex, rowVector);
+            }
+        }
+        wavetableDoc.Save(csvPath);
+    }
+
+    //
     static void writeWaveformToCSV(const rd_dsp::Waveform& waveform, const std::string& csvPath)
     {
         // args mean "no path (yet)" and no column / row labels
@@ -95,6 +114,7 @@ public:
             row[sampleIndex] = sampleToWrite;
         }
     }
+
 
 
 private:

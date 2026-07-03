@@ -104,6 +104,13 @@ int Wavetable::getWaveformSize() const noexcept
     return mWaveforms[0]->getNumSamples();
 }
 
+const Waveform* Wavetable::getWaveformAtIndex (int index) const noexcept
+{
+    if (index < 0 || index >= static_cast<int>(mWaveforms.size()))
+        return nullptr;
+    return mWaveforms[index].get();
+}
+
 void Wavetable::addWaveform(std::unique_ptr<Waveform> waveForm)
 {
     mWaveforms.push_back(std::move(waveForm));

@@ -1,6 +1,7 @@
 #include "WaveFactory.h"
 #include "../HELPERS/CsvLoader.h"
 
+#include <cmath>
 #include <vector>
 
 namespace rd_dsp
@@ -53,6 +54,42 @@ const HarmonicData* WaveFactory::getHarmonicData(int harmonicIndex)
 
     return &mHarmonicData[harmonicIndex];
 
+}
+
+void WaveFactory::fillWaveformWithHarmonics(rd_dsp::Waveform& waveform)
+{
+
+    for(int harmonicIndex = 0; harmonicIndex < kMaxAudioFriendlyHarmonics; harmonicIndex++)
+    {
+        _writeHarmonicToWaveform(waveform, harmonicIndex);
+    }
+}
+
+void WaveFactory::_writeHarmonicToWaveform(rd_dsp::Waveform& waveform, int harmonicIndex)
+{
+    const rd_dsp::HarmonicData* harmonicData = getHarmonicData(harmonicIndex);
+    float period = (float)kDefaultWaveformSize / harmonicData->ratio;
+
+    float phaseIncrement = kTwoPi / period;
+    float phasePos = 0.f;
+
+    for(int sampleIndex = 0; sampleIndex < kDefaultWaveformSize; sampleIndex++)
+    {
+        const float harmonicSample = std::sin(phasePos) * harmonicData->gain;
+
+        // This is the summed sample val at this sampleIndex before adding this harmonicSample
+        const float prevSampleValue = waveform.getInterpolatedSampleAtIndex(sampleIndex);
+
+        // this is the new value in waveform at given index after summing prev and new harmonic sample
+        const float calculatedSample = prevSampleValue + harmonicSample;
+
+        waveform.setSample(sampleIndex, calculatedSample);
+
+        phasePos = phasePos + phaseIncrement;
+        if(phasePos >= kTwoPi)
+            phasePos = phasePos - kTwoPi;
+
+    }
 }
 
 

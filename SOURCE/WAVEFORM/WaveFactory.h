@@ -14,7 +14,8 @@ namespace rd_dsp
 {
 
 static const int kMaxAudioFriendlyHarmonics = 16;
-
+static const int kDefaultWaveformSize = 8196;
+constexpr float kTwoPi = 6.28318530717958647692f;
 //
 struct HarmonicData
 {
@@ -39,7 +40,15 @@ public:
 
     // gets a ref to a given harmonic's data
     const HarmonicData* getHarmonicData(int harmonicIndex);
+
+    void fillWaveformWithHarmonics(rd_dsp::Waveform& waveform);
+
 private:
+
+    // generates a sine wave based on the given harmonic's data vals
+    // writes ADDITIVELY to waveform
+    void _writeHarmonicToWaveform(rd_dsp::Waveform& waveform, int harmonic);
+
     // creates HarmonicData for each harmonic sine wave we will create
     void _initHarmonicData();
     // this turns off all harmonics except the fundamental

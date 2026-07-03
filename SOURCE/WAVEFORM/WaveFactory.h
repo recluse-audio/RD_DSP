@@ -14,7 +14,7 @@ namespace rd_dsp
 {
 
 static const int kMaxAudioFriendlyHarmonics = 16;
-static const int kDefaultWaveformSize = 8196;
+static const int kDefaultWaveformSize = 8192;
 constexpr float kTwoPi = 6.28318530717958647692f;
 //
 struct HarmonicData

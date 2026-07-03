@@ -68,14 +68,11 @@ void WaveFactory::fillWaveformWithHarmonics(rd_dsp::Waveform& waveform)
 void WaveFactory::_writeHarmonicToWaveform(rd_dsp::Waveform& waveform, int harmonicIndex)
 {
     const rd_dsp::HarmonicData* harmonicData = getHarmonicData(harmonicIndex);
-    float period = (float)kDefaultWaveformSize / harmonicData->ratio;
-
-    float phaseIncrement = kTwoPi / period;
-    float phasePos = 0.f;
 
     for(int sampleIndex = 0; sampleIndex < kDefaultWaveformSize; sampleIndex++)
     {
-        const float harmonicSample = std::sin(phasePos) * harmonicData->gain;
+        const float phasePos = (kTwoPi * harmonicData->ratio * (float)sampleIndex) / (float)kDefaultWaveformSize;
+        const float harmonicSample = std::sin(phasePos + harmonicData->phaseOffset) * harmonicData->gain;
 
         // This is the summed sample val at this sampleIndex before adding this harmonicSample
         const float prevSampleValue = waveform.getInterpolatedSampleAtIndex(sampleIndex);
@@ -84,11 +81,6 @@ void WaveFactory::_writeHarmonicToWaveform(rd_dsp::Waveform& waveform, int harmo
         const float calculatedSample = prevSampleValue + harmonicSample;
 
         waveform.setSample(sampleIndex, calculatedSample);
-
-        phasePos = phasePos + phaseIncrement;
-        if(phasePos >= kTwoPi)
-            phasePos = phasePos - kTwoPi;
-
     }
 }
 

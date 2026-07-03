@@ -59,3 +59,39 @@ TEST_CASE("WaveFactory allows setting of specific HarmonicData""[WaveFactory][Ha
     REQUIRE(harmonicData->gain == gainTestValue);
 
 }
+
+
+TEST_CASE("WaveFactory can fill a waveform with harmonics as expected""[WaveFactory]")
+{
+    const int expectedNumHarmonics = rd_dsp::kMaxAudioFriendlyHarmonics;
+    REQUIRE(expectedNumHarmonics == 16);
+    rd_dsp::WaveFactory waveFactory;
+    rd_dsp::Waveform waveForm;
+    waveForm.setSize(rd_dsp::kDefaultWaveformSize);
+
+    // set fundamental to 1.f gain, no other harmonics active
+    waveFactory.setHarmonicDataValues(0, 1.f, 0.f, 1.f);
+
+    // fundamental-only harmonic fill is a plain sine, matches golden sine file
+    waveFactory.fillWaveformWithHarmonics(waveForm);
+
+    const std::string goldenPath =
+        std::string(RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/SINE/GOLDEN_SINE_8192.csv";
+
+    std::vector<std::vector<float>> rows;
+    const bool loaded = rd_dsp::CsvLoader::load(goldenPath, rows, /*skipHeader=*/false);
+    INFO("Golden path: " << goldenPath);
+    REQUIRE(loaded);
+    REQUIRE(rows.size() == 1);
+    REQUIRE(static_cast<int>(rows[0].size()) == rd_dsp::kDefaultWaveformSize);
+
+    const auto& goldenRow = rows[0];
+    for(int i = 0; i < rd_dsp::kDefaultWaveformSize; i++)
+    {
+        const float generated = waveForm.getSample(i);
+        const float golden = goldenRow[static_cast<std::size_t>(i)];
+
+        INFO("sample index " << i);
+        REQUIRE(generated == Catch::Approx(golden).margin(1.0e-6));
+    }
+}

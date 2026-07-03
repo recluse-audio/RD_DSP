@@ -61,7 +61,7 @@ TEST_CASE("WaveFactory allows setting of specific HarmonicData""[WaveFactory][Ha
 }
 
 
-TEST_CASE("WaveFactory can fill a waveform with harmonics as expected""[WaveFactory]")
+TEST_CASE("WaveFactory can fill Waveform with fundamental only sine wave""[WaveFactory]")
 {
     const int expectedNumHarmonics = rd_dsp::kMaxAudioFriendlyHarmonics;
     REQUIRE(expectedNumHarmonics == 16);

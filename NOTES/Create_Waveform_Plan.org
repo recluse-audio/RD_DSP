@@ -4,6 +4,13 @@
 #+OPTIONS: toc:nil num:nil
 #+SUMMARY: This documents my planned waveform creation feature
 
+* STEPS
+
+** Give ~WaveFactory~ a vector of HarmonicData [DONE]
+- corresponds with freq/gain/phase of harmonic waveform
+
+** Create ~WaveFactory::setHarmonicDataValues(int harmonic, float gain, float phase)
+
 * GOALS
 - Create ~Waveform~ by summing sine waves as harmonics
 - Construct with variable number of sine waves.

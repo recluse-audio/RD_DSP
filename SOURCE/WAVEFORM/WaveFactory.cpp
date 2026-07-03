@@ -32,5 +32,21 @@ void WaveFactory::_initHarmonicData()
     }
 }
 
+bool WaveFactory::setHarmonicDataValues(int harmonic, float gain, float phaseOffset)
+{
+  bool setSuccess = false;
+
+  return setSuccess;
+}
+
+const HarmonicData* WaveFactory::getHarmonicData(int harmonic)
+{
+    if(harmonic >= kMaxAudioFriendlyHarmonics)
+        return nullptr;
+
+    return &mHarmonicData[harmonic];
+
+}
+
 
 } // namespace rd_dsp

@@ -17,9 +17,13 @@
 #define RD_DSP_TESTS_DIR "."
 #endif
 
-TEST_CASE("WaveFactory can create a waveform with WaveformData object""[WaveFactory][WaveformData]")
+TEST_CASE("WaveFactory constructs with default num harmonic data in member array""[WaveFactory][WaveformData]")
 {
-
+    const int expectedNumHarmonics = rd_dsp::kMaxAudioFriendlyHarmonics;
+    REQUIRE(expectedNumHarmonics == 16);
     rd_dsp::WaveFactory waveFactory;
+
+    auto fundamentalData = waveFactory.getHarmonicData(0);
+    REQUIRE(fundamentalData->harmonic == 0);
 
 }

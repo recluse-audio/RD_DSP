@@ -20,7 +20,7 @@ void WaveFactory::_initHarmonicData()
     for(int harmonicIndex = 0; harmonicIndex < kMaxAudioFriendlyHarmonics; harmonicIndex++)
     {
         HarmonicData harmonicData;
-        harmonicData.harmonic = harmonicIndex;
+        harmonicData.ratio = (float)(harmonicIndex + 1);
         harmonicData.phaseOffset = 0.f;
         // for default, only fundamental has gain
         if(harmonicIndex == 0)
@@ -32,19 +32,26 @@ void WaveFactory::_initHarmonicData()
     }
 }
 
-bool WaveFactory::setHarmonicDataValues(int harmonic, float gain, float phaseOffset)
+bool WaveFactory::setHarmonicDataValues(int harmonicIndex, float gain, float phaseOffset, float ratio)
 {
-  bool setSuccess = false;
+    // don't even bother if out of range
+    if(harmonicIndex >= kMaxAudioFriendlyHarmonics )
+      return false;
 
-  return setSuccess;
+   auto& harmonicData = mHarmonicData[harmonicIndex];
+   harmonicData.ratio = ratio;
+   harmonicData.gain = gain;
+   harmonicData.phaseOffset = phaseOffset;
+
+   return true;
 }
 
-const HarmonicData* WaveFactory::getHarmonicData(int harmonic)
+const HarmonicData* WaveFactory::getHarmonicData(int harmonicIndex)
 {
-    if(harmonic >= kMaxAudioFriendlyHarmonics)
+    if(harmonicIndex >= kMaxAudioFriendlyHarmonics)
         return nullptr;
 
-    return &mHarmonicData[harmonic];
+    return &mHarmonicData[harmonicIndex];
 
 }
 

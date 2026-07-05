@@ -14,7 +14,7 @@
         {
             "harmonicIndex": 2,
             "ratio": 3.0,
-            "gain": -0.11111
+            "gain": 0.333333
         },
         {
             "harmonicIndex": 3,
@@ -24,7 +24,7 @@
         {
             "harmonicIndex": 4,
             "ratio": 2.0,
-            "gain": 0.04
+            "gain": 0.2
         },
         {
             "harmonicIndex": 5,
@@ -34,7 +34,7 @@
         {
             "harmonicIndex": 6,
             "ratio": 7.0,
-            "gain": -0.0204082
+            "gain": 0.142857
         },
         {
             "harmonicIndex": 7,
@@ -44,7 +44,7 @@
         {
             "harmonicIndex": 8,
             "ratio": 9.0,
-            "gain": 0.0123457
+            "gain": 0.111111
         },
         {
             "harmonicIndex": 9,
@@ -54,7 +54,7 @@
         {
             "harmonicIndex": 10,
             "ratio": 11.0,
-            "gain": -0.00826446
+            "gain": 0.090909
         },
         {
             "harmonicIndex": 11,
@@ -64,7 +64,7 @@
         {
             "harmonicIndex": 12,
             "ratio": 13.0,
-            "gain": 0.00591716
+            "gain": 0.0769231
         },
         {
             "harmonicIndex": 13,
@@ -74,7 +74,7 @@
         {
             "harmonicIndex": 14,
             "ratio": 15.0,
-            "gain": -0.004444444
+            "gain": 0.6666667
         },
         {
             "harmonicIndex": 15,

@@ -5,18 +5,26 @@
 #+SUMMARY: This documents my planned waveform creation feature
 
 * CURRENT OBJECTIVE
-Need expanded test cases for ~Waveform~ creation
+[ ] Need ~HarmonicData~ and ~WaveformFactory~ to handle negative gain coefficients (interpret as inverse phase)
+[X] Need to enter values in HarmonicData.json(s)
 
-** GOLDEN Files
+* GOLDEN Files
 First aim for consistency between python and cpp waveforms
 - THEN optimize
 
-*** GENERATING GOLDEN WAVEFORM
-Need authoritative way of making a triangle wave with 16 sine waves
-[X] generate with python
+** CREATE GOLDEN HARMONIC DATA JSON(s)
+="Authoritative" equations found in wolfram, wikipedia, claude=
+[ ] triangle
+[ ] square
+[ ] saw
+
+** GENERATING GOLDEN WAVEFORM(s)
+=Must use HarmonicData.json=
+[ ] generate with python
 [ ] generate with Catch2 (in test output)
 
-** TESTS
+
+* TESTS
 [X] Fundamental only
 [ ] Logarithmic harmonic gain fall off
 [ ] "Authoritative" triangle algorithm

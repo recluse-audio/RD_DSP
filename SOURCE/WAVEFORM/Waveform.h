@@ -51,6 +51,8 @@ public:
     // notice this takes a FLOAT index? That means don't round before here, it will
     // handle interp.
     float getInterpolatedSampleAtIndex (float index) const noexcept;
+
+    float getWaveformRMS();
 private:
     friend class WaveformTester;
     void _fillWithSine();

@@ -43,6 +43,7 @@ public:
 
     void fillWaveformWithHarmonics(rd_dsp::Waveform& waveform);
 
+    void normalizeWaveform(rd_dsp::Waveform& waveform);
 private:
     // this is used to keep waveforms within a desirable rms
     float mNormalizeCoefficient = 1.f;

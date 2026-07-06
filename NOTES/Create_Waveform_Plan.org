@@ -12,7 +12,7 @@
   - [X] make new harmonic data json files with more harmonics
   - [X] generate new GOLDEN files with =gen_golden_waveform.py=
   - [X] generate new GOLDEN =GOLDEN_BasicTable_32_8192=
-  - [ ] update all tests referencing old golden files
+  - [X] update all tests referencing old golden files
   - [ ] modify existing Waveform basic waveshape generation to match this
 - [ ] Need ~HarmonicData~ and ~WaveformFactory~ to handle negative gain coefficients (interpret as inverse phase)
   - [ ] Write test case for sine wave

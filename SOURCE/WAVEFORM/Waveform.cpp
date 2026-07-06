@@ -50,6 +50,22 @@ float Waveform::getInterpolatedSampleAtIndex (float index) const noexcept
     return static_cast<float>(Interpolator::linearInterp (s0, s1, frac));
 }
 
+float Waveform::getWaveformRMS()
+{
+    const int numSamples = mBuffer.getNumSamples();
+
+    float sumOfSquaredSamples = 0.f;
+    for(int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++)
+    {
+        float sampleValue = mBuffer.getSample(0, sampleIndex);
+        sumOfSquaredSamples += (sampleValue * sampleValue);
+
+    }
+
+    float rmsValue = std::sqrt(sumOfSquaredSamples / numSamples);
+    return rmsValue;
+}
+
 void Waveform::_fillWithSine()
 {
     mBuffer.clear();

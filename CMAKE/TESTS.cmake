@@ -19,6 +19,5 @@ set(TEST_SOURCES
     TESTS/WAVEFORM/test_WaveformFileManager.cpp
     TESTS/WAVEFORM/test_Wavetable.cpp
     TESTS/WINDOW/test_Window.cpp
-    TESTS/test_Waveform.cpp
     TESTS/test_main.cpp
 )

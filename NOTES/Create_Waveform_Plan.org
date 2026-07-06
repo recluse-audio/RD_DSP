@@ -5,30 +5,43 @@
 #+SUMMARY: This documents my planned waveform creation feature
 
 * CURRENT OBJECTIVE
-[ ] Need ~HarmonicData~ and ~WaveformFactory~ to handle negative gain coefficients (interpret as inverse phase)
-[X] Need to enter values in HarmonicData.json(s)
+- [ ] Need ~/TESTS/WAVEFORM/GOLDEN/SCRIPTS/gen_golden_waveform.py to handle negative gain coefficients.
+- [ ] Need ~HarmonicData~ and ~WaveformFactory~ to handle negative gain coefficients (interpret as inverse phase)
+  - [ ] Write test case for sine wave
+  - [ ] Write test case for constructive harmonics
+  - [ ] Write test case for destructive harmonics
+
+
+- [X] Need to enter values in HarmonicData.json(s)
 
 * GOLDEN Files
 First aim for consistency between python and cpp waveforms
 - THEN optimize
 
+
+
 ** CREATE GOLDEN HARMONIC DATA JSON(s)
 ="Authoritative" equations found in wolfram, wikipedia, claude=
-[ ] triangle
-[ ] square
-[ ] saw
+- [ ] triangle
+- [ ] square
+- [ ] saw
 
 ** GENERATING GOLDEN WAVEFORM(s)
 =Must use HarmonicData.json=
-[ ] generate with python
-[ ] generate with Catch2 (in test output)
+- [ ] generate with python
+- [ ] generate with Catch2 (in test output)
 
+*** How to generate GOLDEN waveforms
+GOLDEN waveforms are made by calling this script
+#+begin_Src sh
+python3 TESTS/WAVEFORM/GOLDEN/SCRIPTS/gen_golden_waveform.py --harmonic_data "TESTS/WAVEFORM/GOLDEN/SCRIPTS/GOLDEN_TriangleWave_HarmonicData_16.json"
+#+end_src
 
 * TESTS
-[X] Fundamental only
-[ ] Logarithmic harmonic gain fall off
-[ ] "Authoritative" triangle algorithm
-[ ] Inharmonic spectrum (must maintain smooth periodicity and zero-crossings)
+- [X] Fundamental only
+- [ ] Logarithmic harmonic gain fall off
+- [ ] "Authoritative" triangle algorithm
+- [ ] Inharmonic spectrum (must maintain smooth periodicity and zero-crossings)
 
 * STEPS
 

@@ -4,7 +4,7 @@
         {
             "harmonicIndex": 0,
             "ratio": 1.0,
-            "gain": 0.5
+            "gain": 1.0
         },
         {
             "harmonicIndex": 1,

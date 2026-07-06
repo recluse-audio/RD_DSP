@@ -44,7 +44,8 @@ public:
     void fillWaveformWithHarmonics(rd_dsp::Waveform& waveform);
 
 private:
-
+    // this is used to keep waveforms within a desirable rms
+    float mNormalizeCoefficient = 1.f;
     // generates a sine wave based on the given harmonic's data vals
     // writes ADDITIVELY to waveform
     void _writeHarmonicToWaveform(rd_dsp::Waveform& waveform, int harmonic);

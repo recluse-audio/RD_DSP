@@ -29,15 +29,6 @@ def parse_json_file(file_path):
         print(f"An error occurred: {str(e)}")
 
 
-def write_golden_waveform(num_samples: int) -> Path:
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    out_path = OUTPUT_DIR / f"GOLDEN_WAVEFORM_{num_samples}.csv"
-
-    amplitudes = [math.sin(2.0 * math.pi * i / num_samples) for i in range(num_samples)]
-    with out_path.open("w", newline="") as f:
-        f.write(",".join(repr(a) for a in amplitudes) + "\n")
-
-    return out_path
 
 TWO_PI = 6.28318530717958647692
 

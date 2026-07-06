@@ -147,7 +147,49 @@ TEST_CASE("New golden sine wave matches old golden sine wave - both made with py
 
 }
 
+// GOLDEN TRIANGLE WAVE CONFIRMATION
+TEST_CASE("New golden triangle wave matches old golden triangle wave - both made with python""[GoldenWaveform]")
+{
 
+    const std::string oldPath =
+        std::string(RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/TRIANGLE/GOLDEN_TRIANGLE_8192.csv";
+
+    // HarmonicData python generated sine wave
+    const std::string newPath =
+        std::string(RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/SCRIPTS/WAVEFORM/GOLDEN_TriangleWave_HarmonicData_16_8192.csv";
+
+    std::vector<std::vector<float>> oldRows;
+    std::vector<std::vector<float>> newRows;
+
+    const bool loadedOld = rd_dsp::CsvLoader::load(oldPath, oldRows, /*skipHeader=*/false);
+    const bool loadedNew = rd_dsp::CsvLoader::load(newPath, newRows, /*skipHeader=*/false);
+
+    //==================================
+    // Ensure paths load and are properly sized
+    INFO("OLD PATH: " << oldPath);
+    INFO("NEW PATH: " << newPath);
+
+    REQUIRE(loadedOld); REQUIRE(loadedNew);
+    REQUIRE(oldRows.size() == 1); REQUIRE(newRows.size() == 1);
+
+    REQUIRE(static_cast<int>(oldRows[0].size()) == rd_dsp::kDefaultWaveformSize);
+    REQUIRE(static_cast<int>(newRows[0].size()) == rd_dsp::kDefaultWaveformSize);
+
+    //=================================
+    // Compare sample values in each row
+    // Technically could be many rows, so use first row only for meaningful comparison
+    // (these are single row waveforms)
+    const auto& oldRow = oldRows[0];
+    const auto& newRow = newRows[0];
+    for(int sampleIndex = 0; sampleIndex < rd_dsp::kDefaultWaveformSize; sampleIndex++)
+    {
+        const float oldSample = static_cast<float>(oldRow[static_cast<std::size_t>(sampleIndex)]);
+        const float newSample = static_cast<float>(newRow[static_cast<std::size_t>(sampleIndex)]);
+        INFO("Sample Index: " << sampleIndex);
+        CHECK(oldSample == Catch::Approx(newSample).margin(1.0e-5));
+    }
+
+}
 
 
 
@@ -184,7 +226,7 @@ TEST_CASE("Sine wave generated with multi-harmonic method matches previous simpl
         const float golden = goldenRow[static_cast<std::size_t>(i)];
 
         INFO("sample index " << i);
-        //REQUIRE(generated == Catch::Approx(golden).margin(1.0e-6));
+        REQUIRE(generated == Catch::Approx(golden).margin(1.0e-5));
     }
 }
 

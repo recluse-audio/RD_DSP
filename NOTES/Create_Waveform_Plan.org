@@ -5,7 +5,14 @@
 #+SUMMARY: This documents my planned waveform creation feature
 
 * CURRENT OBJECTIVE
-- [ ] Need ~/TESTS/WAVEFORM/GOLDEN/SCRIPTS/gen_golden_waveform.py to handle negative gain coefficients.
+- [X] Need ~/TESTS/WAVEFORM/GOLDEN/SCRIPTS/gen_golden_waveform.py to handle negative gain coefficients.
+- [ ] Remove old golden waveforms for basic shapes
+  - [ ] remove old gen python scripts
+  - [ ] remove old GOLDEN files
+  - [ ] make new harmonic data json files with more harmonics
+  - [ ] generate new GOLDEN files with =gen_golden_waveform.py=
+  - [ ] update all tests referencing old golden files
+  - [ ] modify existing Waveform basic waveshape generation to match this
 - [ ] Need ~HarmonicData~ and ~WaveformFactory~ to handle negative gain coefficients (interpret as inverse phase)
   - [ ] Write test case for sine wave
   - [ ] Write test case for constructive harmonics

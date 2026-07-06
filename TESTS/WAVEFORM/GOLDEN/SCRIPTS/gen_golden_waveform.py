@@ -66,6 +66,18 @@ def write_waveform_csv(waveform, out_path: Path) -> Path:
         f.write(",".join(repr(a) for a in waveform) + "\n")
     return out_path
 
+# RMS is taken so we can normalize waves like square that are too "loud" and tri too "quiet"
+# This is due to peak length, (Square waves are supposed to be at peak for most of duty cycle)
+# This is a common thing to do apparently
+def rms(samples):
+    return math.sqrt(sum(s * s for s in samples) / len(samples))
+
+def normalize_rms(waveform, target_rms):
+    current = rms(waveform)
+    if current == 0.0:
+        return waveform
+    scale = target_rms / current
+    return [s * scale for s in waveform]
 
 def main() -> None:
     parser = argparse.ArgumentParser(description='script that accepts arguments')
@@ -73,7 +85,7 @@ def main() -> None:
     parser.add_argument('--harmonic_data', type=str, help='These are the harmonics from which to make waveforms')
     parser.add_argument('--output', type=str, help='Output file path')
     parser.add_argument('--num_samples', type=int, default=8192, help='Waveform length in samples')
-
+    parser.add_argument('--target_rms', type=float, default=0.7071067811865476, help='RMS target for whole waveform')
     args = parser.parse_args()
 
     if not args.harmonic_data:
@@ -90,12 +102,15 @@ def main() -> None:
     for harmonic in harmonics:
         add_harmonic_to_waveform(waveform, harmonic)
 
+    # do normalization of waveform
+    waveform = normalize_rms(waveform, args.target_rms)
+
     if args.output:
         out_path = Path(args.output)
     else:
         # derive a name from the harmonic_data file, e.g. GOLDEN_TriangleWave_...
         stem = Path(args.harmonic_data).stem
-        out_path = OUTPUT_DIR / f"GOLDEN_WAVEFORM_{stem}_{args.num_samples}.csv"
+        out_path = OUTPUT_DIR / f"{stem}_{args.num_samples}.csv"
 
     write_waveform_csv(waveform, out_path)
     print(f"Wrote {out_path}")

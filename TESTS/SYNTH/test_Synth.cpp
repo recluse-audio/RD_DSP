@@ -457,7 +457,7 @@ TEST_CASE ("Synth::loadWavetable replaces wavetable contents in place", "[Synth]
     REQUIRE (wt.getNumWaveforms() > 0);
 
     const std::string tablePath =
-        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/BASIC_TABLE/GOLDEN_BASIC_WAVEFORM_TABLE_8192.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVETABLES/GOLDEN_Wavetable_BasicShapes_8192.csv";
 
     synth.loadWavetable (tablePath);
 
@@ -470,7 +470,7 @@ TEST_CASE ("Synth::process at varied wave positions matches per-shape golden CSV
     rd_dsp::Synth synth;
 
     const std::string tablePath =
-        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/BASIC_TABLE/GOLDEN_BASIC_WAVEFORM_TABLE_8192.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVETABLES/GOLDEN_Wavetable_BasicShapes_8192.csv";
     synth.loadWavetable (tablePath);
 
     synth.setNumVoices (1);

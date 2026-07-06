@@ -50,27 +50,27 @@ namespace
 TEST_CASE("Waveform sine fill matches golden CSV exactly at N=8192", "[Waveform]")
 {
     verifyWaveAgainstGolden (rd_dsp::Waveform::WaveType::wSine,
-                             "/WAVEFORM/GOLDEN/SINE/GOLDEN_SINE_8192.csv",
+                             "/WAVEFORM/GOLDEN/WAVEFORM/GOLDEN_SineWave_HarmonicData_8192.csv",
                              8192);
 }
 
 TEST_CASE("Waveform triangle fill matches golden CSV exactly at N=8192", "[Waveform]")
 {
     verifyWaveAgainstGolden (rd_dsp::Waveform::WaveType::wTri,
-                             "/WAVEFORM/GOLDEN/TRIANGLE/GOLDEN_TRIANGLE_8192.csv",
+                             "/WAVEFORM/GOLDEN/WAVEFORM/GOLDEN_TriangleWave_HarmonicData_HarmonicCount_8_8192.csv",
                              8192);
 }
 
 TEST_CASE("Waveform square fill matches golden CSV exactly at N=8192", "[Waveform]")
 {
     verifyWaveAgainstGolden (rd_dsp::Waveform::WaveType::wSquare,
-                             "/WAVEFORM/GOLDEN/SQUARE/GOLDEN_SQUARE_8192.csv",
+                             "/WAVEFORM/GOLDEN/WAVEFORM/GOLDEN_SquareWave_HarmonicData_HarmonicCount_8_8192.csv",
                              8192);
 }
 
 TEST_CASE("Waveform saw fill matches golden CSV exactly at N=8192", "[Waveform]")
 {
     verifyWaveAgainstGolden (rd_dsp::Waveform::WaveType::wSaw,
-                             "/WAVEFORM/GOLDEN/SAW/GOLDEN_SAW_8192.csv",
+                             "/WAVEFORM/GOLDEN/WAVEFORM/GOLDEN_SawWave_HarmonicData_HarmonicCount_16_8192.csv",
                              8192);
 }

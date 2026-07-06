@@ -114,7 +114,7 @@ TEST_CASE ("PulsarTrain::loadWavetable replaces wavetable contents in place", "[
     auto& wt = PulsarTrainTester::wavetable (train);
 
     const std::string tablePath =
-        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/BASIC_TABLE/GOLDEN_BASIC_WAVEFORM_TABLE_8192.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVETABLES/GOLDEN_Wavetable_BasicShapes_8192.csv";
 
     train.loadWavetable (tablePath);
 
@@ -127,7 +127,7 @@ TEST_CASE ("PulsarTrain::getWavetable returns live ref usable for fillDisplayBuf
     rd_dsp::PulsarTrain train;
 
     const std::string tablePath =
-        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/BASIC_TABLE/GOLDEN_BASIC_WAVEFORM_TABLE_8192.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVETABLES/GOLDEN_Wavetable_BasicShapes_8192.csv";
 
     train.loadWavetable (tablePath);
     train.setWavePosition (0.5f);
@@ -420,7 +420,7 @@ TEST_CASE ("PulsarTrain _emitPulsar applies the drawn wave position to the wavet
     train.prepare (48000.0, 512);
 
     const std::string tablePath =
-        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/BASIC_TABLE/GOLDEN_BASIC_WAVEFORM_TABLE_8192.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVETABLES/GOLDEN_Wavetable_BasicShapes_8192.csv";
     train.loadWavetable (tablePath);
 
     rd_dsp::RandomizedParam& wavePosRand = PulsarTrainTester::wavePositionRandom (train);
@@ -533,7 +533,7 @@ TEST_CASE ("PulsarTrain amp scales emission output by the drawn value", "[Pulsar
     train.prepare (kSampleRate, kBlockSize);
 
     const std::string tablePath =
-        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/BASIC_TABLE/GOLDEN_BASIC_WAVEFORM_TABLE_8192.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVETABLES/GOLDEN_Wavetable_BasicShapes_8192.csv";
     train.loadWavetable (tablePath);
     train.setWavePosition (0.f);                       // sine slot
     train.setWindowType  (rd_dsp::WindowType::kNone);  // all-ones window
@@ -574,7 +574,7 @@ TEST_CASE ("PulsarTrain end-to-end: one 200Hz sine cycle then zeros within emiss
     train.prepare (kSampleRate, kBlockSize);
 
     const std::string tablePath =
-        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/BASIC_TABLE/GOLDEN_BASIC_WAVEFORM_TABLE_8192.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVETABLES/GOLDEN_Wavetable_BasicShapes_8192.csv";
     train.loadWavetable (tablePath);
     train.setWavePosition (0.f);                          // sine slot
     train.setWindowType  (rd_dsp::WindowType::kNone);     // all-ones window
@@ -629,7 +629,7 @@ TEST_CASE ("PulsarTrain::start emits immediately; ::stop silences output", "[Pul
     train.prepare (kSampleRate, kBlockSize);
 
     const std::string tablePath =
-        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/BASIC_TABLE/GOLDEN_BASIC_WAVEFORM_TABLE_8192.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVETABLES/GOLDEN_Wavetable_BasicShapes_8192.csv";
     train.loadWavetable (tablePath);
     train.setWavePosition (0.f);
     train.setWindowType  (rd_dsp::WindowType::kNone);
@@ -683,7 +683,7 @@ TEST_CASE ("PulsarTrain output matches golden tukey-windowed sine over duty cycl
     pulsarTrain.prepare (kSampleRate, kBlockSize);
 
     const std::string wavetablePath =
-        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/BASIC_TABLE/GOLDEN_BASIC_WAVEFORM_TABLE_8192.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVETABLES/GOLDEN_Wavetable_BasicShapes_8192.csv";
     pulsarTrain.loadWavetable   (wavetablePath);
     pulsarTrain.setWavePosition (0.f);
     pulsarTrain.setWindowType   (rd_dsp::WindowType::kTukey);

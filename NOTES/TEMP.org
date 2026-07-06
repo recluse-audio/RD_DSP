@@ -1,0 +1,5 @@
+#+TITLE: TEMP
+#+AUTHOR: Ryan Devens
+#+DATE: 2026-07-06 15:14
+#+OPTIONS: toc:nil num:nil
+#+SUMMARY: Temporary dump file

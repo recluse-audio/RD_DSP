@@ -76,7 +76,7 @@ TEST_CASE("WaveFactory can fill Waveform with fundamental only sine wave""[WaveF
     waveFactory.fillWaveformWithHarmonics(waveForm);
 
     const std::string goldenPath =
-        std::string(RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/SINE/GOLDEN_SINE_8192.csv";
+        std::string(RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVEFORM/GOLDEN_SineWave_HarmonicData_8192.csv";
 
     std::vector<std::vector<float>> rows;
     const bool loaded = rd_dsp::CsvLoader::load(goldenPath, rows, /*skipHeader=*/false);
@@ -108,11 +108,11 @@ TEST_CASE("New golden sine wave matches old golden sine wave - both made with py
 {
 
     const std::string oldSinePath =
-        std::string(RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/SINE/GOLDEN_SINE_8192.csv";
+        std::string(RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/ALT_WAVEFORMS/WAVEFORMS/GOLDEN_SineWave_HarmonicData_16_8192.csv";
 
     // HarmonicData python generated sine wave
     const std::string newSinePath =
-        std::string(RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/SCRIPTS/WAVEFORM/GOLDEN_SineWave_HarmonicData_16_8192.csv";
+        std::string(RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVEFORM/GOLDEN_SineWave_HarmonicData_8192.csv";
 
     std::vector<std::vector<float>> oldRows;
     std::vector<std::vector<float>> newRows;
@@ -152,11 +152,11 @@ TEST_CASE("New golden triangle wave matches old golden triangle wave - both made
 {
 
     const std::string oldPath =
-        std::string(RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/TRIANGLE/GOLDEN_TRIANGLE_8192.csv";
+        std::string(RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/ALT_WAVEFORMS/WAVEFORMS/GOLDEN_TriangleWave_HarmonicData_16_8192.csv";
 
     // HarmonicData python generated sine wave
     const std::string newPath =
-        std::string(RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/SCRIPTS/WAVEFORM/GOLDEN_TriangleWave_HarmonicData_16_8192.csv";
+        std::string(RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVEFORM/GOLDEN_TriangleWave_HarmonicData_HarmonicCount_8_8192.csv";
 
     std::vector<std::vector<float>> oldRows;
     std::vector<std::vector<float>> newRows;
@@ -210,7 +210,7 @@ TEST_CASE("Sine wave generated with multi-harmonic method matches previous simpl
     waveFactory.fillWaveformWithHarmonics(waveForm);
 
     const std::string goldenPath =
-        std::string(RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/SCRIPTS/WAVEFORM/GOLDEN_SineWave_HarmonicData_16_8192.csv";
+        std::string(RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVEFORM/GOLDEN_SineWave_HarmonicData_8192.csv";
 
     std::vector<std::vector<float>> rows;
     const bool loaded = rd_dsp::CsvLoader::load(goldenPath, rows, /*skipHeader=*/false);
@@ -264,7 +264,7 @@ TEST_CASE("Triangle wave generated with multi-harmonic method matches previous s
     waveFactory.fillWaveformWithHarmonics(waveForm);
 
     const std::string goldenPath =
-        std::string(RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/SCRIPTS/WAVEFORM/GOLDEN_TriangleWave_HarmonicData_16_8192.csv";
+        std::string(RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVEFORM/GOLDEN_TriangleWave_HarmonicData_HarmonicCount_8_8192.csv";
 
     std::vector<std::vector<float>> rows;
     const bool loaded = rd_dsp::CsvLoader::load(goldenPath, rows, /*skipHeader=*/false);

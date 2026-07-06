@@ -9,9 +9,9 @@
 - [ ] Remove old golden waveforms for basic shapes
   - [X] remove old gen python scripts (moved to SCRIPTS/DEPRECATED)
   - [X] remove old GOLDEN waveforms (can regen from DEPRECATED scripts)
-  - [ ] make new harmonic data json files with more harmonics
-  - [ ] generate new GOLDEN files with =gen_golden_waveform.py=
-  - [ ] generate new GOLDEN =GOLDEN_BasicTable_32_8192=
+  - [X] make new harmonic data json files with more harmonics
+  - [X] generate new GOLDEN files with =gen_golden_waveform.py=
+  - [X] generate new GOLDEN =GOLDEN_BasicTable_32_8192=
   - [ ] update all tests referencing old golden files
   - [ ] modify existing Waveform basic waveshape generation to match this
 - [ ] Need ~HarmonicData~ and ~WaveformFactory~ to handle negative gain coefficients (interpret as inverse phase)

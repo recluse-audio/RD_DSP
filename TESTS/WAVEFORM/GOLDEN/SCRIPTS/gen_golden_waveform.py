@@ -4,7 +4,7 @@
 This generates sine waves with harmonics according to a series of args
 
 Run:
-    python TESTS/WAVEFORM/GOLDEN/gen_golden_waveform.py
+    python TESTS/WAVEFORM/GOLDEN/SCRIPTS/gen_golden_waveform.py
 """
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ from pathlib import Path
 import json
 import numpy
 
-OUTPUT_DIR = Path(__file__).resolve().parent / "WAVEFORM"
+OUTPUT_DIR = Path(__file__).resolve().parent.parent / "WAVEFORM"
 
 def parse_json_file(file_path):
     try:

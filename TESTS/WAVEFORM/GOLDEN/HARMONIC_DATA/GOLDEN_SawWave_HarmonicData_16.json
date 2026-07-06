@@ -1,0 +1,21 @@
+{
+    "waveName": "Sawtooth",
+    "HarmonicData": [
+        { "harmonicIndex": 0,  "ratio": 1.0,  "gain":  1.0 },
+        { "harmonicIndex": 1,  "ratio": 2.0,  "gain": -0.5 },
+        { "harmonicIndex": 2,  "ratio": 3.0,  "gain":  0.333333 },
+        { "harmonicIndex": 3,  "ratio": 4.0,  "gain": -0.25 },
+        { "harmonicIndex": 4,  "ratio": 5.0,  "gain":  0.2 },
+        { "harmonicIndex": 5,  "ratio": 6.0,  "gain": -0.166667 },
+        { "harmonicIndex": 6,  "ratio": 7.0,  "gain":  0.142857 },
+        { "harmonicIndex": 7,  "ratio": 8.0,  "gain": -0.125 },
+        { "harmonicIndex": 8,  "ratio": 9.0,  "gain":  0.111111 },
+        { "harmonicIndex": 9,  "ratio": 10.0, "gain": -0.1 },
+        { "harmonicIndex": 10, "ratio": 11.0, "gain":  0.090909 },
+        { "harmonicIndex": 11, "ratio": 12.0, "gain": -0.083333 },
+        { "harmonicIndex": 12, "ratio": 13.0, "gain":  0.076923 },
+        { "harmonicIndex": 13, "ratio": 14.0, "gain": -0.071429 },
+        { "harmonicIndex": 14, "ratio": 15.0, "gain":  0.066667 },
+        { "harmonicIndex": 15, "ratio": 16.0, "gain": -0.0625 }
+    ]
+}

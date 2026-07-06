@@ -1,0 +1,13 @@
+#+TITLE: README
+#+AUTHOR: Ryan Devens
+#+DATE: 2026-07-06 12:40
+#+OPTIONS: toc:nil num:nil
+#+SUMMARY: This describes the generation and testing of GOLDEN waveform files
+
+* Generating =GOLDEN= with Scripts
+To generate while cwd = project repo
+#+begin_src sh
+python3 /TESTS/WAVEFORM/GOLDEN/SCRIPTS/gen_golden_waveform.py --harmonic_data "TESTS/WAVEFORM/GOLDEN/HARMONIC_DATA/GOLDEN_SquareWave_HarmonicData_16.json"
+#+end_src
+
+The ~--harmonic_data~ arg is for a path to the harmonic data json.

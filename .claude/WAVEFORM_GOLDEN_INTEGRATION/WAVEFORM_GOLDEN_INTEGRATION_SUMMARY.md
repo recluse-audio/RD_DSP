@@ -1,42 +1,40 @@
 # Waveform Golden Integration — SUMMARY
 
-## What changes
+## What gets built / added
 | What | Why | Where |
 |------|-----|-------|
-| Fill `normalizeWaveform` | Add RMS-normalize + `tanh` peak-protect to match goldens | `SOURCE/WAVEFORM/WaveFactory.cpp:87` |
-| Rewrite shape fills | Use harmonic-gain tables, drop analytic `4/pi` etc. | `SOURCE/WAVEFORM/Waveform.cpp:65-151` |
-| New harmonic-constants header | Embed JSON ratios/gains (core lib can't read JSON) | new file under `SOURCE/WAVEFORM/` |
-| Regenerate square + basic table + wavetable goldens | They were NOT regenerated; still stale | `TESTS/WAVEFORM/GOLDEN/WAVEFORM/`, `.../WAVETABLES/` |
-| Precision decision | Meet strict 1e-6 test margins | `TESTS/WAVEFORM/test_Waveform.cpp:52` |
+| 4 golden variants per waveform | RAW, RMS_SCALED, PEAK_SCALED, RMS_PEAK_SCALED oracles | `TESTS/WAVEFORM/GOLDEN/WAVEFORMS/<VARIANT>/*.csv` |
+| 4 golden variants per wavetable | same four scalings, assembled | `TESTS/WAVEFORM/GOLDEN/WAVETABLES/<VARIANT>/*.csv` |
+| `gen_golden_waveform.py` refactor | decouple RMS from tanh; emit all four variants | `TESTS/WAVEFORM/GOLDEN/SCRIPTS/gen_golden_waveform.py` |
+| regen driver | one command rebuilds all variants × shapes + wavetables | `HELPER_SCRIPTS/` (new) |
+| nlohmann/json (header lib) | C++ reads HARMONIC_DATA JSON | CMake FetchContent, linked to `Tests` |
+| rapidcsv (header lib) | C++ reads golden CSV rows | CMake FetchContent, linked to `Tests` |
+| 4 C++ scaling stages | raw / rmsScale / peakScale(tanh) / rmsPeakScale | `SOURCE/WAVEFORM/WaveFactory.*` |
+| per-variant tests | assert C++ == golden for each level | `TESTS/WAVEFORM/*` |
 
-## The mismatch in one line
-- Goldens now do: sum harmonics → RMS-normalize to `0.7071` → `0.95*tanh(s/0.95)`.
-- C++ does: analytic Fourier coefficients, `normalizeWaveform` empty. So they diverge.
-
-## Failure map (9) — two mechanisms
-- **Bucket A — C++ generation change is the fix:** Waveform sine/tri/saw/square fills,
-  WaveFactory sine (x2). (Square also needs its golden regenerated.)
-- **Bucket B — no C++ generation runs; regenerate downstream goldens:**
-  - WaveformFileManager: table sine row (stale) vs regenerated individual sine golden.
-  - Synth: loads wavetable, compares to `SYNTH/GOLDEN/OUTPUT/*` (must regen from wavetable).
-  - Pulsar: `gen_golden_pulsar.py` makes a PURE analytic sine*window, never loads the wavetable.
-
-## tanh tension
-- `0.95*tanh(1.0/0.95) ≈ 0.743` — protecting the sine drops its peak to ~0.743, not 1.0.
-- Every downstream sine golden must be regenerated FROM the normalized wavetable, or sine must
-  be exempted from `protect_peaks`. Decide before implementing (Open Q4).
+## Scaling definitions
+- **RAW** — harmonic sum only. No scaling. Peaks may exceed 1.0.
+- **RMS_SCALED** — scale so RMS == 0.7071 (1/sqrt(2)).
+- **PEAK_SCALED** — tanh soft-clip only: `0.95 * tanh(x / 0.95)`.
+- **RMS_PEAK_SCALED** — RMS-scale, THEN tanh. Order matters. Matches current committed goldens.
 
 ## Acronyms
-- **RMS** — Root Mean Square, an energy-based amplitude measure.
-- **DSP** — Digital Signal Processing.
-- **AUv3 / WASM** — Apple AudioUnit v3 / WebAssembly; restricted targets banning file I/O and deps.
+- **RMS** — Root Mean Square, an amplitude/loudness measure.
+- **tanh** — hyperbolic tangent, the soft-clip curve.
+- **CSV** — Comma-Separated Values.
+- **AUv3 / WASM** — Apple audio-unit extension / WebAssembly; the restrictive no-file-I/O targets.
 
 ## In repo vs. on machine
-- **Repo (synced):** C++ sources, harmonic JSONs, golden CSVs, python generators, this plan.
-- **Local-only (per machine):** `BUILD/` artifacts.
+- **Repo (synced):** the four-variant `WAVEFORMS/` and `WAVETABLES/<VARIANT>/` CSVs, the
+  refactored scripts, HARMONIC_DATA JSONs, CMake fetch declarations.
+- **Local-only (per machine):** `BUILD/` and the FetchContent download cache (nlohmann, rapidcsv).
+
+## Dependencies (permanent)
+- nlohmann/json + rapidcsv are permanent project deps via FetchContent, usable anywhere including
+  the core lib. No zero-dep caveat, no build guard.
+- Downstream consumers (Synth, Pulsar, WaveformFileManager) use the `RMS_PEAK_SCALED` variant.
 
 ## How to use it
-- Regenerate one shape: `python TESTS/WAVEFORM/GOLDEN/SCRIPTS/gen_golden_waveform.py --harmonic_data <JSON>`
-- Reassemble table: `python TESTS/WAVEFORM/GOLDEN/SCRIPTS/gen_golden_wavetable.py <waveform_dir> --output <csv>`
-- Build + test: `python HELPER_SCRIPTS/build_tests.py --run`
-- Single tag: `./Tests "[WaveFactory]"`
+- Regenerate all goldens: run the new `HELPER_SCRIPTS/` driver (regens 4 variants × 4 shapes + 4 wavetables).
+- Reassemble one variant table: `python TESTS/WAVEFORM/GOLDEN/SCRIPTS/gen_golden_wavetable.py TESTS/WAVEFORM/GOLDEN/WAVEFORMS/<VARIANT> --output TESTS/WAVEFORM/GOLDEN/WAVETABLES/<VARIANT>/GOLDEN_Wavetable_BasicShapes_8192.csv`
+- Build + run tests: `python HELPER_SCRIPTS/build_tests.py --run`.

@@ -5,9 +5,9 @@ level in C++. C++ reads the harmonic JSON (nlohmann) and golden CSVs (rapidcsv) 
 Effort: medium (confirmed by inference; say the word to widen to high)
 
 ## Status
-- activeFocus: "WAVEFORM_GOLDEN_INTEGRATION :: PLAN_PHASE_3 :: PLAN_STEP_3_1"
+- activeFocus: "WAVEFORM_GOLDEN_INTEGRATION :: PLAN_PHASE_3 :: PLAN_STEP_3_2"
 - last commit: 61303ae (PLAN_PHASE_2/3 changes uncommitted)
-- updated: 2026-07-07 14:52 CDT / 2026-07-07T19:52Z
+- updated: 2026-07-07 18:54 CDT / 2026-07-07T23:54Z
 
 ## Decisions (resolved this session)
 - **Four scaling variants, not one.** Prior "RMS-only, no tanh" single-answer decision is
@@ -127,9 +127,11 @@ DECISION (user): the core `WaveFactory` is NOT responsible for scaling. It keeps
 ScalingVariant enum, no rms/peak methods on the class. The rms/peak scaling (taking float target
 + ceiling args) lives in a TEST-SIDE helper and is applied to the generated waveform before it is
 compared to the matching golden variant.
-- **PLAN_STEP_2_1** (effort: S, obj 4) Add a test-side scaling helper (free functions
-  `rmsScale(samples, targetRms)`, `peakScale(samples, ceiling)`) matching the Python step-for-step:
-  RMS in double, scale, then `ceiling*tanh(s/ceiling)`; guard RMS==0. Narrow to float32 on store.
+- **PLAN_STEP_2_1** [DONE] (effort: S, obj 4) Real `WaveFactory` methods (NOT a test helper):
+  `applyScaleRMS(Waveform&, float targetRms=kDefaultTargetRMS)` and
+  `applyPeakNormalization(Waveform&, float ceiling=kDefaultPeakCeiling)`, matching Python
+  step-for-step: RMS in double, scale, then `ceiling*tanh(s/ceiling)`; guard RMS==0; narrow to
+  float32 on store. Replaced the empty `normalizeWaveform` stub. Tests call these directly.
 - **PLAN_STEP_2_2** (effort: M, obj 4) `fillWaveformWithHarmonics` produces the RAW harmonic sum
   seeded from the JSON `gain` values (set via `setHarmonicDataValues` from the test's nlohmann parse),
   accumulated in double and narrowed to float32 once on store (so it matches the RAW golden). Remove

@@ -69,22 +69,26 @@ void WaveFactory::_writeHarmonicToWaveform(rd_dsp::Waveform& waveform, int harmo
 {
     const rd_dsp::HarmonicData* harmonicData = getHarmonicData(harmonicIndex);
 
+    // Double two-pi to match gen_golden_waveform.py. The phase argument (ratio * sampleIndex)
+    // grows large, so a float here loses precision inside std::sin and drifts past the 1e-6 margin.
+    constexpr double kTwoPiDouble = 6.28318530717958647692;
+
     for(int sampleIndex = 0; sampleIndex < kDefaultWaveformSize; sampleIndex++)
     {
-        const float phasePos = (kTwoPi * harmonicData->ratio * (float)sampleIndex) / (float)kDefaultWaveformSize;
-        const float harmonicSample = std::sin(phasePos + harmonicData->phaseOffset) * harmonicData->gain;
+        const double phasePos = (kTwoPiDouble * harmonicData->ratio * (double)sampleIndex) / (double)kDefaultWaveformSize;
+        const double harmonicSample = std::sin(phasePos + harmonicData->phaseOffset) * harmonicData->gain;
 
         // This is the summed sample val at this sampleIndex before adding this harmonicSample
-        const float prevSampleValue = waveform.getInterpolatedSampleAtIndex(sampleIndex);
+        const double prevSampleValue = waveform.getInterpolatedSampleAtIndex(sampleIndex);
 
         // this is the new value in waveform at given index after summing prev and new harmonic sample
-        const float calculatedSample = prevSampleValue + harmonicSample;
+        const float calculatedSample = static_cast<float>(prevSampleValue + harmonicSample);
 
         waveform.setSample(sampleIndex, calculatedSample);
     }
 }
 
-void WaveFactory::rmsScale(rd_dsp::Waveform& waveform, float targetRms)
+void WaveFactory::applyScaleRMS(rd_dsp::Waveform& waveform, float targetRms)
 {
     const int numSamples = waveform.getNumSamples();
     if(numSamples <= 0)
@@ -110,7 +114,7 @@ void WaveFactory::rmsScale(rd_dsp::Waveform& waveform, float targetRms)
     }
 }
 
-void WaveFactory::peakScale(rd_dsp::Waveform& waveform, float ceiling)
+void WaveFactory::applyPeakNormalization(rd_dsp::Waveform& waveform, float ceiling)
 {
     const int numSamples = waveform.getNumSamples();
     const double c = static_cast<double>(ceiling);

@@ -50,9 +50,9 @@ public:
     // Scaling stages, applied on top of the RAW harmonic-sum waveform. Each matches
     // gen_golden_waveform.py step-for-step: compute in double, narrow to float32 on store.
     // RMS-normalize the whole waveform to targetRms (no-op if RMS is zero).
-    void rmsScale(rd_dsp::Waveform& waveform, float targetRms = kDefaultTargetRMS);
+    void applyScaleRMS(rd_dsp::Waveform& waveform, float targetRms = kDefaultTargetRMS);
     // tanh soft-clip each sample: ceiling * tanh(s / ceiling).
-    void peakScale(rd_dsp::Waveform& waveform, float ceiling = kDefaultPeakCeiling);
+    void applyPeakNormalization(rd_dsp::Waveform& waveform, float ceiling = kDefaultPeakCeiling);
 private:
     // this is used to keep waveforms within a desirable rms
     float mNormalizeCoefficient = 1.f;

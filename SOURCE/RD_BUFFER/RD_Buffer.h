@@ -5,6 +5,8 @@
 #pragma once
 
 #include <cstddef>
+#include <tuple>
+#include <cmath>
 
 namespace rd_dsp
 {
@@ -49,6 +51,13 @@ public:
 
     // Zero every sample. Preserves channel/sample counts.
     void clear() noexcept;
+
+    float getRMS(int channel);
+    // returns float sample value and index / channel it was found
+    std::tuple<float, int, int> getPeakValue();
+
+    //
+    void fillBufferWithSine(rd_dsp::RD_Buffer& buffer);
 
 private:
     void _allocate (int numChannels, int numSamples, bool zeroInit);

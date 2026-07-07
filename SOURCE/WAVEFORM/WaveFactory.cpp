@@ -84,5 +84,10 @@ void WaveFactory::_writeHarmonicToWaveform(rd_dsp::Waveform& waveform, int harmo
     }
 }
 
+void WaveFactory::normalizeWaveform(rd_dsp::Waveform& waveform)
+{
+
+
+}
 
 } // namespace rd_dsp

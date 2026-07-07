@@ -52,33 +52,20 @@ float Waveform::getInterpolatedSampleAtIndex (float index) const noexcept
 
 float Waveform::getWaveformRMS()
 {
-    const int numSamples = mBuffer.getNumSamples();
-
-    float sumOfSquaredSamples = 0.f;
-    for(int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++)
-    {
-        float sampleValue = mBuffer.getSample(0, sampleIndex);
-        sumOfSquaredSamples += (sampleValue * sampleValue);
-
-    }
-
-    float rmsValue = std::sqrt(sumOfSquaredSamples / numSamples);
-    return rmsValue;
+    return mBuffer.getRMS(0);
 }
+
+float Waveform::getPeakValue()
+{
+    auto [peakValue, index, channel] = mBuffer.getPeakValue();
+    return peakValue;
+}
+
 
 void Waveform::_fillWithSine()
 {
     mBuffer.clear();
-    const int numSamples = mBuffer.getNumSamples();
-    if (numSamples <= 0)
-        return;
-
-    for (int sampleIndex = 0; sampleIndex < numSamples; ++sampleIndex)
-    {
-        const float phase  = (static_cast<float>(sampleIndex) * kTwoPi) / static_cast<float>(numSamples);
-        const float sample = std::sin (phase);
-        mBuffer.setSample (0, sampleIndex, sample);
-    }
+    mBuffer.fillBufferWithSine(mBuffer);
 }
 
 void Waveform::_fillWithTri()

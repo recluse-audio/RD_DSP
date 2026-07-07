@@ -53,6 +53,8 @@ public:
     float getInterpolatedSampleAtIndex (float index) const noexcept;
 
     float getWaveformRMS();
+    float getPeakValue();
+
 private:
     friend class WaveformTester;
     void _fillWithSine();

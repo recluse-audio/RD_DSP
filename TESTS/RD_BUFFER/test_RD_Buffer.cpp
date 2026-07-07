@@ -4,7 +4,10 @@
  */
 
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/catch_approx.hpp>
+
 #include "RD_BUFFER/RD_Buffer.h"
+#include "../../SOURCE/WAVEFORM/Waveform.h"
 
 TEST_CASE ("Default-constructed RD_Buffer reports zero size", "[RD_Buffer]")
 {
@@ -98,4 +101,50 @@ TEST_CASE ("getWriteArray exposes float* per channel", "[RD_Buffer]")
 
     REQUIRE (buffer.getSample (0, 0) == 0.1f);
     REQUIRE (buffer.getSample (2, 1) == 0.9f);
+}
+
+//-----------------------------------------
+TEST_CASE("Can calculate RMS for RD_Buffer", "[RD_Buffer][RMS]")
+{
+    const int numChannels = 1;
+    const int numSamples = 1024;
+    // declare buffer, get write array, write sine wave samples to it
+    // expect rms of 0.707
+    rd_dsp::RD_Buffer buffer (numChannels, numSamples);
+    // expect silent buffer no rms before fill
+    REQUIRE(buffer.getRMS(0) == 0.f);
+
+    buffer.fillBufferWithSine(buffer);
+
+    // after fill expect 0.707
+    float rms = buffer.getRMS(0);
+    REQUIRE(rms == Catch::Approx(0.707107).margin(1.0e-6));
+
+}
+
+//-----------------------------------------
+TEST_CASE("Can find peak index in RD_Buffer", "[RD_Buffer][Peak]")
+{
+    const int numChannels = 2;
+    const int numSamples = 512;
+
+    rd_dsp::RD_Buffer buffer(numChannels, numSamples);
+
+    // set one sample to 1.f (all others at 0.f)
+    // confirm it was set, then confirm peak detection finds it
+    buffer.setSample(0, 256, 1.f);
+
+    REQUIRE(buffer.getSample(0, 256) == 1.f);
+    auto [peakValue, sampleIndex, channelIndex] = buffer.getPeakValue();
+    REQUIRE(peakValue == 1.f);
+    REQUIRE(sampleIndex == 256);
+    REQUIRE(channelIndex == 0);
+
+    // now set another sample even higher to make sure it updates
+    buffer.setSample(1, 257, 2.f);
+    auto [newPeakValue, newSampleIndex, newChannelIndex] = buffer.getPeakValue();
+    REQUIRE(newPeakValue == 2.f);
+    REQUIRE(newSampleIndex == 257);
+    REQUIRE(newChannelIndex == 1);
+
 }

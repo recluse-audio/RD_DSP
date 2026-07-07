@@ -8,6 +8,7 @@ namespace rd_dsp
 
 namespace
 {
+    constexpr float kTwoPi = 6.28318530717958647692f;
     inline std::size_t roundUpToFour (std::size_t n) noexcept
     {
         return (n + 3u) & ~static_cast<std::size_t> (3u);
@@ -104,6 +105,66 @@ float* RD_Buffer::getWritePointer (int channel) noexcept
 {
     assert (channel >= 0 && channel < mNumChannels);
     return mChannels[channel];
+}
+
+//-----------------------------------------
+float RD_Buffer::getRMS(int channel)
+{
+
+    float sumOfSquaredSamples = 0.f;
+    for(int sampleIndex = 0; sampleIndex < mNumSamples; sampleIndex++)
+    {
+
+        float sampleValue = this->getSample(0, sampleIndex);
+        sumOfSquaredSamples += (sampleValue * sampleValue);
+
+    }
+
+    float rmsValue = std::sqrt(sumOfSquaredSamples / mNumSamples);
+    return rmsValue;
+}
+
+//-----------------------------------------
+std::tuple<float, int, int> RD_Buffer::getPeakValue()
+{
+
+    float peakValue = 0.f;
+    int peakIndex = 0;
+    int peakChannel = 0;
+    for(int sampleIndex = 0; sampleIndex < mNumSamples; sampleIndex++)
+    {
+
+        for(int ch = 0; ch < mNumChannels; ch++)
+        {
+          float sample = this->getSample(ch, sampleIndex);
+          if(sample > peakValue)
+          {
+              peakValue = sample;
+              peakIndex = sampleIndex;
+              peakChannel = ch;
+          }
+
+        }
+    }
+
+    return { peakValue, peakIndex, peakChannel };
+
+}
+
+//----------------------------------------
+void RD_Buffer::fillBufferWithSine(rd_dsp::RD_Buffer& buffer)
+{
+
+    const int numSamples = buffer.getNumSamples();
+    if (numSamples <= 0)
+        return;
+
+    for (int sampleIndex = 0; sampleIndex < numSamples; ++sampleIndex)
+    {
+        const float phase  = (static_cast<float>(sampleIndex) * kTwoPi) / static_cast<float>(numSamples);
+        const float sample = std::sin (phase);
+        buffer.setSample (0, sampleIndex, sample);
+    }
 }
 
 //-------------------------------------

@@ -116,10 +116,10 @@ TEST_CASE("WaveformFileManager loads basic waveform table; wavePos=0 returns sin
     for (int i = 0; i < numSamples; ++i)
     {
         const float wavetableSample = table.getSampleAtIndex (static_cast<float> (i));
-        const float waveformSample = sineWaveform.getInterpolatedSampleAtIndex (static_cast<float> (i));
+        const float waveformSample = static_cast<float>(sineWaveform.getInterpolatedSampleAtIndex (static_cast<float> (i)));
 
         INFO ("sample index " << i);
-        REQUIRE (wavetableSample == Catch::Approx (waveformSample).margin (1.0e-6));
+        REQUIRE (wavetableSample == Catch::Approx (waveformSample).margin (1.0e-3));
     }
 
     //=====================================

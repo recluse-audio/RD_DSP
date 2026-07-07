@@ -18,7 +18,7 @@ from __future__ import annotations
 import math
 from pathlib import Path
 
-OUTPUT_DIR = Path(__file__).resolve().parent / "BASIC_TABLE"
+OUTPUT_DIR = Path(__file__).resolve().parent.parent.parent / "WAVETABLES/BASIC_TABLE"
 
 
 def sine_sample(i: int, n: int) -> float:

@@ -63,12 +63,18 @@ def write_waveform_csv(waveform, out_path: Path) -> Path:
 def rms(samples):
     return math.sqrt(sum(s * s for s in samples) / len(samples))
 
+def protect_peaks(waveform, peak_ceiling=0.95):
+    return [peak_ceiling * math.tanh(s / peak_ceiling) for s in waveform]
+
 def normalize_rms(waveform, target_rms):
     current = rms(waveform)
     if current == 0.0:
         return waveform
     scale = target_rms / current
-    return [s * scale for s in waveform]
+    scaledWaveform = [s * scale for s in waveform]
+    protectedWaveform = protect_peaks(scaledWaveform)
+    return protectedWaveform
+
 
 def main() -> None:
     parser = argparse.ArgumentParser(description='script that accepts arguments')

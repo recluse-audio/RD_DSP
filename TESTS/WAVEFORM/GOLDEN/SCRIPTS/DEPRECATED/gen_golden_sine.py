@@ -13,7 +13,7 @@ from __future__ import annotations
 import math
 from pathlib import Path
 
-OUTPUT_DIR = Path(__file__).resolve().parent / "SINE"
+OUTPUT_DIR = Path(__file__).resolve().parent.parent.parent / "ALT_WAVEFORMS"
 
 
 def write_golden_sine(num_samples: int) -> Path:

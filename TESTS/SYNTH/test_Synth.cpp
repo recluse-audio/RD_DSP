@@ -518,7 +518,7 @@ TEST_CASE ("Synth::process at varied wave positions matches per-shape golden CSV
         for (int i = 0; i < processBlockSize; ++i)
         {
             const float expected = csvBuffer.getSample (amplitudeChannel, i);
-            CHECK (processBuffer.getSample (0, i) == Catch::Approx (expected).margin (margin));
+            REQUIRE (processBuffer.getSample (0, i) == Catch::Approx (expected).margin (margin));
         }
     }
 }

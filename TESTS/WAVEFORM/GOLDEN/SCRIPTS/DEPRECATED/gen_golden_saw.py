@@ -20,7 +20,7 @@ from __future__ import annotations
 import math
 from pathlib import Path
 
-OUTPUT_DIR = Path(__file__).resolve().parent / "SAW"
+OUTPUT_DIR = Path(__file__).resolve().parent.parent.parent / "ALT_WAVEFORMS"
 NUM_HARMONICS = 32
 
 

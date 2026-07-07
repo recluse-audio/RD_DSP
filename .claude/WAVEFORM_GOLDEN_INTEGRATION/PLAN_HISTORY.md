@@ -35,3 +35,18 @@ Append-only. Newest at bottom. Source of truth for /rd_plan --resume.
 - activeFocus: "WAVEFORM_GOLDEN_INTEGRATION :: PLAN_PHASE_1 :: PLAN_STEP_1_1"
 - commit: 61303ae (uncommitted working tree)
 - note: Next: add nlohmann/json + rapidcsv via CMake FetchContent, exposed to RD_DSP and Tests.
+
+## 2026-07-07 14:26 CDT (2026-07-07T19:26Z) — phase-done
+- activeFocus: "WAVEFORM_GOLDEN_INTEGRATION :: PLAN_PHASE_1 :: PLAN_STEP_1_1"
+- commit: 61303ae
+- note: PLAN_PHASE_1 complete. nlohmann/json + rapidcsv are git submodules under SUBMODULES/, already wired via add_subdirectory (not FetchContent) and linked to RD_DSP, Standalone, and Tests (CMakeLists.txt:50-56,82-86,103-108). Submodule self-tests disabled. Tests carry RD_DSP_TESTS_DIR compile def to find goldens at runtime. Verified: build_tests.py configures + builds RD_DSP/Catch2/Tests clean. Guard step (old PLAN_STEP_1_2) not needed (zero-dep rule retired).
+
+## 2026-07-07 14:26 CDT (2026-07-07T19:26Z) — focus-set
+- activeFocus: "WAVEFORM_GOLDEN_INTEGRATION :: PLAN_PHASE_2 :: PLAN_STEP_2_1"
+- commit: 61303ae
+- note: Next: implement the four C++ scaling stages (raw/rmsScale/peakScale tanh/rmsPeakScale) in WaveFactory matching the Python constants + order.
+
+## 2026-07-07 14:52 CDT (2026-07-07T19:52Z) — step-done
+- activeFocus: "WAVEFORM_GOLDEN_INTEGRATION :: PLAN_PHASE_3 :: PLAN_STEP_3_1"
+- commit: 61303ae (uncommitted)
+- note: DESIGN CHANGE (user): scaling stays test-callable but lives as REAL WaveFactory methods, not a test helper and not an enum. Added WaveFactory::rmsScale(Waveform&, float targetRms=kDefaultTargetRMS) and peakScale(Waveform&, float ceiling=kDefaultPeakCeiling), both compute in double, narrow to float32 on store; replaced the empty normalizeWaveform stub; added kDefaultTargetRMS/kDefaultPeakCeiling consts to WaveFactory.h. PLAN_STEP_2_1 done. PLAN_STEP_2_2 (double-accumulate fill rewrite) was STARTED then interrupted by user - fillWaveformWithHarmonics left as-is for now. PLAN_STEP_3_1 begun: new TESTS/WAVEFORM/test_WaveformVariants.cpp loads HARMONIC_DATA JSON via nlohmann, sets harmonics, fills RAW, applies the actual WaveFactory scaling fns, compares to WAVEFORMS/<VARIANT>/ via rapidcsv, one SECTION per variant. Sine passes ALL four variants at margin 1e-6 (32776 assertions). Note: fixed TEST_CASE name/tag to use a comma so [tag] filtering works (repo's existing tests concatenate name+tag, a latent bug). Next: extend to saw/square/tri (multi-harmonic) - may need the interrupted double-accumulate fill for 1e-6 to hold.

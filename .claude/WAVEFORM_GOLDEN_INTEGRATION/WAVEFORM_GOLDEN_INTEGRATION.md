@@ -5,9 +5,9 @@ level in C++. C++ reads the harmonic JSON (nlohmann) and golden CSVs (rapidcsv) 
 Effort: medium (confirmed by inference; say the word to widen to high)
 
 ## Status
-- activeFocus: "WAVEFORM_GOLDEN_INTEGRATION :: PLAN_PHASE_1 :: PLAN_STEP_1_1"
-- last commit: 61303ae (PLAN_PHASE_0 changes not yet committed)
-- updated: 2026-07-07 14:22 CDT / 2026-07-07T19:22Z
+- activeFocus: "WAVEFORM_GOLDEN_INTEGRATION :: PLAN_PHASE_3 :: PLAN_STEP_3_1"
+- last commit: 61303ae (PLAN_PHASE_2/3 changes uncommitted)
+- updated: 2026-07-07 14:52 CDT / 2026-07-07T19:52Z
 
 ## Decisions (resolved this session)
 - **Four scaling variants, not one.** Prior "RMS-only, no tanh" single-answer decision is
@@ -114,25 +114,32 @@ RMS-then-tanh ORDER for the combined variant.
   Python) that regenerates all four shapes × four variants + the four wavetables in one command.
   Run it; commit the new `WAVEFORMS/` and `WAVETABLES/<VARIANT>/` tree.
 
-### PLAN_PHASE_1 — CMake: add nlohmann/json + rapidcsv
-- **PLAN_STEP_1_1** (effort: M, obj 3) FetchContent `nlohmann_json` and `rapidcsv`; expose their
-  include dirs to both `RD_DSP` and `Tests`. `target_link_libraries` as needed. Both are permanent
-  project dependencies; no build guard.
+### PLAN_PHASE_1 — CMake: add nlohmann/json + rapidcsv  [DONE]
+- **PLAN_STEP_1_1** [DONE] (effort: M, obj 3) Both are git submodules under `SUBMODULES/`, wired via
+  `add_subdirectory` (not FetchContent), linked to `RD_DSP`, `Standalone`, and `Tests`
+  (`CMakeLists.txt:50-56, 82-86, 103-108`). Submodule self-tests disabled (`JSON_BuildTests`,
+  `RAPIDCSV_BUILD_TESTS`). Tests get `RD_DSP_TESTS_DIR` define to locate goldens at runtime.
+  Verified with a clean `build_tests.py`.
 
-### PLAN_PHASE_2 — C++ scaling stages matching Python
-- **PLAN_STEP_2_1** (effort: M, obj 4) Implement the four stages in `WaveFactory`: raw harmonic sum
-  (no scaling), `rmsScale` (compute RMS, scale to `target_rms`, guard RMS==0), `peakScale`
-  (`ceiling*tanh(s/ceiling)`), and `rmsPeakScale` (rms then peak). No allocation / no exceptions on
-  hot path. Constants in a shared header, commented next to the Python values.
-- **PLAN_STEP_2_2** (effort: M, obj 4) `_fillWith*` / `fillWaveformWithHarmonics` produce the RAW
-  harmonic sum seeded from the JSON `gain` values (parsed via nlohmann), computed in double and
-  narrowed to float32 on store. Remove the hardcoded 0.5 in `_initHarmonicData`. Delete the
-  analytic coefficient loops if they no longer match the harmonic-sum RAW baseline.
+### PLAN_PHASE_2 — C++ produces the RAW harmonic sum; scaling is test-side
+DECISION (user): the core `WaveFactory` is NOT responsible for scaling. It keeps only the setters
+(`setHarmonicDataValues`) and `fillWaveformWithHarmonics`, which produce the RAW waveform. No
+ScalingVariant enum, no rms/peak methods on the class. The rms/peak scaling (taking float target
++ ceiling args) lives in a TEST-SIDE helper and is applied to the generated waveform before it is
+compared to the matching golden variant.
+- **PLAN_STEP_2_1** (effort: S, obj 4) Add a test-side scaling helper (free functions
+  `rmsScale(samples, targetRms)`, `peakScale(samples, ceiling)`) matching the Python step-for-step:
+  RMS in double, scale, then `ceiling*tanh(s/ceiling)`; guard RMS==0. Narrow to float32 on store.
+- **PLAN_STEP_2_2** (effort: M, obj 4) `fillWaveformWithHarmonics` produces the RAW harmonic sum
+  seeded from the JSON `gain` values (set via `setHarmonicDataValues` from the test's nlohmann parse),
+  accumulated in double and narrowed to float32 once on store (so it matches the RAW golden). Remove
+  the hardcoded 0.5 default in `_initHarmonicData` if it interferes.
 
 ### PLAN_PHASE_3 — Tests assert each level
-- **PLAN_STEP_3_1** (effort: M, obj 5) Test helper: load `HARMONIC_DATA/*.json` via nlohmann, build
-  the RAW C++ waveform, then for each variant apply the matching C++ stage, load the golden CSV via
-  rapidcsv, and assert equality within tolerance. One `TEST_CASE` per shape, `SECTION` per variant.
+- **PLAN_STEP_3_1** (effort: M, obj 5) Test helper: load `HARMONIC_DATA/*.json` via nlohmann, set the
+  harmonics, build the RAW C++ waveform, then for each variant apply the matching test-side scaling
+  helper, load the golden CSV via rapidcsv, and assert equality within tolerance. One `TEST_CASE`
+  per shape, `SECTION` per variant against `WAVEFORMS/<VARIANT>/`.
 - **PLAN_STEP_3_2** (effort: S, obj 5) Wavetable-level test: same pattern against
   `WAVETABLES/<VARIANT>/`.
 - **PLAN_STEP_3_3** (effort: S, obj 6) Full suite green; nothing regressed.

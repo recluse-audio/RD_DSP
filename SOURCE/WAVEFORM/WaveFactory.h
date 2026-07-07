@@ -16,6 +16,10 @@ namespace rd_dsp
 static const int kMaxAudioFriendlyHarmonics = 16;
 static const int kDefaultWaveformSize = 8192;
 constexpr float kTwoPi = 6.28318530717958647692f;
+
+// Shared with the Python golden generator (gen_golden_waveform.py). Keep in sync.
+constexpr float kDefaultTargetRMS   = 0.70710678118654752f; // 1 / sqrt(2)
+constexpr float kDefaultPeakCeiling = 0.95f;                // tanh soft-clip ceiling
 //
 struct HarmonicData
 {
@@ -43,7 +47,12 @@ public:
 
     void fillWaveformWithHarmonics(rd_dsp::Waveform& waveform);
 
-    void normalizeWaveform(rd_dsp::Waveform& waveform);
+    // Scaling stages, applied on top of the RAW harmonic-sum waveform. Each matches
+    // gen_golden_waveform.py step-for-step: compute in double, narrow to float32 on store.
+    // RMS-normalize the whole waveform to targetRms (no-op if RMS is zero).
+    void rmsScale(rd_dsp::Waveform& waveform, float targetRms = kDefaultTargetRMS);
+    // tanh soft-clip each sample: ceiling * tanh(s / ceiling).
+    void peakScale(rd_dsp::Waveform& waveform, float ceiling = kDefaultPeakCeiling);
 private:
     // this is used to keep waveforms within a desirable rms
     float mNormalizeCoefficient = 1.f;

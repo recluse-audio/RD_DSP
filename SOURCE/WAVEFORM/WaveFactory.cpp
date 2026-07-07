@@ -84,10 +84,42 @@ void WaveFactory::_writeHarmonicToWaveform(rd_dsp::Waveform& waveform, int harmo
     }
 }
 
-void WaveFactory::normalizeWaveform(rd_dsp::Waveform& waveform)
+void WaveFactory::rmsScale(rd_dsp::Waveform& waveform, float targetRms)
 {
+    const int numSamples = waveform.getNumSamples();
+    if(numSamples <= 0)
+        return;
 
+    // Compute RMS in double to match the Python golden generator.
+    double sumOfSquares = 0.0;
+    for(int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++)
+    {
+        const double sample = static_cast<double>(waveform.getSample(sampleIndex));
+        sumOfSquares += sample * sample;
+    }
 
+    const double rms = std::sqrt(sumOfSquares / static_cast<double>(numSamples));
+    if(rms == 0.0)
+        return;
+
+    const double scale = static_cast<double>(targetRms) / rms;
+    for(int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++)
+    {
+        const double scaled = static_cast<double>(waveform.getSample(sampleIndex)) * scale;
+        waveform.setSample(sampleIndex, static_cast<float>(scaled));
+    }
+}
+
+void WaveFactory::peakScale(rd_dsp::Waveform& waveform, float ceiling)
+{
+    const int numSamples = waveform.getNumSamples();
+    const double c = static_cast<double>(ceiling);
+    for(int sampleIndex = 0; sampleIndex < numSamples; sampleIndex++)
+    {
+        const double sample = static_cast<double>(waveform.getSample(sampleIndex));
+        const double clipped = c * std::tanh(sample / c);
+        waveform.setSample(sampleIndex, static_cast<float>(clipped));
+    }
 }
 
 } // namespace rd_dsp

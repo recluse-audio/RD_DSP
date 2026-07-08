@@ -19,10 +19,10 @@
       - put in =Waveform= so it can still generate its own wave shapes
       - general idea is "if you make a waveform, decide if you want it normalized"
         - This logic applies to the ~Waveform~ itself when generating its own waveshapes
-- [ ] Need ~HarmonicData~ and ~WaveformFactory~ to handle negative gain coefficients (interpret as inverse phase)
-  - [ ] Write test case for sine wave
-  - [ ] Write test case for constructive harmonics
-  - [ ] Write test case for destructive harmonics
+- [X] Need ~HarmonicData~ and ~WaveformFactory~ to handle negative gain coefficients (interpret as inverse phase)
+  - [X] Write test case for sine wave
+  - [X] Write test case for constructive harmonics
+  - [X] Write test case for destructive harmonics
 
 
 - [X] Need to enter values in HarmonicData.json(s)
@@ -32,17 +32,15 @@ First aim for consistency between python and cpp waveforms
 - THEN optimize
 
 
-
 ** CREATE GOLDEN HARMONIC DATA JSON(s)
 ="Authoritative" equations found in wolfram, wikipedia, claude=
-- [ ] triangle
-- [ ] square
-- [ ] saw
+- [X] triangle
+- [X] square
+- [X] saw
 
 ** GENERATING GOLDEN WAVEFORM(s)
 =Must use HarmonicData.json=
-- [ ] generate with python
-- [ ] generate with Catch2 (in test output)
+- [X] generate with python
 
 *** How to generate GOLDEN waveforms
 GOLDEN waveforms are made by calling this script
@@ -50,6 +48,10 @@ GOLDEN waveforms are made by calling this script
 python3 TESTS/WAVEFORM/GOLDEN/SCRIPTS/gen_golden_waveform.py --harmonic_data "TESTS/WAVEFORM/GOLDEN/SCRIPTS/GOLDEN_TriangleWave_HarmonicData_16.json"
 #+end_src
 
+** ~Waveform~ have consistent =RMS= but are not =Normalized=
+- Basic waveforms have varied RMS
+  - using a target rms arg in python gen scripts to keep them close in RMS
+  - may still exceed
 * TESTS
 - [X] Fundamental only
 - [ ] Logarithmic harmonic gain fall off

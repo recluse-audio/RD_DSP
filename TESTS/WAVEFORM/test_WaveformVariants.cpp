@@ -71,17 +71,23 @@ namespace
         return doc.GetRow<float>(0);
     }
 
-    // Build the RAW waveform for jsonStem, apply the variant's scaling, compare to its golden.
-    void checkVariant(const std::string& jsonStem, Variant variant)
+    // All rows of a (possibly multi-row) golden CSV, e.g. an assembled wavetable.
+    std::vector<std::vector<float>> loadGoldenRows(const std::string& csvPath)
+    {
+        rapidcsv::Document doc(csvPath, rapidcsv::LabelParams(-1, -1));
+        std::vector<std::vector<float>> rows;
+        for(std::size_t rowIndex = 0; rowIndex < doc.GetRowCount(); rowIndex++)
+            rows.push_back(doc.GetRow<float>(rowIndex));
+        return rows;
+    }
+
+    // Fill waveform (RAW) from jsonStem, then apply the variant's scaling.
+    void buildScaledWaveform(rd_dsp::WaveFactory& factory, rd_dsp::Waveform& waveform,
+                             const std::string& jsonStem, Variant variant)
     {
         const std::string jsonPath = kGoldenDir + "/HARMONIC_DATA/" + jsonStem + ".json";
-        const std::string csvPath  =
-            kGoldenDir + "/WAVEFORMS/" + variantDir(variant) + "/" + jsonStem + "_8192.csv";
 
-        rd_dsp::WaveFactory factory;
-        rd_dsp::Waveform    waveform;
         waveform.setSize(rd_dsp::kDefaultWaveformSize);
-
         setHarmonicsFromJson(factory, jsonPath);
         factory.fillWaveformWithHarmonics(waveform);
 
@@ -93,9 +99,13 @@ namespace
             case Variant::RmsPeakScaled: factory.applyScaleRMS(waveform);
                                          factory.applyPeakNormalization(waveform);      break;
         }
+    }
 
-        const std::vector<float> golden = loadGoldenRow(csvPath);
-        INFO("Golden path: " << csvPath);
+    // Compare a generated waveform against one golden row of expected samples.
+    void compareWaveformToRow(const rd_dsp::Waveform& waveform, const std::vector<float>& golden,
+                              Variant variant, const std::string& context)
+    {
+        INFO(context);
         REQUIRE(static_cast<int>(golden.size()) == rd_dsp::kDefaultWaveformSize);
 
         for(int i = 0; i < rd_dsp::kDefaultWaveformSize; i++)
@@ -104,6 +114,19 @@ namespace
             REQUIRE(waveform.getSample(i)
                     == Catch::Approx(golden[static_cast<std::size_t>(i)]).margin(1.0e-6));
         }
+    }
+
+    // Single-shape check against WAVEFORMS/<VARIANT>/<stem>_8192.csv.
+    void checkVariant(const std::string& jsonStem, Variant variant)
+    {
+        const std::string csvPath =
+            kGoldenDir + "/WAVEFORMS/" + variantDir(variant) + "/" + jsonStem + "_8192.csv";
+
+        rd_dsp::WaveFactory factory;
+        rd_dsp::Waveform    waveform;
+        buildScaledWaveform(factory, waveform, jsonStem, variant);
+
+        compareWaveformToRow(waveform, loadGoldenRow(csvPath), variant, "Golden path: " + csvPath);
     }
 
     void checkAllVariants(const std::string& jsonStem)
@@ -133,4 +156,38 @@ TEST_CASE("Square waveform matches golden across all scaling variants", "[Wavefo
 TEST_CASE("Triangle waveform matches golden across all scaling variants", "[WaveformVariants]")
 {
     checkAllVariants("GOLDEN_TriangleWave_HarmonicData_HarmonicCount_8");
+}
+
+TEST_CASE("Wavetable matches golden across all scaling variants", "[WaveformVariants]")
+{
+    // Row order matches gen_golden_wavetable.py: per-shape CSVs sorted by filename.
+    const std::vector<std::string> orderedStems = {
+        "GOLDEN_SawWave_HarmonicData_HarmonicCount_16",
+        "GOLDEN_SineWave_HarmonicData",
+        "GOLDEN_SquareWave_HarmonicData_HarmonicCount_8",
+        "GOLDEN_TriangleWave_HarmonicData_HarmonicCount_8"
+    };
+
+    const std::vector<Variant> variants = {
+        Variant::Raw, Variant::RmsScaled, Variant::PeakScaled, Variant::RmsPeakScaled };
+
+    for(const Variant variant : variants)
+    {
+        const std::string tablePath = kGoldenDir + "/WAVETABLES/" + variantDir(variant)
+                                      + "/GOLDEN_Wavetable_BasicShapes_8192.csv";
+
+        const std::vector<std::vector<float>> goldenRows = loadGoldenRows(tablePath);
+        INFO("Wavetable path: " << tablePath);
+        REQUIRE(goldenRows.size() == orderedStems.size());
+
+        for(std::size_t row = 0; row < orderedStems.size(); row++)
+        {
+            rd_dsp::WaveFactory factory;
+            rd_dsp::Waveform    waveform;
+            buildScaledWaveform(factory, waveform, orderedStems[row], variant);
+
+            compareWaveformToRow(waveform, goldenRows[row], variant,
+                                 "Wavetable row " + std::to_string(row) + " (" + orderedStems[row] + ")");
+        }
+    }
 }

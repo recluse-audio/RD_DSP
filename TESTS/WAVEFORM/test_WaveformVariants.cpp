@@ -160,12 +160,13 @@ TEST_CASE("Triangle waveform matches golden across all scaling variants", "[Wave
 
 TEST_CASE("Wavetable matches golden across all scaling variants", "[WaveformVariants]")
 {
-    // Row order matches gen_golden_wavetable.py: per-shape CSVs sorted by filename.
+    // Row order = wavePosition order (0.0 sine, 0.25 tri, 0.5 square, 0.75 saw), matching
+    // regen_goldens.py's WAVETABLE_ROW_ORDER passed to gen_golden_wavetable.py --order.
     const std::vector<std::string> orderedStems = {
-        "GOLDEN_SawWave_HarmonicData_HarmonicCount_16",
         "GOLDEN_SineWave_HarmonicData",
+        "GOLDEN_TriangleWave_HarmonicData_HarmonicCount_8",
         "GOLDEN_SquareWave_HarmonicData_HarmonicCount_8",
-        "GOLDEN_TriangleWave_HarmonicData_HarmonicCount_8"
+        "GOLDEN_SawWave_HarmonicData_HarmonicCount_16"
     };
 
     const std::vector<Variant> variants = {

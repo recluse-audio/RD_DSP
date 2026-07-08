@@ -23,7 +23,7 @@ TEST_CASE("WaveformFileManager loads golden csv" "[rapidcsv]")
 
     // path to single sine wave in 1 row of a csv, considered one source of truth
     const std::string goldenPath =
-        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVEFORM/GOLDEN_SineWave_HarmonicData_8192.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVEFORMS/RMS_PEAK_SCALED/GOLDEN_SineWave_HarmonicData_8192.csv";
 
     //
    rd_dsp::Wavetable waveTable;
@@ -57,7 +57,7 @@ TEST_CASE("WaveformFileManager loads golden sine CSV and samples match golden fi
     constexpr int numSamples = 8192;
 
     const std::string goldenPath =
-        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVEFORM/GOLDEN_SineWave_HarmonicData_8192.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVEFORMS/RMS_PEAK_SCALED/GOLDEN_SineWave_HarmonicData_8192.csv";
 
     rd_dsp::Waveform wave;
     const bool waveLoaded = rd_dsp::WaveformFileManager::fillFromCSV (wave, goldenPath);
@@ -89,10 +89,10 @@ TEST_CASE("WaveformFileManager loads basic waveform table; wavePos=0 returns sin
     constexpr int numWaves = 4;
 
     const std::string goldenPath =
-        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVETABLES/BASIC_TABLE/GOLDEN_BASIC_WAVEFORM_TABLE_8192.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVETABLES/RMS_PEAK_SCALED/GOLDEN_Wavetable_BasicShapes_8192.csv";
 
     const std::string goldenSineWaveformPath =
-        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVEFORM/GOLDEN_SineWave_HarmonicData_8192.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVEFORMS/RMS_PEAK_SCALED/GOLDEN_SineWave_HarmonicData_8192.csv";
 
     rd_dsp::Wavetable table;
     rd_dsp::WaveformFileManager::fillFromCSV (table, goldenPath);
@@ -125,7 +125,7 @@ TEST_CASE("WaveformFileManager loads basic waveform table; wavePos=0 returns sin
     //=====================================
     // Basic Table at 0.25 is a triangle (world wavePos = 1), should match golden triangle
     const std::string goldenTriWaveformPath =
-        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVEFORM/GOLDEN_TriangleWave_HarmonicData_HarmonicCount_8_8192.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVEFORMS/RMS_PEAK_SCALED/GOLDEN_TriangleWave_HarmonicData_HarmonicCount_8_8192.csv";
 
     rd_dsp::Waveform triWaveform;
     REQUIRE (rd_dsp::WaveformFileManager::fillFromCSV (triWaveform, goldenTriWaveformPath));
@@ -143,7 +143,7 @@ TEST_CASE("WaveformFileManager loads basic waveform table; wavePos=0 returns sin
     //=====================================
     // Basic Table at 0.5 is a square (world wavePos = 2), should match golden square
     const std::string goldenSquareWaveformPath =
-        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVEFORM/GOLDEN_SquareWave_HarmonicData_HarmonicCount_8_8192.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVEFORMS/RMS_PEAK_SCALED/GOLDEN_SquareWave_HarmonicData_HarmonicCount_8_8192.csv";
 
     rd_dsp::Waveform squareWaveform;
     REQUIRE (rd_dsp::WaveformFileManager::fillFromCSV (squareWaveform, goldenSquareWaveformPath));
@@ -161,7 +161,7 @@ TEST_CASE("WaveformFileManager loads basic waveform table; wavePos=0 returns sin
     //=====================================
     // Basic Table at 0.75 is a saw (world wavePos = 3), should match golden saw
     const std::string goldenSawWaveformPath =
-        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVEFORM/GOLDEN_SawWave_HarmonicData_HarmonicCount_16_8192.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVEFORMS/RMS_PEAK_SCALED/GOLDEN_SawWave_HarmonicData_HarmonicCount_16_8192.csv";
 
     rd_dsp::Waveform sawWaveform;
     REQUIRE (rd_dsp::WaveformFileManager::fillFromCSV (sawWaveform, goldenSawWaveformPath));
@@ -185,7 +185,7 @@ TEST_CASE("Can load Wavetable from multi-row csv" "[Wavetable][CSV]")
     REQUIRE(wavetable.getNumWaveforms() == 0);
 
     const std::string goldenTablePath =
-        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVETABLES/BASIC_TABLE/GOLDEN_BASIC_WAVEFORM_TABLE_8192.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVETABLES/RMS_PEAK_SCALED/GOLDEN_Wavetable_BasicShapes_8192.csv";
 
     rd_dsp::WaveformFileManager::fillFromCSV(wavetable, goldenTablePath);
 

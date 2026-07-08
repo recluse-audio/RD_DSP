@@ -72,11 +72,13 @@ TEST_CASE("WaveFactory can fill Waveform with fundamental only sine wave""[WaveF
     // set fundamental to 1.f gain, no other harmonics active
     waveFactory.setHarmonicDataValues(0, 1.f, 0.f, 1.f);
 
-    // fundamental-only harmonic fill is a plain sine, matches golden sine file
+    // fundamental-only harmonic fill is a plain sine; scale to match the RMS_PEAK_SCALED golden
     waveFactory.fillWaveformWithHarmonics(waveForm);
+    waveFactory.applyScaleRMS(waveForm);
+    waveFactory.applyPeakNormalization(waveForm);
 
     const std::string goldenPath =
-        std::string(RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVEFORM/GOLDEN_SineWave_HarmonicData_8192.csv";
+        std::string(RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVEFORMS/RMS_PEAK_SCALED/GOLDEN_SineWave_HarmonicData_8192.csv";
 
     std::vector<std::vector<float>> rows;
     const bool loaded = rd_dsp::CsvLoader::load(goldenPath, rows, /*skipHeader=*/false);
@@ -206,11 +208,13 @@ TEST_CASE("Sine wave generated with multi-harmonic method matches previous simpl
     // set fundamental to 1.f gain, no other harmonics active
     waveFactory.setHarmonicDataValues(0, 1.f, 0.f, 1.f);
 
-    // fundamental-only harmonic fill is a plain sine, matches golden sine file
+    // fundamental-only harmonic fill is a plain sine; scale to match the RMS_PEAK_SCALED golden
     waveFactory.fillWaveformWithHarmonics(waveForm);
+    waveFactory.applyScaleRMS(waveForm);
+    waveFactory.applyPeakNormalization(waveForm);
 
     const std::string goldenPath =
-        std::string(RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVEFORM/GOLDEN_SineWave_HarmonicData_8192.csv";
+        std::string(RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVEFORMS/RMS_PEAK_SCALED/GOLDEN_SineWave_HarmonicData_8192.csv";
 
     std::vector<std::vector<float>> rows;
     const bool loaded = rd_dsp::CsvLoader::load(goldenPath, rows, /*skipHeader=*/false);

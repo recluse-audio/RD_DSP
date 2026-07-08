@@ -682,8 +682,9 @@ TEST_CASE ("PulsarTrain output matches golden tukey-windowed sine over duty cycl
     rd_dsp::PulsarTrain pulsarTrain;
     pulsarTrain.prepare (kSampleRate, kBlockSize);
 
+    // RAW variant: row 0 is a unit sine (peak 1.0), matching gen_golden_pulsar.py's pure sin*window.
     const std::string wavetablePath =
-        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVETABLES/GOLDEN_Wavetable_BasicShapes_8192.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVETABLES/RAW/GOLDEN_Wavetable_BasicShapes_8192.csv";
     pulsarTrain.loadWavetable   (wavetablePath);
     pulsarTrain.setWavePosition (0.f);
     pulsarTrain.setWindowType   (rd_dsp::WindowType::kTukey);

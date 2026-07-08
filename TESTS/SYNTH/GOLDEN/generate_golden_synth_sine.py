@@ -20,14 +20,15 @@ import argparse
 from pathlib import Path
 
 SCRIPT_DIR     = Path(__file__).resolve().parent
-WAVEFORM_ROOT  = SCRIPT_DIR.parent.parent / "WAVEFORM" / "GOLDEN"
-OUTPUT_DIR     = SCRIPT_DIR.parent / "OUTPUT"
+# RAW variant: unmodified per-shape waveforms, matching the wavetable the Synth test loads.
+WAVEFORM_ROOT  = SCRIPT_DIR.parent.parent / "WAVEFORM" / "GOLDEN" / "WAVEFORMS" / "RAW"
+OUTPUT_DIR     = SCRIPT_DIR / "OUTPUT"
 
 WAVEFORM_FILES = {
-    "sine":     WAVEFORM_ROOT / "SINE"     / "GOLDEN_SINE_8096.csv",
-    "triangle": WAVEFORM_ROOT / "TRIANGLE" / "GOLDEN_TRIANGLE_8096.csv",
-    "square":   WAVEFORM_ROOT / "SQUARE"   / "GOLDEN_SQUARE_8096.csv",
-    "saw":      WAVEFORM_ROOT / "SAW"      / "GOLDEN_SAW_8096.csv",
+    "sine":     WAVEFORM_ROOT / "GOLDEN_SineWave_HarmonicData_8192.csv",
+    "triangle": WAVEFORM_ROOT / "GOLDEN_TriangleWave_HarmonicData_HarmonicCount_8_8192.csv",
+    "square":   WAVEFORM_ROOT / "GOLDEN_SquareWave_HarmonicData_HarmonicCount_8_8192.csv",
+    "saw":      WAVEFORM_ROOT / "GOLDEN_SawWave_HarmonicData_HarmonicCount_16_8192.csv",
 }
 
 

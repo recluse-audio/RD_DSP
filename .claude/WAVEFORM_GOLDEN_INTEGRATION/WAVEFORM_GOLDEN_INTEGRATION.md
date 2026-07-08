@@ -5,9 +5,11 @@ level in C++. C++ reads the harmonic JSON (nlohmann) and golden CSVs (rapidcsv) 
 Effort: medium (confirmed by inference; say the word to widen to high)
 
 ## Status
-- activeFocus: "WAVEFORM_GOLDEN_INTEGRATION :: PLAN_PHASE_4 :: PLAN_STEP_4_1"
-- last commit: 61303ae (PLAN_PHASE_2/3 changes uncommitted)
-- updated: 2026-07-07 19:01 CDT / 2026-07-08T00:01Z
+- activeFocus: "WAVEFORM_GOLDEN_INTEGRATION :: PLAN_PHASE_4 :: PLAN_STEP_4_2"
+- last commit: 61303ae (+ user checkpoint commit; PLAN_PHASE_4 golden/synth/pulsar changes uncommitted)
+- updated: 2026-07-07 19:49 CDT / 2026-07-08T00:49Z
+- FULL SUITE GREEN: 170/170 test cases, 406873 assertions. Only optional PLAN_STEP_4_2
+  (retire legacy dirs) remains.
 
 ## Decisions (resolved this session)
 - **Four scaling variants, not one.** Prior "RMS-only, no tanh" single-answer decision is

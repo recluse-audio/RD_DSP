@@ -469,8 +469,10 @@ TEST_CASE ("Synth::process at varied wave positions matches per-shape golden CSV
 {
     rd_dsp::Synth synth;
 
+    // RAW variant wavetable: the generate_golden_synth_sine.py generator reads the same
+    // WAVEFORMS/RAW/ per-shape files, so process output matches the regenerated goldens.
     const std::string tablePath =
-        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVETABLES/GOLDEN_Wavetable_BasicShapes_8192.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVETABLES/RAW/GOLDEN_Wavetable_BasicShapes_8192.csv";
     synth.loadWavetable (tablePath);
 
     synth.setNumVoices (1);

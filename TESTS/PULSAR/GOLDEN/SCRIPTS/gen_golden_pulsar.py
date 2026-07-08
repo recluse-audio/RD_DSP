@@ -16,8 +16,8 @@ Output: TESTS/PULSAR/GOLDEN/OUTPUT/GOLDEN_PULSAR_<WINDOW>_<SR>SR_<F>Hz_<C>C.csv
 Format: header row "amplitude", then one amplitude per row (BufferFiller-compatible).
 
 Usage:
-    python TESTS/PULSAR/GOLDEN/gen_golden_pulsar.py
-    python TESTS/PULSAR/GOLDEN/gen_golden_pulsar.py --sample-rate 44100 --window hanning --cycles 2
+    python TESTS/PULSAR/GOLDEN/SCRIPTS/gen_golden_pulsar.py
+    python TESTS/PULSAR/GOLDEN/SCRIPTS/gen_golden_pulsar.py --sample-rate 44100 --window hanning --cycles 2
 """
 from __future__ import annotations
 
@@ -25,7 +25,8 @@ import argparse
 import math
 from pathlib import Path
 
-OUTPUT_DIR  = Path(__file__).resolve().parent / "OUTPUT"
+# Script lives in PULSAR/GOLDEN/SCRIPTS/; OUTPUT is a sibling of SCRIPTS under GOLDEN/.
+OUTPUT_DIR  = Path(__file__).resolve().parent.parent / "OUTPUT"
 TUKEY_ALPHA = 0.8
 
 WINDOWS = ("none", "hanning", "tukey")

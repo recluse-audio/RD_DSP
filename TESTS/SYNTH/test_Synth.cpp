@@ -457,7 +457,7 @@ TEST_CASE ("Synth::loadWavetable replaces wavetable contents in place", "[Synth]
     REQUIRE (wt.getNumWaveforms() > 0);
 
     const std::string tablePath =
-        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVETABLES/GOLDEN_Wavetable_BasicShapes_8192.csv";
+        std::string (RD_DSP_TESTS_DIR) + "/WAVEFORM/GOLDEN/WAVETABLES/RMS_PEAK_SCALED/GOLDEN_Wavetable_BasicShapes_8192.csv";
 
     synth.loadWavetable (tablePath);
 

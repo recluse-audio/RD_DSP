@@ -9,9 +9,8 @@ Effort: medium (confirmed by inference; say the word to widen to high)
 - last commit: 61303ae (+ user checkpoint; PLAN_PHASE_4 changes uncommitted)
 - updated: 2026-07-07 20:01 CDT / 2026-07-08T01:01Z
 - FULL SUITE GREEN: 170/170 test cases, 406873 assertions. Legacy dirs retired into
-  GOLDEN/DEPRECATED/. Pulsar generator moved to PULSAR/GOLDEN/SCRIPTS/. All objectives met.
-  Optional follow-up: relocate the SYNTH generator under SYNTH/GOLDEN/SCRIPTS; regen stale
-  M76/M81 synth goldens.
+  GOLDEN/DEPRECATED/. Pulsar + synth generators moved under their GOLDEN/SCRIPTS/. All
+  objectives met. Optional follow-up: regen stale M76/M81 synth goldens (their tests pass).
 
 ## Decisions (resolved this session)
 - **Four scaling variants, not one.** Prior "RMS-only, no tanh" single-answer decision is

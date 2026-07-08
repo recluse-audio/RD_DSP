@@ -85,3 +85,8 @@ Append-only. Newest at bottom. Source of truth for /rd_plan --resume.
 - activeFocus: "WAVEFORM_GOLDEN_INTEGRATION :: PLAN_PHASE_4 :: PLAN_STEP_4_3"
 - commit: 61303ae (uncommitted)
 - note: Moved pulsar generator to TESTS/PULSAR/GOLDEN/SCRIPTS/gen_golden_pulsar.py (user rule: golden scripts under GOLDEN/SCRIPTS). Fixed its OUTPUT_DIR to Path(__file__).parent.parent/"OUTPUT" so it still writes to PULSAR/GOLDEN/OUTPUT; updated docstring usage paths. Regenerated the tukey golden from the new location (240 samples) - suite still 170/170. SYNTH generator (generate_golden_synth_sine.py) still sits directly under SYNTH/GOLDEN/ - not moved this pass.
+
+## 2026-07-07 20:01 CDT (2026-07-08T01:01Z) — note
+- activeFocus: "WAVEFORM_GOLDEN_INTEGRATION :: PLAN_PHASE_4 :: PLAN_STEP_4_3"
+- commit: 61303ae (uncommitted)
+- note: Moved synth generator to TESTS/SYNTH/GOLDEN/SCRIPTS/generate_golden_synth_sine.py. Added GOLDEN_DIR = SCRIPT_DIR.parent so OUTPUT_DIR stays SYNTH/GOLDEN/OUTPUT and WAVEFORM_ROOT stays TESTS/WAVEFORM/GOLDEN/WAVEFORMS/RAW after the extra level; updated docstring usage paths. Regenerated M69 sine golden from new location - suite still 170/170. Both synth + pulsar generators now under their GOLDEN/SCRIPTS/. Only remaining optional item: regen stale M76/M81 synth goldens (their tests currently pass). Uncommitted.

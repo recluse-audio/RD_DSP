@@ -11,8 +11,8 @@ Output: one cycle at the freq corresponding to the MIDI note, sampled at
 sample_rate. num samples = round(sample_rate / freq).
 
 Usage:
-    python TESTS/SYNTH/GOLDEN/generate_golden_synth_sine.py --midi 69 --sample-rate 44100
-    python TESTS/SYNTH/GOLDEN/generate_golden_synth_sine.py --midi 69 --sample-rate 44100 --waveform triangle
+    python TESTS/SYNTH/GOLDEN/SCRIPTS/generate_golden_synth_sine.py --midi 69 --sample-rate 44100
+    python TESTS/SYNTH/GOLDEN/SCRIPTS/generate_golden_synth_sine.py --midi 69 --sample-rate 44100 --waveform triangle
 """
 from __future__ import annotations
 
@@ -20,9 +20,11 @@ import argparse
 from pathlib import Path
 
 SCRIPT_DIR     = Path(__file__).resolve().parent
+# Script lives in SYNTH/GOLDEN/SCRIPTS/; GOLDEN is one level up from here.
+GOLDEN_DIR     = SCRIPT_DIR.parent
 # RAW variant: unmodified per-shape waveforms, matching the wavetable the Synth test loads.
-WAVEFORM_ROOT  = SCRIPT_DIR.parent.parent / "WAVEFORM" / "GOLDEN" / "WAVEFORMS" / "RAW"
-OUTPUT_DIR     = SCRIPT_DIR / "OUTPUT"
+WAVEFORM_ROOT  = GOLDEN_DIR.parent.parent / "WAVEFORM" / "GOLDEN" / "WAVEFORMS" / "RAW"
+OUTPUT_DIR     = GOLDEN_DIR / "OUTPUT"
 
 WAVEFORM_FILES = {
     "sine":     WAVEFORM_ROOT / "GOLDEN_SineWave_HarmonicData_8192.csv",

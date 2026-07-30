@@ -1,5 +1,6 @@
 set(TEST_SOURCES
     TESTS/BUFFER_FILLER/test_BufferFiller_fromCSV.cpp
+    TESTS/GAIN/test_Gain.cpp
     TESTS/OSCILLATOR/test_Oscillator.cpp
     TESTS/PULSAR/test_Pulsar.cpp
     TESTS/PULSAR/test_PulsarData.cpp

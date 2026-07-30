@@ -1,4 +1,6 @@
 set(SOURCES
+    SOURCE/GAIN/Gain.cpp
+    SOURCE/GAIN/Gain.h
     SOURCE/HELPERS/CsvLoader.cpp
     SOURCE/HELPERS/CsvLoader.h
     SOURCE/INTERPOLATOR/Interpolator.h

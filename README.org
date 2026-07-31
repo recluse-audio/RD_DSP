@@ -6,3 +6,34 @@ SUMMARY: This is a C++ DSP library with minimal external dependencies
 
 This is ported from much of my work done in JUCE.
 Building for web assembly necessitated this.
+
+* Running the tests
+From this directory:
+
+#+BEGIN_SRC sh
+python3 HELPER_SCRIPTS/build_tests.py --run                   # usual case, build then run
+python3 HELPER_SCRIPTS/build_tests.py                         # after editing a class, build only
+python3 HELPER_SCRIPTS/build_tests.py --run "[Gain]"          # one tag, when chasing one class
+python3 HELPER_SCRIPTS/build_tests.py --run --config Release  # checking optimised behaviour
+python3 HELPER_SCRIPTS/build_tests.py --run --clean           # after a confusing stale build
+#+END_SRC
+
+- Catch2 cases for every DSP class here, including =rd_dsp::Gain=
+- Cases live in =TESTS/=
+- It builds into =BUILD/=
+- Catch2 is pulled from GitHub on first configure, so that one needs network
+- 179 cases today
+
+** Who depends on this
+- This library is a submodule of every plugin repo
+- Effects and synthesis live here, never in JUCE
+  - the same DSP serves the browser and the native plugin
+  - JUCE will not compile into a =.wam=
+- A change here needs the consuming plugin rebuilt before its tests see it
+
+** First time on this machine
+- =cmake= and a C++20 compiler are assumed present
+- Nothing else, this library has minimal external dependencies
+
+Every repo's test command is listed in =RECLUSE_CMD/NOTES/TEST_RUNNING.org=, at the
+container root beside the plugin containers.

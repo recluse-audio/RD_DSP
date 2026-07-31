@@ -21,6 +21,8 @@ def clean_output_dirs(root: Path) -> None:
         if "GOLDEN" in output_dir.relative_to(root).parts:
             continue
         for entry in output_dir.iterdir():
+            if entry.name == ".gitkeep":
+                continue
             if entry.is_dir():
                 shutil.rmtree(entry)
             else:

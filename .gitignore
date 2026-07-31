@@ -20,5 +20,6 @@ __pycache__/
 # Compile commands
 compile_commands.json
 
-# Generated test output
-TESTS/WAVEFORM/OUTPUT/
+# Generated test output, the directory itself must stay
+TESTS/WAVEFORM/OUTPUT/*
+!TESTS/WAVEFORM/OUTPUT/.gitkeep

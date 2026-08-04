@@ -2,10 +2,11 @@
 #+REPO: RD_DSP
 #+PATH: PLUGINS_CONTAINER/SYNTH_CONTAINER/RECLUSE_SYNTH_WEB/SUBMODULES/RD_DSP
 
-These blocks call python directly, they do not run through cmd_org_run.sh, so
-the full output prints where the block runs. Read #+OUTPUT: for what a block
-writes and #+NEXT: for how to check it. This repo is a submodule, the same
-checkout appears under every plugin that uses the DSP.
+* Running Codeblocks with =C c C c=
+
+- Codeblocks call python directly, no cmd_org_run.sh
+- full output prints where the block runs
+- the same checkout appears under every plugin using the DSP
 
 * build
 #+DESC: SCRIPTS/rebuild_all.py, regenerates the CMake file lists then builds into BUILD/, pulls Catch2 on first configure

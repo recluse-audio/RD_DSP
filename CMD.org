@@ -3,10 +3,10 @@
 #+PATH: PLUGINS_CONTAINER/SYNTH_CONTAINER/RECLUSE_SYNTH_WEB/SUBMODULES/RD_DSP
 
 * build
-#+DESC: SCRIPTS/build_tests.py, configures and builds into BUILD/, pulls Catch2 on first configure
+#+DESC: SCRIPTS/rebuild_all.py, regenerates the CMake file lists then builds into BUILD/, pulls Catch2 on first configure
 #+NAME: build
 #+BEGIN_SRC sh
-python3 SCRIPTS/build_tests.py
+python3 SCRIPTS/rebuild_all.py
 #+END_SRC
 
 * test

@@ -2,8 +2,15 @@
 #+REPO: RD_DSP
 #+PATH: PLUGINS_CONTAINER/SYNTH_CONTAINER/RECLUSE_SYNTH_WEB/SUBMODULES/RD_DSP
 
+These blocks call python directly, they do not run through cmd_org_run.sh, so
+the full output prints where the block runs. Read #+OUTPUT: for what a block
+writes and #+NEXT: for how to check it. This repo is a submodule, the same
+checkout appears under every plugin that uses the DSP.
+
 * build
 #+DESC: SCRIPTS/rebuild_all.py, regenerates the CMake file lists then builds into BUILD/, pulls Catch2 on first configure
+#+OUTPUT: BUILD/, the configured CMake tree and the library
+#+NEXT: run the test block, it reuses this build
 #+NAME: build
 #+BEGIN_SRC sh
 python3 SCRIPTS/rebuild_all.py
@@ -11,6 +18,8 @@ python3 SCRIPTS/rebuild_all.py
 
 * test
 #+DESC: SCRIPTS/build_tests.py, builds then runs every DSP case through ctest, 179 cases
+#+OUTPUT: the test binaries under BUILD/, the counts come from ctest
+#+NEXT: a failing case names its file in the ctest output
 #+NAME: test
 #+BEGIN_SRC sh
 python3 SCRIPTS/build_tests.py --run
@@ -18,6 +27,8 @@ python3 SCRIPTS/build_tests.py --run
 
 * dev
 #+DESC: SCRIPTS/build_standalone.py, builds the RD_DSP_Standalone command line demo
+#+OUTPUT: BUILD/, holding the RD_DSP_Standalone binary
+#+NEXT: run that binary yourself, this block only builds it
 #+NAME: dev
 #+BEGIN_SRC sh
 python3 SCRIPTS/build_standalone.py

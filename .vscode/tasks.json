@@ -5,7 +5,7 @@
             "label": "build-tests",
             "type": "shell",
             "command": "python",
-            "args": ["HELPER_SCRIPTS/build_tests.py"],
+            "args": ["SCRIPTS/build_tests.py"],
             "options": {
                 "cwd": "${workspaceFolder}"
             },

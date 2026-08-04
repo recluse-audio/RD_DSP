@@ -11,11 +11,11 @@ Building for web assembly necessitated this.
 From this directory:
 
 #+BEGIN_SRC sh
-python3 HELPER_SCRIPTS/build_tests.py --run                   # usual case, build then run
-python3 HELPER_SCRIPTS/build_tests.py                         # after editing a class, build only
-python3 HELPER_SCRIPTS/build_tests.py --run "[Gain]"          # one tag, when chasing one class
-python3 HELPER_SCRIPTS/build_tests.py --run --config Release  # checking optimised behaviour
-python3 HELPER_SCRIPTS/build_tests.py --run --clean           # after a confusing stale build
+python3 SCRIPTS/build_tests.py --run                   # usual case, build then run
+python3 SCRIPTS/build_tests.py                         # after editing a class, build only
+python3 SCRIPTS/build_tests.py --run "[Gain]"          # one tag, when chasing one class
+python3 SCRIPTS/build_tests.py --run --config Release  # checking optimised behaviour
+python3 SCRIPTS/build_tests.py --run --clean           # after a confusing stale build
 #+END_SRC
 
 - Catch2 cases for every DSP class here, including =rd_dsp::Gain=

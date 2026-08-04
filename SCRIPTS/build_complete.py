@@ -37,7 +37,7 @@ def find_cmake() -> str:
 def beep(*, success: bool = True) -> None:
     """Cross-platform audible notification. Best-effort.
 
-    On Windows, plays HELPER_SCRIPTS/SOUNDS/{success,failure}_sound.wav if present;
+    On Windows, plays SCRIPTS/SOUNDS/{success,failure}_sound.wav if present;
     falls back to a tone. On other platforms emits the terminal bell.
     """
     try:

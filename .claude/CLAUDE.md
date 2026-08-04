@@ -15,17 +15,17 @@ The sister project `C:/REPOS/PLUGIN_PROJECTS/RD` is a JUCE plugin that uses simi
 - **No allocations on the audio hot path.** Anything that runs inside a `processBlock` equivalent must be allocation-free. Sizing/init goes in `prepare()`-style methods.
 - **No exceptions in DSP hot path.** Exceptions are fine in setup/factory methods but must not propagate through real-time code (incompatible with AUv3 and disabled in many WASM builds).
 - **Allman braces** (opening brace on its own line at the parent's indent). Match the surrounding file only if it is overwhelmingly non-Allman.
-- **Helper scripts and platform integration live outside `SOURCE/`** — `HELPER_SCRIPTS/` for Python build drivers, `STANDALONE/` for the CLI demo. Never let platform code leak into the core library.
+- **Helper scripts and platform integration live outside `SOURCE/`** — `SCRIPTS/` for Python build drivers, `STANDALONE/` for the CLI demo. Never let platform code leak into the core library.
 
 ## Build commands
 
 ```bash
 # From repo root — Python drivers (cross-platform)
-python HELPER_SCRIPTS/build_tests.py             # build Tests target (Debug)
-python HELPER_SCRIPTS/build_tests.py --run       # build then run Catch2
-python HELPER_SCRIPTS/build_standalone.py        # build CLI demo
-python HELPER_SCRIPTS/rebuild_all.py             # wipe BUILD/, rebuild both
-python HELPER_SCRIPTS/regenSource.py             # regen CMAKE/{SOURCES,TESTS}.cmake
+python SCRIPTS/build_tests.py             # build Tests target (Debug)
+python SCRIPTS/build_tests.py --run       # build then run Catch2
+python SCRIPTS/build_standalone.py        # build CLI demo
+python SCRIPTS/rebuild_all.py             # wipe BUILD/, rebuild both
+python SCRIPTS/regenSource.py             # regen CMAKE/{SOURCES,TESTS}.cmake
 
 # Or raw CMake
 cmake -B BUILD -DRD_DSP_BUILD_TESTS=ON -DRD_DSP_BUILD_STANDALONE=ON
@@ -60,7 +60,7 @@ ctest -R <regex>                  # ctest filter
 | `STANDALONE/` | CLI demo executable (`main.cpp`) that links the static lib. |
 | `CMAKE/SOURCES.cmake` | Auto-generated source list (do not edit by hand — run `regenSource.py`). |
 | `CMAKE/TESTS.cmake` | Auto-generated test source list. |
-| `HELPER_SCRIPTS/` | Python build drivers. Cross-platform; no shell scripts. |
+| `SCRIPTS/` | Python build drivers. Cross-platform; no shell scripts. |
 | `BUILD/` | Out-of-source build dir. Gitignored. |
 | `VERSION.txt` | Single source of truth for project version. |
 

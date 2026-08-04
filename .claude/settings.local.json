@@ -1,7 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python HELPER_SCRIPTS/regenSource.py)",
+      "Bash(python SCRIPTS/regenSource.py)",
       "Bash(git mv *)",
       "PowerShell(Move-Item *)",
       "Bash(git -C C:/REPOS/PLUGIN_PROJECTS/RD_DSP status)",

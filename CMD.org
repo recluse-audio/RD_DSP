@@ -1,0 +1,24 @@
+#+TITLE: RD_DSP: CMD
+#+REPO: RD_DSP
+#+PATH: PLUGINS_CONTAINER/SYNTH_CONTAINER/RECLUSE_SYNTH_WEB/SUBMODULES/RD_DSP
+
+* build
+#+DESC: SCRIPTS/build_tests.py, configures and builds into BUILD/, pulls Catch2 on first configure
+#+NAME: build
+#+BEGIN_SRC sh
+python3 SCRIPTS/build_tests.py
+#+END_SRC
+
+* test
+#+DESC: SCRIPTS/build_tests.py, builds then runs every DSP case through ctest, 179 cases
+#+NAME: test
+#+BEGIN_SRC sh
+python3 SCRIPTS/build_tests.py --run
+#+END_SRC
+
+* dev
+#+DESC: SCRIPTS/build_standalone.py, builds the RD_DSP_Standalone command line demo
+#+NAME: dev
+#+BEGIN_SRC sh
+python3 SCRIPTS/build_standalone.py
+#+END_SRC

@@ -1,6 +1,7 @@
 #+TITLE: RD_DSP: CMD
 #+REPO: RD_DSP
 #+PATH: PLUGINS_CONTAINER/SYNTH_CONTAINER/RECLUSE_SYNTH_WEB/SUBMODULES/RD_DSP
+#+PROPERTY: header-args:sh :dir ..
 
 * Running Codeblocks with =C c C c=
 

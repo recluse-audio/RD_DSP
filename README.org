@@ -8,6 +8,8 @@ This is ported from much of my work done in JUCE.
 Building for web assembly necessitated this.
 
 * Running the tests
+Important CLI commands in this repo: [[file:NOTES/CMD.org][NOTES/CMD.org]]
+
 From this directory:
 
 #+BEGIN_SRC sh

@@ -14,6 +14,7 @@
 #+OUTPUT: BUILD/, the configured CMake tree and the library
 #+NEXT: run the test block, it reuses this build
 #+NAME: build
+#+KIND: build
 #+BEGIN_SRC sh
 python3 SCRIPTS/rebuild_all.py
 #+END_SRC
@@ -23,6 +24,7 @@ python3 SCRIPTS/rebuild_all.py
 #+OUTPUT: the test binaries under BUILD/, the counts come from ctest
 #+NEXT: a failing case names its file in the ctest output
 #+NAME: test
+#+KIND: test
 #+BEGIN_SRC sh
 python3 SCRIPTS/build_tests.py --run
 #+END_SRC
@@ -32,6 +34,7 @@ python3 SCRIPTS/build_tests.py --run
 #+OUTPUT: BUILD/, holding the RD_DSP_Standalone binary
 #+NEXT: run that binary yourself, this block only builds it
 #+NAME: dev
+#+KIND: prototype
 #+BEGIN_SRC sh
 python3 SCRIPTS/build_standalone.py
 #+END_SRC

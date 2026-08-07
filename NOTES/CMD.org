@@ -11,6 +11,7 @@
 
 * build
 #+DESC: SCRIPTS/rebuild_all.py, regenerates the CMake file lists then builds into BUILD/, pulls Catch2 on first configure
+#+PLAIN: Builds the shared sound processing code every instrument and effect is built on.
 #+OUTPUT: BUILD/, the configured CMake tree and the library
 #+NEXT: run the test block, it reuses this build
 #+NAME: build
@@ -21,6 +22,7 @@ python3 SCRIPTS/rebuild_all.py
 
 * test
 #+DESC: SCRIPTS/build_tests.py, builds then runs every DSP case through ctest, 179 cases
+#+PLAIN: Runs every check on the shared sound processing code.
 #+OUTPUT: the test binaries under BUILD/, the counts come from ctest
 #+NEXT: a failing case names its file in the ctest output
 #+NAME: test
@@ -31,6 +33,7 @@ python3 SCRIPTS/build_tests.py --run
 
 * dev
 #+DESC: SCRIPTS/build_standalone.py, builds the RD_DSP_Standalone command line demo
+#+PLAIN: Builds a small command line program for trying the sound processing on its own.
 #+OUTPUT: BUILD/, holding the RD_DSP_Standalone binary
 #+NEXT: run that binary yourself, this block only builds it
 #+NAME: dev

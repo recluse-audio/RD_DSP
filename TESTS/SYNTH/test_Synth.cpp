@@ -5,6 +5,8 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/catch_approx.hpp>
 
+#include <algorithm>
+#include <cmath>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -546,4 +548,66 @@ TEST_CASE ("Synth::prepare propagates to every voice and oscillator", "[Synth]")
         CHECK (SynthVoiceTester::oscillatorSampleRate (voice) == kSampleRate);
         CHECK (SynthVoiceTester::oscillatorBlockSize  (voice) == kBlockSize);
     }
+}
+
+TEST_CASE ("Synth::fillWithBasicShapes resizes the shared wavetable", "[Synth]")
+{
+    rd_dsp::Synth synth;
+    auto& wavetable = SynthTester::wavetable (synth);
+
+    synth.fillWithBasicShapes (2048);
+
+    CHECK (wavetable.getNumWaveforms() == 4);
+    CHECK (wavetable.getWaveformSize() == 2048);
+}
+
+TEST_CASE ("Synth::allNotesOff releases every active voice", "[Synth]")
+{
+    rd_dsp::Synth synth;
+    synth.setNumVoices (3);
+    auto& voices = SynthTester::voices (synth);
+
+    synth.noteOn (60, 1.0f);
+    synth.noteOn (64, 1.0f);
+    synth.noteOn (67, 1.0f);
+
+    synth.allNotesOff();
+
+    CHECK (voices[0].isActive() == false);
+    CHECK (voices[1].isActive() == false);
+    CHECK (voices[2].isActive() == false);
+}
+
+TEST_CASE ("SynthVoice::process adds its voice onto the existing samples", "[SynthVoice]")
+{
+    constexpr int   kBlockSize   = 64;
+    constexpr float kExisting    = 0.25f;
+
+    rd_dsp::Wavetable wavetable;
+    rd_dsp::SynthVoice aloneVoice (wavetable);
+    rd_dsp::SynthVoice summedVoice (wavetable);
+    aloneVoice.prepare (48000.0, kBlockSize);
+    summedVoice.prepare (48000.0, kBlockSize);
+    aloneVoice.noteOn (69, 1.0f);
+    summedVoice.noteOn (69, 1.0f);
+
+    rd_dsp::RD_Buffer aloneBuffer (1, kBlockSize);
+    rd_dsp::RD_Buffer summedBuffer (1, kBlockSize);
+    aloneBuffer.clear();
+    for (int i = 0; i < kBlockSize; ++i)
+        summedBuffer.setSample (0, i, kExisting);
+
+    aloneVoice.process (aloneBuffer.getReadArray(), aloneBuffer.getWriteArray(), 1, kBlockSize);
+    summedVoice.process (summedBuffer.getReadArray(), summedBuffer.getWriteArray(), 1, kBlockSize);
+
+    float alonePeak = 0.f;
+    for (int i = 0; i < kBlockSize; ++i)
+    {
+        const float aloneSample = aloneBuffer.getSample (0, i);
+        const float aloneMagnitude = std::abs (aloneSample);
+        alonePeak = std::max (alonePeak, aloneMagnitude);
+        CHECK (summedBuffer.getSample (0, i) == Catch::Approx (kExisting + aloneSample).margin (1e-6));
+    }
+
+    CHECK (alonePeak > 0.1f);
 }

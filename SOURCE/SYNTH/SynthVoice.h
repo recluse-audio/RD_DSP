@@ -12,6 +12,7 @@ namespace rd_dsp
 {
 class Wavetable;
 class Oscillator;
+class RD_Buffer;
 
 /**
  * Owns an oscillator and is aware of envelopes / note on events.
@@ -51,6 +52,8 @@ private:
 
     Wavetable& mWavetable;
     std::unique_ptr<Oscillator> mOscillator;
+    // Oscillator::process() overwrites / process() adds this into writePointers
+    std::unique_ptr<RD_Buffer> mVoiceBuffer;
     int mCurrentMidiNote = -1;
     bool mIsActive = false;
     std::uint64_t mAge = 0;

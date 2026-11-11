@@ -547,3 +547,14 @@ TEST_CASE ("Synth::prepare propagates to every voice and oscillator", "[Synth]")
         CHECK (SynthVoiceTester::oscillatorBlockSize  (voice) == kBlockSize);
     }
 }
+
+TEST_CASE ("Synth::fillWithBasicShapes resizes the shared wavetable", "[Synth]")
+{
+    rd_dsp::Synth synth;
+    auto& wavetable = SynthTester::wavetable (synth);
+
+    synth.fillWithBasicShapes (2048);
+
+    CHECK (wavetable.getNumWaveforms() == 4);
+    CHECK (wavetable.getWaveformSize() == 2048);
+}

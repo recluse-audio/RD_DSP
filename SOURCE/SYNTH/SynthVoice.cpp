@@ -2,15 +2,19 @@
 
 #include "../WAVEFORM/Wavetable.h"
 #include "../OSCILLATOR/Oscillator.h"
+#include "../RD_BUFFER/RD_Buffer.h"
 
 #include <cmath>
 
 namespace rd_dsp
 {
 
+static constexpr int kMaxVoiceChannels = 2;
+
 SynthVoice::SynthVoice (Wavetable& waveTable)
     : mWavetable (waveTable)
     , mOscillator (std::make_unique<Oscillator>(waveTable))
+    , mVoiceBuffer (std::make_unique<RD_Buffer>(kMaxVoiceChannels, 512))
 {
 }
 
@@ -21,14 +25,30 @@ void SynthVoice::prepare (double sampleRate, int maxBlockSize)
 {
     mSampleRate = sampleRate; mBlockSize = maxBlockSize;
     mOscillator->prepare(sampleRate, maxBlockSize);
+    mVoiceBuffer->setSize(kMaxVoiceChannels, maxBlockSize);
 }
 
 void SynthVoice::process (const float* const* readPointers, float* const* writePointers,
                           int numChannels, int numSamples)
 {
-    if(mIsActive)
+    if(!mIsActive)
+        return;
+
+    if(numChannels > mVoiceBuffer->getNumChannels())
+        numChannels = mVoiceBuffer->getNumChannels();
+
+    if(numSamples > mVoiceBuffer->getNumSamples())
+        numSamples = mVoiceBuffer->getNumSamples();
+
+    float* const* voiceChannels = mVoiceBuffer->getWriteArray();
+    mOscillator->process(readPointers, voiceChannels, numChannels, numSamples);
+
+    for(int ch = 0; ch < numChannels; ++ch)
     {
-        mOscillator->process(readPointers, writePointers, numChannels, numSamples);
+        for(int sampleIndex = 0; sampleIndex < numSamples; ++sampleIndex)
+        {
+            writePointers[ch][sampleIndex] += voiceChannels[ch][sampleIndex];
+        }
     }
 }
 

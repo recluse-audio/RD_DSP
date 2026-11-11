@@ -32,6 +32,7 @@ public:
 
     void noteOn(int midiNote, float midiVelocity);
     void noteOff(int midiNote, float midiVelocity);
+    void allNotesOff();
 
     void controlChange(int controlNumber, float normalizedValue);
     void pitchBend(float signedNormalizedValue);
@@ -41,6 +42,8 @@ public:
 
     void setWavePosition(float wavePos);
     void loadWavetable(std::string tablePath);
+    // synth.cpp in RECLUSE_SYNTH_WEB - wasm has no file for loadWavetable()
+    void fillWithBasicShapes(int waveformSize);
 private:
 friend class SynthTester;
     std::unique_ptr<Wavetable> mWavetable;

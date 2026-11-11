@@ -57,6 +57,23 @@ void Synth::noteOff (int midiNote, float midiVelocity)
     voice->noteOff(midiVelocity);
 }
 
+void Synth::allNotesOff()
+{
+    for(auto& voice : mSynthVoices)
+    {
+        if(voice.isActive())
+            voice.noteOff(0.0f);
+    }
+}
+
+void Synth::fillWithBasicShapes (int waveformSize)
+{
+    if (mWavetable == nullptr)
+        return;
+
+    mWavetable->fillWithBasicShapes (waveformSize);
+}
+
 void Synth::setWavePosition (float wavePos)
 {
     if (mWavetable == nullptr)

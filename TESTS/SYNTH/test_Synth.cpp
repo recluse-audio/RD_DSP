@@ -558,3 +558,20 @@ TEST_CASE ("Synth::fillWithBasicShapes resizes the shared wavetable", "[Synth]")
     CHECK (wavetable.getNumWaveforms() == 4);
     CHECK (wavetable.getWaveformSize() == 2048);
 }
+
+TEST_CASE ("Synth::allNotesOff releases every active voice", "[Synth]")
+{
+    rd_dsp::Synth synth;
+    synth.setNumVoices (3);
+    auto& voices = SynthTester::voices (synth);
+
+    synth.noteOn (60, 1.0f);
+    synth.noteOn (64, 1.0f);
+    synth.noteOn (67, 1.0f);
+
+    synth.allNotesOff();
+
+    CHECK (voices[0].isActive() == false);
+    CHECK (voices[1].isActive() == false);
+    CHECK (voices[2].isActive() == false);
+}
